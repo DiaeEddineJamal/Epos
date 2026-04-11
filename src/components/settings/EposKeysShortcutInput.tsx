@@ -40,8 +40,26 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
   // Use a ref to track currentKeys for the event handler (avoids stale closure)
   const currentKeysRef = useRef<string>("");
   const osType = useOsType();
+  const commandBindings = commands as typeof commands & {
+    startEposKeysRecording?: (bindingId: string) => Promise<unknown>;
+    stopEposKeysRecording?: () => Promise<unknown>;
+  };
 
   const bindings = getSetting("bindings") || {};
+
+  const startKeysRecording = useCallback(
+    (bindingId: string) =>
+      commandBindings.startEposKeysRecording?.(bindingId) ??
+      commandBindings.startHandyKeysRecording(bindingId),
+    [commandBindings],
+  );
+
+  const stopKeysRecording = useCallback(
+    () =>
+      commandBindings.stopEposKeysRecording?.() ??
+      commandBindings.stopHandyKeysRecording(),
+    [commandBindings],
+  );
 
   // Handle cancellation
   const cancelRecording = useCallback(async () => {
@@ -54,7 +72,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
     }
 
     // Stop backend recording
-    await commands.stopEposKeysRecording().catch(console.error);
+    await stopKeysRecording().catch(console.error);
 
     // Restore original binding
     if (originalBinding) {
@@ -120,7 +138,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
               unlistenRef.current();
               unlistenRef.current = null;
             }
-            await commands.stopEposKeysRecording().catch(console.error);
+            await stopKeysRecording().catch(console.error);
             setIsRecording(false);
             setCurrentKeys("");
             currentKeysRef.current = "";
@@ -141,7 +159,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
         unlistenRef.current = null;
       }
       // Stop backend recording on unmount to prevent orphaned recording loops
-      commands.stopEposKeysRecording().catch(console.error);
+      stopKeysRecording().catch(console.error);
     };
   }, [
     isRecording,
@@ -149,6 +167,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
     originalBinding,
     updateBinding,
     cancelRecording,
+    stopKeysRecording,
     t,
   ]);
 
@@ -178,7 +197,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
 
     // Start backend recording
     try {
-      await commands.startEposKeysRecording(shortcutId);
+      await startKeysRecording(shortcutId);
       setIsRecording(true);
       setCurrentKeys("");
       currentKeysRef.current = "";

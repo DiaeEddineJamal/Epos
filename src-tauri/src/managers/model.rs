@@ -1055,6 +1055,21 @@ impl ModelManager {
 
         let mut response = request.send().await?;
 
+        // If the server rejects the requested byte range, the partial file is no
+        // longer valid for resume (usually because the remote file changed or the
+        // stored partial size exceeds the current file length). Delete the partial
+        // and restart from scratch.
+        if resume_from > 0 && response.status() == reqwest::StatusCode::RANGE_NOT_SATISFIABLE {
+            warn!(
+                "Stored partial download for model {} is no longer resumable (HTTP 416), restarting download",
+                model_id
+            );
+            drop(response);
+            let _ = fs::remove_file(&partial_path);
+            resume_from = 0;
+            response = client.get(&url).send().await?;
+        }
+
         // If we tried to resume but server returned 200 (not 206 Partial Content),
         // the server doesn't support range requests. Delete partial file and restart
         // fresh to avoid file corruption (appending full file to partial).

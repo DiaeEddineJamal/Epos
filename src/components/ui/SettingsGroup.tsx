@@ -36,8 +36,8 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
           )}
         </div>
       )}
-      <div className={`${getBgClass()} border border-primary/10 rounded-xl overflow-hidden transition-all duration-200 ease-out shadow-sm`}>
-        <div className="divide-y divide-primary/5">{children}</div>
+      <div className={`${getBgClass()} relative border border-primary/10 rounded-xl overflow-visible transition-all duration-200 ease-out shadow-sm`}>
+        <div className="divide-y divide-primary/5 overflow-visible">{children}</div>
       </div>
     </div>
   );

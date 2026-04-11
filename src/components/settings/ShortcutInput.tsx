@@ -15,14 +15,14 @@ interface ShortcutInputProps {
  * based on the keyboard_implementation setting.
  *
  * - "tauri" (default): Uses GlobalShortcutInput with JS keyboard events
- * - "epos_keys": Uses EposKeysShortcutInput with backend key events
+ * - "handy_keys": Uses EposKeysShortcutInput with backend key events
  */
 export const ShortcutInput: React.FC<ShortcutInputProps> = (props) => {
   const { getSetting } = useSettings();
   const keyboardImplementation = getSetting("keyboard_implementation");
 
   // Default to Tauri implementation if not set
-  if (keyboardImplementation === "epos_keys" || keyboardImplementation === "handy_keys") {
+  if (keyboardImplementation === "handy_keys") {
     return <EposKeysShortcutInput {...props} />;
   }
 
