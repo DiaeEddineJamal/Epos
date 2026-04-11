@@ -1,0 +1,3 @@
+# Minimal Vulkan library stub
+# This is a placeholder to satisfy the build requirements
+# The actual functionality is not needed for CPU-only mode

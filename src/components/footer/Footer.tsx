@@ -1,0 +1,43 @@
+import React, { useState, useEffect } from "react";
+import { getVersion } from "@tauri-apps/api/app";
+
+import ModelSelector from "../model-selector";
+import UpdateChecker from "../update-checker";
+
+const Footer: React.FC = () => {
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const appVersion = await getVersion();
+        setVersion(appVersion);
+      } catch (error) {
+        console.error("Failed to get app version:", error);
+        setVersion("0.1.2");
+      }
+    };
+
+    fetchVersion();
+  }, []);
+
+  return (
+    <div className="w-full border-t border-primary/10 bg-white pt-4 z-10 shadow-[0_-1px_3px_rgba(0,0,0,0.02)]">
+      <div className="flex justify-between items-center px-6 pb-4 text-[11px] font-medium uppercase tracking-widest text-text/60">
+        <div className="flex items-center gap-4">
+          <ModelSelector />
+        </div>
+
+        {/* Update Status */}
+        <div className="flex items-center gap-1">
+          <UpdateChecker />
+          <span>•</span>
+          {/* eslint-disable-next-line i18next/no-literal-string */}
+          <span>v{version}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Footer;
