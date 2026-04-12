@@ -124,7 +124,7 @@ Now that the build environment is working, you can customize:
 **File**: `src-tauri/tauri.conf.json` (lines 3-4)
 ```json
 "productName": "Handy",                    // Change to your app name
-"identifier": "com.pais.handy",            // Change to your domain
+"identifier": "com.luziv.epos",            // Change to your domain
 ```
 
 ### 6. UI Components

@@ -48,7 +48,7 @@ pub fn get_current_theme(app: &AppHandle) -> AppTheme {
 pub fn get_icon_path(theme: AppTheme, state: TrayIconState) -> &'static str {
     let _ = theme;
     let _ = state;
-    "resources/epos.png"
+    "resources/epos-app-icon-tray.png"
 }
 
 pub fn change_tray_icon(app: &AppHandle, icon: TrayIconState) {
@@ -267,7 +267,7 @@ mod tests {
     fn build_entry(transcription: &str, post_processed: Option<&str>) -> HistoryEntry {
         HistoryEntry {
             id: 1,
-            file_name: "handy-1.wav".to_string(),
+            file_name: "epos-1.wav".to_string(),
             timestamp: 0,
             saved: false,
             title: "Recording".to_string(),

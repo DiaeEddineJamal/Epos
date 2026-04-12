@@ -520,9 +520,9 @@
         "description": "Location where Epos stores its data"
       },
       "sourceCode": {
-        "title": "Source Code",
-        "description": "View source code and contribute",
-        "button": "View on GitHub"
+        "title": "Credits",
+        "description": "Developed by Luziv",
+        "button": "View Luziv's GitHub"
       },
       "supportDevelopment": {
         "title": "Support Development",

@@ -67,11 +67,11 @@ fn build_headers(provider: &PostProcessProvider, api_key: &str) -> Result<Header
     headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
     headers.insert(
         REFERER,
-        HeaderValue::from_static("https://github.com/cjpais/Epos"),
+        HeaderValue::from_static("https://github.com/DiaeEddineJamal/Epos"),
     );
     headers.insert(
         USER_AGENT,
-        HeaderValue::from_static("Epos/1.0 (+https://github.com/cjpais/Epos)"),
+        HeaderValue::from_static("Epos/1.0 (+https://github.com/DiaeEddineJamal/Epos)"),
     );
     headers.insert("X-Title", HeaderValue::from_static("Epos"));
 

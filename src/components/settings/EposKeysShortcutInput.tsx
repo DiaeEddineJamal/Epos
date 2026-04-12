@@ -40,25 +40,17 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
   // Use a ref to track currentKeys for the event handler (avoids stale closure)
   const currentKeysRef = useRef<string>("");
   const osType = useOsType();
-  const commandBindings = commands as typeof commands & {
-    startEposKeysRecording?: (bindingId: string) => Promise<unknown>;
-    stopEposKeysRecording?: () => Promise<unknown>;
-  };
 
   const bindings = getSetting("bindings") || {};
 
   const startKeysRecording = useCallback(
-    (bindingId: string) =>
-      commandBindings.startEposKeysRecording?.(bindingId) ??
-      commandBindings.startHandyKeysRecording(bindingId),
-    [commandBindings],
+    (bindingId: string) => commands.startEposKeysRecording(bindingId),
+    [],
   );
 
   const stopKeysRecording = useCallback(
-    () =>
-      commandBindings.stopEposKeysRecording?.() ??
-      commandBindings.stopHandyKeysRecording(),
-    [commandBindings],
+    () => commands.stopEposKeysRecording(),
+    [],
   );
 
   // Handle cancellation
@@ -90,7 +82,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
     setOriginalBinding("");
   }, [isRecording, originalBinding, shortcutId, updateBinding, t]);
 
-  // Set up event listener for handy-keys events
+  // Set up event listener for Epos Keys events
   useEffect(() => {
     if (!isRecording) return;
 
@@ -99,7 +91,7 @@ export const EposKeysShortcutInput: React.FC<EposKeysShortcutInputProps> = ({
     const setupListener = async () => {
       // Listen for key events from backend
       const unlisten = await listen<EposKeysEvent>(
-        "handy-keys-event",
+        "epos-keys-event",
         async (event) => {
           if (cleanup) return;
 
