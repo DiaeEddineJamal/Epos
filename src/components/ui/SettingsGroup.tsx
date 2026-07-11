@@ -25,10 +25,10 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       {title && (
-        <div className="px-4">
-          <h2 className="text-[0.65rem] font-bold text-text/60 uppercase tracking-[0.15em] mb-1">
+        <div className="px-1">
+          <h2 className="text-[0.7rem] font-bold text-text/55 uppercase tracking-[0.16em]">
             {title}
           </h2>
           {description && (
@@ -36,8 +36,8 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
           )}
         </div>
       )}
-      <div className={`${getBgClass()} relative border border-primary/10 rounded-xl overflow-visible transition-all duration-200 ease-out shadow-sm`}>
-        <div className="divide-y divide-primary/5 overflow-visible">{children}</div>
+      <div className={`${getBgClass()} relative border border-primary/[0.08] rounded-2xl overflow-visible transition-all duration-200 ease-out shadow-[0_1px_2px_rgba(26,26,26,0.04),0_4px_16px_-8px_rgba(26,26,26,0.08)]`}>
+        <div className="divide-y divide-primary/[0.06] overflow-visible">{children}</div>
       </div>
     </div>
   );

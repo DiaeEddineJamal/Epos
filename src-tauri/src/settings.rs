@@ -630,11 +630,23 @@ fn default_post_process_models() -> HashMap<String, String> {
 }
 
 fn default_post_process_prompts() -> Vec<LLMPrompt> {
-    vec![LLMPrompt {
-        id: "default_improve_transcriptions".to_string(),
-        name: "Improve Transcriptions".to_string(),
-        prompt: "Clean this transcript:\n1. Fix spelling, capitalization, and punctuation errors\n2. Convert number words to digits (twenty-five → 25, ten percent → 10%, five dollars → $5)\n3. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n4. Remove filler words (um, uh, like as filler)\n5. Keep the language in the original version (if it was french, keep it in french for example)\n\nPreserve exact meaning and word order. Do not paraphrase or reorder content.\n\nReturn only the cleaned transcript.\n\nTranscript:\n${output}".to_string(),
-    }]
+    vec![
+        LLMPrompt {
+            id: "default_improve_transcriptions".to_string(),
+            name: "Smart Clean".to_string(),
+            prompt: "You are a dictation cleanup engine. Turn a raw speech-to-text transcript into clean, written text that says exactly what the speaker meant to say.\n\nRules:\n1. Remove filler words and hesitations (um, uh, er, hmm, \"like\" / \"you know\" / \"sort of\" / \"basically\" / \"I mean\" when used as filler).\n2. Remove false starts, stutters, and repeated words (\"I-I-I went\" → \"I went\"; \"the the store\" → \"the store\").\n3. Apply spoken self-corrections: when the speaker corrects themselves, keep ONLY the corrected version and drop the abandoned phrase (\"get bananas, no wait, get apples\" → \"get apples\"; \"meet at five, sorry, at six\" → \"meet at six\").\n4. Fix spelling, capitalization, and punctuation. Add natural sentence breaks.\n5. Convert spoken numbers/units to digits and symbols (twenty-five → 25, ten percent → 10%, five dollars → $5).\n6. Convert spoken punctuation words to symbols (period → ., comma → ,, question mark → ?, new line → line break).\n7. Auto-format lists: if the speaker is clearly enumerating items (e.g. \"I need to get from the store bananas, peanut butter, and fruit\" or uses \"first / second / next / also\"), format the items as a bullet list (\"- item\"), or a numbered list when they imply order. Keep a short lead-in sentence before the list when one was spoken.\n8. Keep the original language (French stays French, etc.).\n\nDo NOT add new information, answer questions, or paraphrase beyond the cleanup above. Preserve the speaker's meaning and intent. Output only the cleaned text with no preamble, quotes, or commentary.\n\nTranscript:\n${output}".to_string(),
+        },
+        LLMPrompt {
+            id: "default_verbatim".to_string(),
+            name: "Light Touch".to_string(),
+            prompt: "Lightly clean this dictated transcript. Fix spelling, capitalization, and punctuation, and remove only obvious filler words (um, uh) and accidental repeated words. Do not reorder, summarize, reformat, or change wording otherwise. Keep the original language. Return only the cleaned text.\n\nTranscript:\n${output}".to_string(),
+        },
+        LLMPrompt {
+            id: "default_notes".to_string(),
+            name: "Bullet Notes".to_string(),
+            prompt: "Convert this dictation into concise written notes. Remove filler words, stutters, and self-corrections (keep only the corrected version). Format the content as clear bullet points (\"- \"), grouping related thoughts and using numbered lists when order matters. Fix spelling, punctuation, and capitalization. Keep the original language and do not invent details. Return only the formatted notes.\n\nTranscript:\n${output}".to_string(),
+        },
+    ]
 }
 
 fn default_whisper_gpu_device() -> i32 {
@@ -789,7 +801,7 @@ pub fn get_default_settings() -> AppSettings {
         post_process_api_keys: default_post_process_api_keys(),
         post_process_models: default_post_process_models(),
         post_process_prompts: default_post_process_prompts(),
-        post_process_selected_prompt_id: None,
+        post_process_selected_prompt_id: Some("default_improve_transcriptions".to_string()),
         mute_while_recording: false,
         append_trailing_space: false,
         app_language: default_app_language(),

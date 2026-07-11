@@ -61,8 +61,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   };
 
   const containerClasses = grouped
-    ? "px-4 p-2"
-    : `px-4 p-2 rounded-xl border border-primary/10 ${getBgClass()} shadow-sm`;
+    ? "px-4 py-3"
+    : `px-4 py-3 rounded-2xl border border-primary/[0.08] ${getBgClass()} shadow-sm`;
 
   if (layout === "stacked") {
     if (descriptionMode === "tooltip") {
@@ -134,8 +134,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
 
   // Horizontal layout (default)
   const horizontalContainerClasses = grouped
-    ? "flex items-center justify-between px-4 p-2"
-    : `flex items-center justify-between px-4 p-2 rounded-xl border border-primary/10 ${getBgClass()} shadow-sm`;
+    ? "flex items-center justify-between px-4 py-3 gap-4"
+    : `flex items-center justify-between px-4 py-3 gap-4 rounded-2xl border border-primary/[0.08] ${getBgClass()} shadow-sm`;
 
   if (descriptionMode === "tooltip") {
     return (

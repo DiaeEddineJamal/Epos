@@ -1,11 +1,7 @@
 import { listen } from "@tauri-apps/api/event";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  MicrophoneIcon,
-  TranscriptionIcon,
-  CancelIcon,
-} from "../components/icons";
+import { TranscriptionIcon, CancelIcon } from "../components/icons";
 import "./RecordingOverlay.css";
 import { commands } from "@/bindings";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
@@ -13,45 +9,63 @@ import { getLanguageDirection } from "@/lib/utils/rtl";
 
 type OverlayState = "recording" | "transcribing" | "processing";
 
+// Number of bars in the waveform. Bars are rendered symmetrically so the
+// loudest energy sits in the middle, like Wispr Flow / superwhisper.
+const BAR_COUNT = 13;
+
 const RecordingOverlay: React.FC = () => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const [state, setState] = useState<OverlayState>("recording");
-  const [levels, setLevels] = useState<number[]>(Array(16).fill(0));
-  const smoothedLevelsRef = useRef<number[]>(Array(16).fill(0));
+  const [bars, setBars] = useState<number[]>(() => Array(BAR_COUNT).fill(0));
   const direction = getLanguageDirection(i18n.language);
+
+  // Smoothed bar values kept in a ref so the rAF loop never triggers re-renders
+  // on its own — we only push to React state from the animation frame.
+  const smoothedRef = useRef<number[]>(Array(BAR_COUNT).fill(0));
+  const targetRef = useRef<number[]>(Array(BAR_COUNT).fill(0));
+  const rafRef = useRef<number | null>(null);
+  const stateRef = useRef<OverlayState>("recording");
+
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  // Map the incoming frequency buckets onto a symmetric, center-weighted layout.
+  const applyLevels = (raw: number[]) => {
+    const half = Math.floor(BAR_COUNT / 2);
+    const next = new Array(BAR_COUNT).fill(0);
+    for (let i = 0; i < BAR_COUNT; i++) {
+      // Distance from center → pick a bucket; center bars use the strongest
+      // low/mid energy, outer bars use higher buckets.
+      const dist = Math.abs(i - half);
+      const bucket = Math.min(raw.length - 1, dist);
+      const v = raw[bucket] ?? 0;
+      // Slight center emphasis for a natural "voice" shape.
+      const centerBoost = 1 - dist / (half + 2);
+      next[i] = Math.min(1, v * (0.7 + 0.6 * centerBoost));
+    }
+    targetRef.current = next;
+  };
 
   useEffect(() => {
     const setupEventListeners = async () => {
-      // Listen for show-overlay event from Rust
       const unlistenShow = await listen("show-overlay", async (event) => {
-        // Sync language from settings each time overlay is shown
         await syncLanguageFromSettings();
         const overlayState = event.payload as OverlayState;
         setState(overlayState);
         setIsVisible(true);
       });
 
-      // Listen for hide-overlay event from Rust
       const unlistenHide = await listen("hide-overlay", () => {
         setIsVisible(false);
+        targetRef.current = Array(BAR_COUNT).fill(0);
       });
 
-      // Listen for mic-level updates
       const unlistenLevel = await listen<number[]>("mic-level", (event) => {
-        const newLevels = event.payload as number[];
-
-        // Apply smoothing to reduce jitter
-        const smoothed = smoothedLevelsRef.current.map((prev, i) => {
-          const target = newLevels[i] || 0;
-          return prev * 0.7 + target * 0.3; // Smooth transition
-        });
-
-        smoothedLevelsRef.current = smoothed;
-        setLevels(smoothed.slice(0, 9));
+        applyLevels(event.payload as number[]);
       });
 
-      // Cleanup function
       return () => {
         unlistenShow();
         unlistenHide();
@@ -59,57 +73,105 @@ const RecordingOverlay: React.FC = () => {
       };
     };
 
-    setupEventListeners();
+    const cleanupPromise = setupEventListeners();
+    return () => {
+      cleanupPromise.then((fn) => fn && fn());
+    };
   }, []);
 
-  const getIcon = () => {
-    if (state === "recording") {
-      return <MicrophoneIcon />;
-    } else {
-      return <TranscriptionIcon />;
-    }
-  };
+  // Animation loop: asymmetric smoothing (fast attack, slow release) gives the
+  // bars a lively but fluid feel. When idle, a gentle breathing wave plays.
+  useEffect(() => {
+    let t0 = performance.now();
+    const tick = (now: number) => {
+      const dt = now - t0;
+      t0 = now;
+      const smoothed = smoothedRef.current;
+      const target = targetRef.current;
+      const recording = stateRef.current === "recording";
+      const half = Math.floor(BAR_COUNT / 2);
 
-  const barColors = [
-    "#1A1A1A", // Primary
-    "#8DB5D8", // Blue
-    "#BBD3C5", // Green
-    "#D2D0E6", // Purple
-    "#1A1A1A", // Primary (Center)
-    "#D2D0E6", // Purple
-    "#BBD3C5", // Green
-    "#8DB5D8", // Blue
-    "#1A1A1A", // Primary
-  ];
+      let anyEnergy = false;
+      for (let i = 0; i < BAR_COUNT; i++) {
+        if (target[i] > 0.02) anyEnergy = true;
+      }
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        let tgt = target[i];
+        // Idle breathing animation while recording but silent.
+        if (recording && !anyEnergy) {
+          const phase = now / 520 - Math.abs(i - half) * 0.45;
+          tgt = 0.06 + 0.05 * (0.5 + 0.5 * Math.sin(phase));
+        }
+        const prev = smoothed[i];
+        const rising = tgt > prev;
+        // Attack ~ fast, release ~ slow (per-ms easing, frame-rate independent).
+        const speed = rising ? 0.045 : 0.012;
+        const k = 1 - Math.pow(1 - speed, dt);
+        smoothed[i] = prev + (tgt - prev) * k;
+      }
+
+      setBars(smoothed.slice());
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   return (
     <div
       dir={direction}
-      className={`recording-overlay ${isVisible ? "fade-in" : ""}`}
+      className={`recording-overlay ${isVisible ? "fade-in" : ""} state-${state}`}
     >
-      <div className="overlay-left">{getIcon()}</div>
+      <div className="overlay-left">
+        {state === "recording" ? (
+          <span className="rec-dot" aria-hidden />
+        ) : (
+          <span className="rec-spinner">
+            <TranscriptionIcon />
+          </span>
+        )}
+      </div>
 
       <div className="overlay-middle">
         {state === "recording" && (
           <div className="bars-container">
-            {levels.map((v, i) => (
-              <div
-                key={i}
-                className="bar"
-                style={{
-                  height: `${Math.max(4, Math.min(24, v * 32))}px`, // Scale differently for center alignment
-                  backgroundColor: barColors[i] || "#1A1A1A",
-                  opacity: Math.max(0.2, Math.min(1, 0.4 + v * 1.5)), // Keep colors vibrant
-                }}
-              />
-            ))}
+            {bars.map((v, i) => {
+              const height = 4 + Math.min(1, v) * 26;
+              return (
+                <div
+                  key={i}
+                  className="bar"
+                  style={{
+                    height: `${height}px`,
+                    opacity: 0.55 + Math.min(0.45, v * 0.9),
+                  }}
+                />
+              );
+            })}
           </div>
         )}
         {state === "transcribing" && (
-          <div className="transcribing-text">{t("overlay.transcribing")}</div>
+          <div className="status-text">
+            {t("overlay.transcribing")}
+            <span className="dots">
+              <span />
+              <span />
+              <span />
+            </span>
+          </div>
         )}
         {state === "processing" && (
-          <div className="transcribing-text">{t("overlay.processing")}</div>
+          <div className="status-text">
+            {t("overlay.processing")}
+            <span className="dots">
+              <span />
+              <span />
+              <span />
+            </span>
+          </div>
         )}
       </div>
 

@@ -1,6 +1,6 @@
 [package]
 name = "epos"
-version = "0.8.3"
+version = "0.8.4"
 description = "Epos"
 authors = ["Luziv"]
 edition = "2021"
@@ -87,8 +87,20 @@ tauri-plugin-global-shortcut = "2.3.1"
 tauri-plugin-single-instance = "2.3.2"
 tauri-plugin-updater = "2.10.0"
 
+# Windows: use the dedicated GPU when available.
+# - ort-directml: GPU-accelerated ONNX Runtime via DirectML (Parakeet/Canary/Moonshine/
+#   SenseVoice/GigaAM/Cohere) on any DirectX 12 GPU. Needs NO toolkit install and falls back
+#   to CPU automatically when no GPU is present.
+# - Whisper GPU is opt-in because whisper.cpp must be compiled against a GPU backend:
+#     * Vulkan: add "whisper-vulkan" and install the Vulkan SDK (provides glslc), or
+#     * CUDA (NVIDIA only): add "whisper-cuda" and install the CUDA Toolkit (provides nvcc).
+#   See the "GPU acceleration" note in DEVELOPMENT_SETUP.md.
 [target.'cfg(windows)'.dependencies]
-transcribe-rs = { version = "0.3.3", features = ["whisper-cpp", "onnx"] }
+transcribe-rs = { version = "0.3.8", features = [
+  "whisper-cpp",
+  "onnx",
+  "ort-directml",
+] }
 windows = { version = "0.61.3", features = [
   "Win32_Media_Audio_Endpoints",
   "Win32_System_Com_StructuredStorage",

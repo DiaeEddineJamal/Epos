@@ -407,6 +407,10 @@ fn run_consumer(
     );
 
     let mut processed_samples = Vec::<f32>::new();
+    // Raw (un-VAD-gated) capture of everything recorded. Used as a safety net:
+    // if the VAD over-filters and drops clear speech, we fall back to this so a
+    // transcription always happens when the user actually spoke.
+    let mut raw_samples = Vec::<f32>::new();
     let mut recording = false;
 
     // ---------- spectrum visualisation setup ---------------------------- //
@@ -425,10 +429,14 @@ fn run_consumer(
         recording: bool,
         vad: &Option<Arc<Mutex<Box<dyn vad::VoiceActivityDetector>>>>,
         out_buf: &mut Vec<f32>,
+        raw_buf: &mut Vec<f32>,
     ) {
         if !recording {
             return;
         }
+
+        // Always keep a raw copy so we can recover if the VAD over-filters.
+        raw_buf.extend_from_slice(samples);
 
         if let Some(vad_arc) = vad {
             let mut det = vad_arc.lock().unwrap();
@@ -439,6 +447,43 @@ fn run_consumer(
         } else {
             out_buf.extend_from_slice(samples);
         }
+    }
+
+    /// Root-mean-square energy of a sample buffer (0.0 == silence).
+    fn rms(samples: &[f32]) -> f32 {
+        if samples.is_empty() {
+            return 0.0;
+        }
+        let sum_sq: f32 = samples.iter().map(|s| s * s).sum();
+        (sum_sq / samples.len() as f32).sqrt()
+    }
+
+    /// Decide which captured buffer to return. Prefer the VAD-trimmed buffer
+    /// (cleaner, no leading/trailing silence). But if the VAD produced almost
+    /// nothing while the raw capture clearly contains speech-level energy, fall
+    /// back to the raw audio so a real utterance is never silently dropped.
+    fn choose_output(vad_samples: Vec<f32>, raw_samples: Vec<f32>) -> Vec<f32> {
+        // ~0.3s of speech at 16kHz is the minimum we consider a "real" VAD result.
+        const MIN_VAD_SAMPLES: usize = constants::WHISPER_SAMPLE_RATE as usize * 3 / 10;
+        // Energy floor (~-46 dBFS) separating speech from ambient noise/silence.
+        const RAW_NOISE_FLOOR: f32 = 0.005;
+
+        if vad_samples.len() >= MIN_VAD_SAMPLES {
+            return vad_samples;
+        }
+
+        let raw_energy = rms(&raw_samples);
+        if raw_samples.len() >= MIN_VAD_SAMPLES && raw_energy > RAW_NOISE_FLOOR {
+            log::info!(
+                "VAD returned only {} samples; falling back to raw capture ({} samples, rms {:.4})",
+                vad_samples.len(),
+                raw_samples.len(),
+                raw_energy
+            );
+            return raw_samples;
+        }
+
+        vad_samples
     }
 
     loop {
@@ -461,7 +506,7 @@ fn run_consumer(
 
         // ---------- existing pipeline ------------------------------------ //
         frame_resampler.push(&raw, &mut |frame: &[f32]| {
-            handle_frame(frame, recording, &vad, &mut processed_samples)
+            handle_frame(frame, recording, &vad, &mut processed_samples, &mut raw_samples)
         });
 
         // non-blocking check for a command
@@ -470,6 +515,7 @@ fn run_consumer(
                 Cmd::Start => {
                     stop_flag.store(false, Ordering::Relaxed);
                     processed_samples.clear();
+                    raw_samples.clear();
                     recording = true;
                     visualizer.reset();
                     if let Some(v) = &vad {
@@ -488,7 +534,13 @@ fn run_consumer(
                         match sample_rx.recv_timeout(Duration::from_secs(2)) {
                             Ok(AudioChunk::Samples(remaining)) => {
                                 frame_resampler.push(&remaining, &mut |frame: &[f32]| {
-                                    handle_frame(frame, true, &vad, &mut processed_samples)
+                                    handle_frame(
+                                        frame,
+                                        true,
+                                        &vad,
+                                        &mut processed_samples,
+                                        &mut raw_samples,
+                                    )
                                 });
                             }
                             Ok(AudioChunk::EndOfStream) => break,
@@ -500,10 +552,14 @@ fn run_consumer(
                     }
 
                     frame_resampler.finish(&mut |frame: &[f32]| {
-                        handle_frame(frame, true, &vad, &mut processed_samples)
+                        handle_frame(frame, true, &vad, &mut processed_samples, &mut raw_samples)
                     });
 
-                    let _ = reply_tx.send(std::mem::take(&mut processed_samples));
+                    let chosen = choose_output(
+                        std::mem::take(&mut processed_samples),
+                        std::mem::take(&mut raw_samples),
+                    );
+                    let _ = reply_tx.send(chosen);
 
                     // Resume the audio callback so the consumer loop can continue
                     // receiving chunks (important for always-on microphone mode).

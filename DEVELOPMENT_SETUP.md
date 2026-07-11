@@ -22,6 +22,27 @@ This document outlines the comprehensive solution for setting up the Handy devel
 - **Solution**: Modified Windows target dependencies to use CPU-only features
 - **Change**: `transcribe-rs = { version = "0.3.3", features = ["whisper-cpp", "onnx"] }`
 
+## GPU acceleration (Windows)
+
+The Windows build enables **DirectML** for the ONNX model families
+(`transcribe-rs` feature `ort-directml`). This runs Parakeet, NVIDIA Canary,
+Moonshine, SenseVoice, GigaAM, and Cohere on any DirectX 12 GPU (e.g. the
+dedicated NVIDIA/AMD adapter) with **no extra toolkit install**. The accelerator
+defaults to `Auto`, so it uses the GPU when present and falls back to CPU
+otherwise. Pick the GPU explicitly in **Settings → Advanced → Acceleration**.
+
+**Whisper** models are GPU-accelerated only if whisper.cpp is compiled against a
+GPU backend, which requires a build-time toolkit:
+
+- **Vulkan** (AMD/Intel/NVIDIA): install the full Vulkan SDK (the bundled
+  `vulkan-sdk/` here is a link-only stub and lacks `glslc`), then add
+  `whisper-vulkan` to the Windows `transcribe-rs` features.
+- **CUDA** (NVIDIA only): install the CUDA Toolkit 12.x (`nvcc`), then add
+  `whisper-cuda`.
+
+Without one of these, Whisper runs on CPU; use a DirectML-accelerated ONNX model
+for full GPU speed.
+
 ### 4. Environment Configuration
 - **Files Created**:
   - `.env` - Main environment variables

@@ -277,8 +277,16 @@ function App() {
         />
         {/* Scrollable content area */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
+          {/* Page header — consistent across every settings section */}
+          <header className="shrink-0 px-8 md:px-12 pt-9 pb-4 border-b border-primary/5">
+            <div className="max-w-4xl mx-auto w-full">
+              <h1 className="text-[1.6rem] leading-tight font-semibold tracking-tight text-text">
+                {t(SECTIONS_CONFIG[currentSection].labelKey)}
+              </h1>
+            </div>
+          </header>
           <div className="flex-1 overflow-y-auto">
-            <div className="max-w-4xl mx-auto flex flex-col p-8 md:p-12 gap-8">
+            <div className="max-w-4xl mx-auto flex flex-col px-8 md:px-12 pt-7 pb-12 gap-7">
               <AccessibilityPermissions />
               {renderSettingsContent(currentSection)}
             </div>
