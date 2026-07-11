@@ -1,0 +1,11 @@
+{
+  "version": "v0.8.4",
+  "notes": "VAD speech fallback, DirectML GPU for ONNX models, better post-process prompts, and UI polish for settings and the recording overlay.",
+  "platforms": {
+    "windows-x86_64": {
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.4/Epos_0.8.4_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0pKU0FZb2NVZzVLcE83cUVWWERkYnJoZ24zZTlTS1dDTCtpeGwxK20rZUlEVnNHYXZkc29JV2NrRDhNU0VjVFNzOVhTWFhNVm5SRDh5M3dER3VQZUE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODEzMzY0CWZpbGU6RXBvc18wLjguNF94NjQtc2V0dXAuZXhlCnJFMi92OHMxdloxVlJSRlpKbzdvTzZMak9xdEVEUzYrY0tVLzRQaGxKZ2YvUnlZekpiNzNBYUhxemtxWUhtQ3hYV1JaZHhZQ3E1UzNCcC9OVlRmNUNBPT0K"
+    }
+  },
+  "pub_date": "2026-07-11T23:43:56Z"
+}
