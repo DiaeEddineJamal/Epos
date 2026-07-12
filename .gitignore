@@ -40,5 +40,10 @@ blob-report/
 .direnv
 .envrc
 
+# Local secrets (signing keys, tokens) — never commit
+.env
+.env.*
+!.env.example
+
 # Nix build output
 result
