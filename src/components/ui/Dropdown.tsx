@@ -62,10 +62,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
-        className={`px-3 py-2 text-[14px] font-medium bg-white border border-primary/20 rounded-xl min-w-[220px] text-start flex items-center justify-between transition-all duration-200 ease-out ${
+        className={`px-3 py-2 text-[13px] font-medium bg-background border hairline rounded-sm min-w-[220px] text-start flex items-center justify-between transition-colors duration-300 ease-in-out ${
           disabled
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-background-ui cursor-pointer hover:border-primary/40 focus:ring-2 focus:ring-primary/10 shadow-sm"
+            : "hover:border-primary/40 cursor-pointer focus:ring-1 focus:ring-live"
         }`}
         onClick={handleToggle}
         disabled={disabled}
@@ -86,7 +86,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         </svg>
       </button>
       {isOpen && !disabled && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-primary/10 rounded-xl shadow-md z-50 max-h-68 overflow-y-auto p-1">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-background-ui border hairline rounded-sm z-50 max-h-68 overflow-y-auto p-1">
           {options.length === 0 ? (
             <div className="px-4 py-3 text-sm text-mid-gray/60 italic text-center">
               {t("common.noOptionsFound")}
@@ -96,10 +96,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
               <button
                 key={option.value}
                 type="button"
-                className={`w-full px-4 py-2 text-sm text-start rounded-lg hover:bg-background-ui transition-all duration-200 ease-out ${
+                className={`w-full px-3 py-2 text-[13px] text-start rounded-xs transition-colors duration-300 ease-in-out ${
                   selectedValue === option.value
-                    ? "bg-accent-tan/30 text-primary font-medium"
-                    : "text-text/80 hover:text-text"
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-text/80 hover:text-text hover:bg-background"
                 } ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 onClick={() => handleSelect(option.value)}
                 disabled={option.disabled}

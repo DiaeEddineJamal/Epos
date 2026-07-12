@@ -151,6 +151,16 @@
     }
   },
   "settings": {
+    "appearance": {
+      "title": "Appearance",
+      "theme": {
+        "label": "Theme",
+        "description": "Choose a light or dark look for Epos, or follow your system setting.",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
     "modelSettings": {
       "title": "{{model}} Settings",
       "noSettingsNeeded": "This model works automatically with no configuration needed."

@@ -86,7 +86,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onModelSelected }) => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col p-8 gap-6 inset-0 bg-background overflow-hidden relative">
+    <div className="h-full w-full flex flex-col p-8 gap-6 inset-0 bg-background overflow-hidden relative">
       <div className="flex flex-col items-center gap-6 shrink-0 pt-16">
         <EposTextLogo width={320} />
         <p className="text-primary max-w-xl font-serif text-3xl text-center leading-relaxed tracking-tight mt-2">

@@ -49,20 +49,13 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
     setShowTooltip(!showTooltip);
   };
 
-  const getBgClass = () => {
-    switch (colorVariant) {
-      case "tan": return "bg-accent-tan";
-      case "green": return "bg-secondary";
-      case "purple": return "bg-accent-purple";
-      case "blue": return "bg-accent-blue";
-      case "light-tan": return "bg-background-ui";
-      default: return "bg-white";
-    }
-  };
+  // Flat panels only — the legacy pastel colorVariant prop is intentionally
+  // ignored in the brutalist system (kept for API compatibility).
+  void colorVariant;
 
   const containerClasses = grouped
     ? "px-4 py-3"
-    : `px-4 py-3 rounded-2xl border border-primary/[0.08] ${getBgClass()} shadow-sm`;
+    : "px-4 py-3 rounded-sm border hairline bg-background-ui";
 
   if (layout === "stacked") {
     if (descriptionMode === "tooltip") {
@@ -70,7 +63,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <div className={containerClasses}>
           <div className="flex items-center gap-2 mb-2">
             <h3
-              className={`text-[13px] font-bold text-text/60 uppercase tracking-widest ${disabled ? "opacity-50" : ""}`}
+              className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}
             >
               {title}
             </h3>
@@ -120,7 +113,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
     return (
       <div className={containerClasses}>
         <div className="mb-2">
-          <h3 className={`text-[13px] font-bold text-text/60 uppercase tracking-widest ${disabled ? "opacity-50" : ""}`}>
+          <h3 className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}>
             {title}
           </h3>
           <p className={`text-sm text-text/60 ${disabled ? "opacity-50" : ""}`}>
@@ -135,7 +128,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   // Horizontal layout (default)
   const horizontalContainerClasses = grouped
     ? "flex items-center justify-between px-4 py-3 gap-4"
-    : `flex items-center justify-between px-4 py-3 gap-4 rounded-2xl border border-primary/[0.08] ${getBgClass()} shadow-sm`;
+    : "flex items-center justify-between px-4 py-3 gap-4 rounded-sm border hairline bg-background-ui";
 
   if (descriptionMode === "tooltip") {
     return (
@@ -143,7 +136,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
         <div className="max-w-2/3">
           <div className="flex items-center gap-2">
             <h3
-              className={`text-[13px] font-bold text-text/60 uppercase tracking-widest ${disabled ? "opacity-50" : ""}`}
+              className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}
             >
               {title}
             </h3>
@@ -194,7 +187,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   return (
     <div className={horizontalContainerClasses}>
       <div className="max-w-2/3">
-        <h3 className={`text-[13px] font-bold text-text/60 uppercase tracking-widest ${disabled ? "opacity-50" : ""}`}>
+        <h3 className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}>
           {title}
         </h3>
         <p className={`text-sm text-text/60 ${disabled ? "opacity-50" : ""}`}>

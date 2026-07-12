@@ -11,6 +11,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg";
 }
 
+/**
+ * Shared button — flat fill or hairline outline only. No gradients, no
+ * shadows, sharp corners, uppercase tracked labels, ease-in-out motion.
+ */
 export const Button: React.FC<ButtonProps> = ({
   children,
   className = "",
@@ -19,27 +23,31 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "font-medium rounded-lg border focus:outline-none transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2";
+    "font-medium uppercase tracking-wider rounded-sm border focus:outline-none focus-visible:ring-1 focus-visible:ring-live focus-visible:ring-offset-1 focus-visible:ring-offset-background transition-colors duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2";
 
   const variantClasses = {
+    // Flat fill: hunter on light, sage on dark (label = canvas color).
     primary:
-      "text-background bg-primary border-primary hover:bg-text hover:shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-primary",
+      "text-background bg-primary border-primary hover:bg-teal hover:border-teal dark:hover:bg-sage-bright dark:hover:border-sage-bright",
+    // Outline-only accent.
     "primary-soft":
-      "text-primary bg-primary/5 border-transparent hover:bg-primary/10 focus:ring-2 focus:ring-offset-2 focus:ring-primary",
+      "text-primary bg-transparent border-primary/40 hover:border-primary hover:bg-primary/5",
+    // Flat panel fill with hairline.
     secondary:
-      "text-text bg-background-ui border-background-ui hover:bg-mid-gray/10 focus:ring-2 focus:ring-offset-2 focus:ring-secondary",
+      "text-text bg-background-ui border-hairline hover:border-primary/40",
+    // Destructive: amber family (AA-adjusted on light).
     danger:
-      "text-white bg-red-600 border-red-600 hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+      "text-bone bg-amber-deep border-amber-deep hover:bg-amber hover:border-amber dark:bg-amber-dark dark:text-forest dark:border-amber-dark dark:hover:bg-amber",
     "danger-ghost":
-      "text-red-600 border-transparent hover:bg-red-50 focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+      "text-amber-deep dark:text-amber-dark bg-transparent border-transparent hover:border-amber-deep/40 dark:hover:border-amber-dark/40",
     ghost:
-      "text-mid-gray border-transparent hover:text-text hover:bg-black/5 focus:ring-2 focus:ring-offset-2 focus:ring-mid-gray/20",
+      "text-mid-gray border-transparent hover:text-text hover:bg-black/5 dark:hover:bg-bone/5",
   };
 
   const sizeClasses = {
-    sm: "px-2 py-1 text-xs",
-    md: "px-4 py-[5px] text-sm",
-    lg: "px-4 py-2 text-base",
+    sm: "px-2.5 py-1 text-[11px]",
+    md: "px-4 py-[6px] text-xs",
+    lg: "px-5 py-2 text-sm",
   };
 
   return (

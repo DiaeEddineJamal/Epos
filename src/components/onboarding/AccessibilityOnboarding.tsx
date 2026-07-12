@@ -284,7 +284,7 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
   // Still checking platform/initial permissions
   if (isChecking) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center">
+      <div className="h-full w-full flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-text/50" />
       </div>
     );
@@ -293,11 +293,11 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
   // All permissions granted - show success briefly
   if (allGranted) {
     return (
-      <div className="h-screen w-screen flex flex-col items-center justify-center gap-4">
-      <div className="p-6 rounded-full bg-secondary/10 shadow-[0_0_30px_rgba(45,161,133,0.2)]">
-        <Check className="w-16 h-16 text-secondary" />
+      <div className="h-full w-full flex flex-col items-center justify-center gap-4">
+      <div className="p-6 rounded-sm border hairline bg-background-ui">
+        <Check className="w-16 h-16 text-live" strokeWidth={1.5} />
       </div>
-      <p className="text-2xl font-serif font-bold text-text tracking-tight italic">
+      <p className="text-lg font-medium text-text uppercase tracking-wider">
         {t("onboarding.permissions.allGranted")}
       </p>
       </div>
@@ -306,10 +306,8 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
 
   // Show permissions request screen
   return (
-    <div className="h-screen w-screen flex flex-col p-8 gap-10 items-center justify-center relative overflow-hidden">
-      {/* Immersive Mythological Ambient Background */}
-      <div className="absolute top-[-10%] left-[-10%] w-[900px] h-[900px] bg-primary/10 rounded-full blur-[160px] -z-10 pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] bg-secondary/15 rounded-full blur-[160px] -z-10 pointer-events-none" />
+    <div className="h-full w-full flex flex-col p-8 gap-10 items-center justify-center relative overflow-hidden">
+      {/* Flat institutional canvas — no ambient glows. */}
 
       <div className="flex flex-col items-center gap-4">
         <EposTextLogo width={300} />

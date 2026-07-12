@@ -25,10 +25,10 @@ const IconButton: React.FC<{
   <button
     onClick={onClick}
     disabled={disabled}
-    className={`p-2 rounded-lg flex items-center justify-center transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:text-text/20 ${
+    className={`p-2 rounded-sm flex items-center justify-center transition-colors duration-300 ease-in-out cursor-pointer disabled:cursor-not-allowed disabled:text-text/20 ${
       active
         ? "text-primary bg-primary/10 hover:bg-primary/20"
-        : "text-mid-gray hover:text-primary hover:bg-mid-gray/5"
+        : "text-mid-gray hover:text-primary hover:bg-mid-gray/10"
     }`}
     title={title}
   >
@@ -251,7 +251,7 @@ export const HistorySettings: React.FC = () => {
   } else {
     content = (
       <>
-        <div className="divide-y divide-mid-gray/5">
+        <div className="divide-y divide-(--color-hairline)">
           {entries.map((entry) => (
             <HistoryEntryComponent
               key={entry.id}
@@ -275,7 +275,7 @@ export const HistorySettings: React.FC = () => {
       <div className="space-y-2">
         <div className="px-4 flex items-center justify-between">
           <div>
-            <h2 className="text-[0.65rem] font-bold text-mid-gray uppercase tracking-[0.15em] mb-1">
+            <h2 className="font-mono text-[0.68rem] font-medium text-mid-gray uppercase tracking-[0.2em] mb-1">
               {t("settings.history.title")}
             </h2>
           </div>
@@ -284,7 +284,7 @@ export const HistorySettings: React.FC = () => {
             label={t("settings.history.openFolder")}
           />
         </div>
-        <div className="bg-white border border-primary/10 rounded-xl overflow-hidden shadow-sm transition-all duration-200 ease-out">
+        <div className="bg-background-ui border hairline rounded-sm overflow-hidden transition-colors duration-300 ease-in-out">
           {content}
         </div>
       </div>
@@ -356,7 +356,10 @@ const HistoryEntryComponent: React.FC<HistoryEntryProps> = ({
   return (
     <div className="px-4 py-2 pb-5 flex flex-col gap-3">
       <div className="flex justify-between items-center mb-1">
-        <p className="text-[12px] font-bold tracking-widest text-mid-gray/60 uppercase">{formattedDate}</p>
+        {/* Metadata is always monospace. */}
+        <p className="font-mono text-[11px] font-medium tracking-widest text-mid-gray/80 uppercase">
+          {formattedDate}
+        </p>
         <div className="flex items-center">
           <IconButton
             onClick={handleCopyText}
@@ -410,8 +413,9 @@ const HistoryEntryComponent: React.FC<HistoryEntryProps> = ({
         </div>
       </div>
 
+      {/* Transcript body: normal case, loose leading for dictation reading. */}
       <p
-        className={`font-serif text-[17px] leading-relaxed pb-2 ${
+        className={`text-[15px] leading-loose pb-2 ${
           retrying
             ? ""
             : hasTranscription

@@ -13,8 +13,10 @@ import AccessibilityPermissions from "./components/AccessibilityPermissions";
 import Footer from "./components/footer";
 import Onboarding, { AccessibilityOnboarding } from "./components/onboarding";
 import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { Titlebar } from "./components/Titlebar";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
+import { useThemeStore } from "./stores/themeStore";
 import { commands } from "@/bindings";
 import { getLanguageDirection, initializeRTL } from "@/lib/utils/rtl";
 
@@ -37,6 +39,7 @@ function App() {
   const [currentSection, setCurrentSection] =
     useState<SidebarSection>("general");
   const { settings, updateSetting } = useSettings();
+  const resolvedTheme = useThemeStore((state) => state.resolved);
   const direction = getLanguageDirection(i18n.language);
   const refreshAudioDevices = useSettingsStore(
     (state) => state.refreshAudioDevices,
@@ -244,11 +247,25 @@ function App() {
   }
 
   if (onboardingStep === "accessibility") {
-    return <AccessibilityOnboarding onComplete={handleAccessibilityComplete} />;
+    return (
+      <div className="h-screen flex flex-col bg-background text-text overflow-hidden">
+        <Titlebar />
+        <div className="flex-1 overflow-y-auto">
+          <AccessibilityOnboarding onComplete={handleAccessibilityComplete} />
+        </div>
+      </div>
+    );
   }
 
   if (onboardingStep === "model") {
-    return <Onboarding onModelSelected={handleModelSelected} />;
+    return (
+      <div className="h-screen flex flex-col bg-background text-text overflow-hidden">
+        <Titlebar />
+        <div className="flex-1 overflow-y-auto">
+          <Onboarding onModelSelected={handleModelSelected} />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -256,19 +273,21 @@ function App() {
       dir={direction}
       className="h-screen flex flex-col select-none cursor-default bg-background text-text overflow-hidden relative"
     >
+      <Titlebar />
       <Toaster
-        theme="light"
+        theme={resolvedTheme}
         toastOptions={{
           unstyled: true,
           classNames: {
             toast:
-              "bg-white rounded-xl px-5 py-4 flex items-center gap-4 text-[15px] border border-primary/10 shadow-sm",
-            title: "text-[17px] text-primary font-medium tracking-tight",
-            description: "text-text/60 text-[14px]",
+              "bg-background-ui rounded-sm px-5 py-4 flex items-center gap-4 text-[15px] border hairline",
+            title:
+              "text-[13px] text-text font-medium uppercase tracking-wider",
+            description: "text-text/60 text-[14px] normal-case tracking-normal",
           },
         }}
       />
-      
+
       {/* Main content area that takes remaining space */}
       <div className="flex-1 flex overflow-hidden z-0">
         <Sidebar
@@ -278,9 +297,9 @@ function App() {
         {/* Scrollable content area */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
           {/* Page header — consistent across every settings section */}
-          <header className="shrink-0 px-8 md:px-12 pt-9 pb-4 border-b border-primary/5">
+          <header className="shrink-0 px-8 md:px-12 pt-8 pb-4 border-b hairline">
             <div className="max-w-4xl mx-auto w-full">
-              <h1 className="text-[1.6rem] leading-tight font-semibold tracking-tight text-text">
+              <h1 className="text-[1.05rem] leading-tight font-medium uppercase tracking-[0.2em] text-text">
                 {t(SECTIONS_CONFIG[currentSection].labelKey)}
               </h1>
             </div>

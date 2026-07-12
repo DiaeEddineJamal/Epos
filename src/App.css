@@ -1,23 +1,115 @@
 @import "tailwindcss";
 
+/* ============================================================================
+   EPOS — Corporate Brutalism / Retro-Futurist design system.
+   Clinical mid-century office-machine aesthetic: flat fills, hairline borders,
+   sharp corners, uppercase tracked labels, monospace metadata.
+
+   Tailwind v4 CSS-first config: the palette below is the single source of
+   truth (tailwind.config.js is legacy/inert and only mirrors it for editors).
+   ============================================================================ */
+
+/* `dark:` utilities are driven by a `.dark` class the theme runtime
+   (src/lib/theme.ts) stamps on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-text: #1A1A1A;
-  --color-background: #FAF9F7;
-  --color-background-ui: #F5F4F0;
-  --color-primary: #1A1A1A;
-  --color-secondary: #BBD3C5;
-  --color-accent-purple: #D2D0E6;
-  --color-accent-blue: #8DB5D8;
-  --color-accent-tan: #E6E2D8;
-  --color-accent-tan-dark: #DCD6CB;
-  --color-logo-primary: #1A1A1A;
-  --color-logo-stroke: #1A1A1A;
-  --color-text-stroke: #E5DFD3;
-  --color-mid-gray: #666666;
+  /* ---- Exact brand palette (do not use default Tailwind colors) ---- */
+  --color-bone: #f0ede4;
+  --color-cream: #e4dfd1;
+  --color-forest: #0d1f1a;
+  --color-forest-light: #16281f;
+  --color-hunter: #1f3d33;
+  --color-teal: #3e6259;
+  --color-sage: #7ba88c;
+  --color-sage-bright: #a8c9b5;
+  --color-amber: #c77b3f;
+  --color-amber-dark: #d68f55;
+  /* AA-adjusted amber (same family, darkened) for text/fills on light
+     surfaces — raw amber-on-bone is ~2.8:1 and fails WCAG AA. */
+  --color-amber-deep: #96591f;
+
+  /* ---- Semantic tokens (legacy names kept so utilities cascade) ----
+     Light mode values; :root.dark remaps them below. */
+  --color-text: var(--color-forest);
+  --color-background: var(--color-bone);
+  --color-background-ui: var(--color-cream);
+  --color-primary: var(--color-hunter);
+  --color-secondary: var(--color-cream);
+  --color-accent-purple: var(--color-cream);
+  --color-accent-blue: var(--color-cream);
+  --color-accent-tan: var(--color-cream);
+  --color-accent-tan-dark: var(--color-sage-bright);
+  --color-logo-primary: var(--color-forest);
+  --color-logo-stroke: var(--color-forest);
+  --color-text-stroke: var(--color-cream);
+  --color-mid-gray: var(--color-teal);
+  /* Live/active states: teal in light (sage fails contrast on bone),
+     sage-bright in dark — both in the sage family. */
+  --color-live: var(--color-teal);
+  /* Recording indicator */
+  --color-rec: var(--color-amber-deep);
+  /* Hairline borders: hunter/15 light, bone/12 dark */
+  --color-hairline: rgba(31, 61, 51, 0.15);
+
+  /* ---- Typography ---- */
+  --font-sans:
+    "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk", "Söhne", "Inter",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:
+    "IBM Plex Mono", "JetBrains Mono", ui-monospace, "SFMono-Regular",
+    Consolas, "Liberation Mono", monospace;
+
+  /* ---- Institutional radii: sharp corners everywhere (2–4px max).
+     Existing rounded-lg/xl/2xl usages collapse to 4px. ---- */
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius-4xl: 4px;
+
+  /* ---- Motion: slow institutional pulse for recording states.
+     (animate-pulse is too fast; 2.5s ease-in-out, no bounce.) ---- */
+  --animate-pulse-slow: pulse-slow 2.5s ease-in-out infinite;
+
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+}
+
+/* ---- Dark theme: token remap (forest canvas, bone type, sage accent) ---- */
+:root.dark {
+  color-scheme: dark;
+
+  --color-text: var(--color-bone);
+  --color-background: var(--color-forest);
+  --color-background-ui: var(--color-forest-light);
+  --color-primary: var(--color-sage);
+  --color-secondary: var(--color-forest-light);
+  --color-accent-purple: var(--color-forest-light);
+  --color-accent-blue: var(--color-forest-light);
+  --color-accent-tan: var(--color-forest-light);
+  --color-accent-tan-dark: var(--color-hunter);
+  --color-logo-primary: var(--color-bone);
+  --color-logo-stroke: var(--color-bone);
+  --color-text-stroke: var(--color-forest-light);
+  --color-mid-gray: var(--color-sage);
+  --color-live: var(--color-sage-bright);
+  --color-rec: var(--color-amber-dark);
+  --color-hairline: rgba(240, 237, 228, 0.12);
 }
 
 :root {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.6;
   font-weight: 400;
@@ -32,6 +124,12 @@
 
   color: var(--color-text);
   background-color: var(--color-background);
+
+  color-scheme: light;
+  /* Theme toggle crossfades rather than snapping. */
+  transition:
+    background-color 500ms ease-in-out,
+    color 500ms ease-in-out;
 }
 
 .container {
@@ -43,7 +141,60 @@
   text-align: center;
 }
 
-/* Dark mode disabled completely per user request */
+/* ============================================================================
+   Enforcement layer — remaps legacy hardcoded utilities into the system so
+   the design language holds across all 35+ settings screens without one-off
+   edits. No pure white, no pure black, no drop shadows, no elevation.
+   ============================================================================ */
+
+/* Pure white is banned: neutral "white" surfaces become cream / forest-light. */
+.bg-white {
+  background-color: var(--color-cream);
+}
+:root.dark .bg-white {
+  background-color: var(--color-forest-light);
+}
+.text-white {
+  color: var(--color-bone);
+}
+
+/* Black-tinted hovers: bone wash in dark mode (invisible otherwise). */
+:root.dark .hover\:bg-black\/5:hover {
+  background-color: rgba(240, 237, 228, 0.06);
+}
+:root.dark .hover\:bg-black\/10:hover {
+  background-color: rgba(240, 237, 228, 0.09);
+}
+
+/* No drop shadows / elevation. Neutralizes only the shadow slot so focus
+   rings (also box-shadow in v4) keep working. */
+.shadow-2xs,
+.shadow-xs,
+.shadow-sm,
+.shadow,
+.shadow-md,
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl {
+  --tw-shadow: 0 0 #0000;
+}
+
+/* Legacy red danger utilities → amber family (palette purity). */
+.bg-red-600 {
+  background-color: var(--color-amber-deep);
+}
+.hover\:bg-red-700:hover {
+  background-color: var(--color-amber);
+}
+.text-red-600 {
+  color: var(--color-amber-deep);
+}
+:root.dark .text-red-600 {
+  color: var(--color-amber-dark);
+}
+.hover\:bg-red-50:hover {
+  background-color: color-mix(in srgb, var(--color-amber), transparent 88%);
+}
 
 /* macOS - tint native overlay scrollbar thumb */
 :root[data-platform="macos"] {
@@ -62,10 +213,8 @@
 
 :root:not([data-platform="macos"]) ::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb);
-  border-radius: 20px;
-  border: 3px solid transparent;
-  border-right-width: 4px;
-  border-left-width: 3px;
+  border-radius: 0;
+  border: 4px solid transparent;
   background-clip: content-box;
   min-height: 32px;
 }
@@ -78,13 +227,18 @@
   .text-stroke {
     -webkit-text-stroke: 2px var(--color-text-stroke);
   }
+  /* Flat panel: fill + hairline, zero elevation. */
   .glass-panel {
-    background: #ffffff;
-    border: 1px solid color-mix(in srgb, var(--color-text), transparent 90%);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: var(--color-background-ui);
+    border: 1px solid var(--color-hairline);
+    box-shadow: none;
   }
+  /* Transcript body text — long-form dictation readability. */
   .font-serif {
-    font-family: 'Caveat', cursive;
+    font-family: var(--font-sans);
+  }
+  .hairline {
+    border-color: var(--color-hairline);
   }
 }
 

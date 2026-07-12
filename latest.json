@@ -1,11 +1,11 @@
 {
-  "version": "v0.8.5",
-  "notes": "Redesigned recording overlay: a smaller, refined pill with a rebuilt voice-reactive waveform \u2014 canvas-rendered spring-physics bars driven by the live audio spectrum, organic per-bar motion, an idle breathing animation, and a loudness-reactive glow.",
+  "version": "v0.8.6",
+  "notes": "A full visual redesign of Epos: a new brand mark and app icon, a clinical \"Corporate Brutalism\" design language, light & dark themes with a theme switcher in Settings, a custom window titlebar, and a redesigned recording overlay waveform.",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.5/Epos_0.8.5_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0dnY1BxMlBDTkI4djh3WExNbXUvQU5ta09oRHBtVjBqMFhoRE5mTUVqOUJGWjAvdzZRSFNXcnlYWGU1WWZ1Uy81dXZyWGgxTDhIRUtBUFg5bFBpTFFFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODE3MDU5CWZpbGU6RXBvc18wLjguNV94NjQtc2V0dXAuZXhlCnkrUUZweUQxb3BsbGl2RnBwUjZEZWtvZ0RsNnp5ZHh2Zmw4WG9nU3RudmVIbnVrZWk2dG40VHIzdkFaUHVKL3g1N3ZIdk5KcUV6UHgvSUtzU0loQUF3PT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.6/Epos_0.8.6_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0luYzBFSVU0QXErZzd4SkEzM2RYeWVoTTNxVFVlbnhrbU9RQjd3T0JaeW9heDVRSHp4S0dxdEp0OG05MC9rTktORFlZRDRxYVRnMnN0cFZWSHpnN1FBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODk3NzUwCWZpbGU6RXBvc18wLjguNl94NjQtc2V0dXAuZXhlCjA3NHliZ0oxMzNScFRPK1BYd1pjbUN6eWw2TDM4cnlCRGhZNklVSUZSaG9Wc0w3ZUVlcHZMT0V2TldSUEUyY2lOaEFXc0RxV25jODFzVzNBbm4wUUN3PT0K"
     }
   },
-  "pub_date": "2026-07-12T00:47:06Z"
+  "pub_date": "2026-07-12T23:09:33Z"
 }

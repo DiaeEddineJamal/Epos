@@ -6,41 +6,31 @@ import "./RecordingOverlay.css";
 import { commands } from "@/bindings";
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import { getLanguageDirection } from "@/lib/utils/rtl";
+import { THEME_CHANGE_EVENT } from "@/lib/theme";
 
 type OverlayState = "recording" | "transcribing" | "processing";
 
 // Number of bars drawn on the canvas. The backend sends 16 log-spaced
 // frequency buckets; bars sample them symmetrically so low/mid voice energy
-// sits in the middle and highs feather out to the edges.
-const BAR_COUNT = 25;
+// sits in the middle and highs feather out to the edges — producing the
+// clean, symmetric waveform silhouette (rounded pill bars) of the brand mark.
+const BAR_COUNT = 23;
 const BUCKET_COUNT = 16;
 
-// Pastel spectrum the bars drift through from left to right.
-const PALETTE: [number, number, number][] = [
-  [127, 176, 218], // blue
-  [148, 168, 214], // periwinkle
-  [186, 166, 222], // lilac
-  [148, 168, 214],
-  [127, 176, 218],
-];
+type RGB = [number, number, number];
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-// Per-bar base color, precomputed once.
-const BAR_COLORS: [number, number, number][] = Array.from(
-  { length: BAR_COUNT },
-  (_, i) => {
-    const pos = (i / (BAR_COUNT - 1)) * (PALETTE.length - 1);
-    const p0 = Math.floor(pos);
-    const p1 = Math.min(PALETTE.length - 1, p0 + 1);
-    const f = pos - p0;
-    return [
-      Math.round(lerp(PALETTE[p0][0], PALETTE[p1][0], f)),
-      Math.round(lerp(PALETTE[p0][1], PALETTE[p1][1], f)),
-      Math.round(lerp(PALETTE[p0][2], PALETTE[p1][2], f)),
-    ];
-  },
-);
+// Read an "r, g, b" CSS custom property into a tuple.
+const readRGB = (styles: CSSStyleDeclaration, name: string, fallback: RGB): RGB => {
+  const raw = styles.getPropertyValue(name).trim();
+  if (!raw) return fallback;
+  const parts = raw.split(",").map((p) => parseFloat(p));
+  if (parts.length === 3 && parts.every((n) => !Number.isNaN(n))) {
+    return [parts[0], parts[1], parts[2]];
+  }
+  return fallback;
+};
 
 const RecordingOverlay: React.FC = () => {
   const { t } = useTranslation();
@@ -52,6 +42,14 @@ const RecordingOverlay: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const stateRef = useRef<OverlayState>("recording");
+
+  // Theme-driven wave colors, refreshed whenever the theme changes so the
+  // monochrome bars match the panel (hunter/teal on light, sage on dark).
+  const colorsRef = useRef<{ wave: RGB; top: RGB; glow: RGB }>({
+    wave: [31, 61, 51],
+    top: [62, 98, 89],
+    glow: [199, 123, 63],
+  });
 
   // Latest raw frequency buckets from the backend (0..1 each).
   const bucketsRef = useRef<number[]>(Array(BUCKET_COUNT).fill(0));
@@ -68,6 +66,22 @@ const RecordingOverlay: React.FC = () => {
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
+
+  // Sync wave colors from CSS variables; re-read on theme change.
+  useEffect(() => {
+    const refreshColors = () => {
+      const el = rootRef.current ?? document.documentElement;
+      const styles = getComputedStyle(el);
+      colorsRef.current = {
+        wave: readRGB(styles, "--ov-wave", [31, 61, 51]),
+        top: readRGB(styles, "--ov-wave-top", [62, 98, 89]),
+        glow: readRGB(styles, "--ov-glow", [199, 123, 63]),
+      };
+    };
+    refreshColors();
+    window.addEventListener(THEME_CHANGE_EVENT, refreshColors);
+    return () => window.removeEventListener(THEME_CHANGE_EVENT, refreshColors);
+  }, []);
 
   useEffect(() => {
     const setupEventListeners = async () => {
@@ -140,18 +154,22 @@ const RecordingOverlay: React.FC = () => {
 
           // Center-weighted envelope for the classic voice-pill silhouette.
           const envelope =
-            0.3 + 0.7 * Math.pow(Math.cos((dist * Math.PI) / 2), 0.75);
+            0.32 + 0.68 * Math.pow(Math.cos((dist * Math.PI) / 2), 0.7);
           v *= envelope;
 
           // Organic shimmer so bars never move in lockstep.
-          v *= 1 + 0.18 * Math.sin(tSec * jitter.freq[i] + jitter.phase[i]);
+          v *= 1 + 0.16 * Math.sin(tSec * jitter.freq[i] + jitter.phase[i]);
           tgt = Math.min(1, v);
         } else if (recording) {
-          // Idle: two slow traveling waves breathing through the bars.
+          // Idle: a calm symmetric wave breathing through the bars — reads as
+          // the resting silhouette of the brand mark.
+          const breathe = 0.5 + 0.5 * Math.sin(tSec * 1.6);
+          const travel = 0.5 + 0.5 * Math.sin(tSec * 2.2 - dist * 3.0);
+          const centerBias = Math.pow(Math.cos((dist * Math.PI) / 2), 0.9);
           tgt =
-            0.055 +
-            0.045 * (0.5 + 0.5 * Math.sin(tSec * 2.4 - dist * 2.8)) +
-            0.02 * Math.sin(tSec * 1.1 + i * 0.7);
+            0.05 +
+            0.11 * centerBias * (0.45 + 0.55 * travel) +
+            0.015 * breathe;
         } else {
           tgt = 0;
         }
@@ -188,28 +206,33 @@ const RecordingOverlay: React.FC = () => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, cw, ch);
 
+      const { wave, top, glow } = colorsRef.current;
       const slot = cw / BAR_COUNT;
-      const barW = Math.min(3, slot * 0.58);
-      const maxH = ch - 3;
+      // Square-capped instrument bars — flat fills, institutional (1px nib
+      // of corner rounding only, matching the 2–4px system radius).
+      const barW = Math.max(2.5, Math.min(4, slot * 0.55));
+      const maxH = ch - 2;
       const midY = ch / 2;
 
       for (let i = 0; i < BAR_COUNT; i++) {
         const v = values[i];
-        const h = Math.max(2.5, v * maxH);
+        // Minimum height keeps quiet/edge bars as tidy ticks, never slivers.
+        const h = Math.max(barW, v * maxH);
         const x = slot * i + (slot - barW) / 2;
         const y = midY - h / 2;
-        const [r, g, b] = BAR_COLORS[i];
 
-        const grad = ctx.createLinearGradient(0, y, 0, y + h);
-        grad.addColorStop(0, `rgba(${r + 38}, ${g + 30}, ${b + 24}, 1)`);
-        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 1)`);
+        // Flat two-tone fill: no gradients — base color, with the highlight
+        // tone reserved for the loudest moments.
+        const hot = v > 0.72;
+        const [r, g, b] = hot ? top : wave;
 
-        ctx.globalAlpha = 0.5 + 0.5 * Math.min(1, v * 1.4);
-        ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.65)`;
-        ctx.shadowBlur = 10 * Math.min(1, v);
-        ctx.fillStyle = grad;
+        ctx.globalAlpha = 0.55 + 0.45 * Math.min(1, v * 1.5);
+        // The only glow in the system: subtle amber halo while recording.
+        ctx.shadowColor = `rgba(${glow[0]}, ${glow[1]}, ${glow[2]}, 0.4)`;
+        ctx.shadowBlur = 8 * Math.min(1, v);
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
         ctx.beginPath();
-        ctx.roundRect(x, y, barW, h, barW / 2);
+        ctx.roundRect(x, y, barW, h, 1);
         ctx.fill();
       }
       ctx.globalAlpha = 1;
