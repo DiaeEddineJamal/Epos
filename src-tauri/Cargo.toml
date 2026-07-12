@@ -1,6 +1,6 @@
 [package]
 name = "epos"
-version = "0.8.4"
+version = "0.8.5"
 description = "Epos"
 authors = ["Luziv"]
 edition = "2021"

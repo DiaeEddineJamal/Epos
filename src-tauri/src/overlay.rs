@@ -30,8 +30,8 @@ tauri_panel! {
     })
 }
 
-const OVERLAY_WIDTH: f64 = 208.0;
-const OVERLAY_HEIGHT: f64 = 46.0;
+const OVERLAY_WIDTH: f64 = 184.0;
+const OVERLAY_HEIGHT: f64 = 40.0;
 
 #[cfg(target_os = "macos")]
 const OVERLAY_TOP_OFFSET: f64 = 46.0;
