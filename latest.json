@@ -1,11 +1,11 @@
 {
-  "version": "v0.8.4",
-  "notes": "VAD speech fallback, DirectML GPU for ONNX models, better post-process prompts, and UI polish for settings and the recording overlay.",
+  "version": "v0.8.5",
+  "notes": "Redesigned recording overlay: a smaller, refined pill with a rebuilt voice-reactive waveform \u2014 canvas-rendered spring-physics bars driven by the live audio spectrum, organic per-bar motion, an idle breathing animation, and a loudness-reactive glow.",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.4/Epos_0.8.4_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0pKU0FZb2NVZzVLcE83cUVWWERkYnJoZ24zZTlTS1dDTCtpeGwxK20rZUlEVnNHYXZkc29JV2NrRDhNU0VjVFNzOVhTWFhNVm5SRDh5M3dER3VQZUE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODEzMzY0CWZpbGU6RXBvc18wLjguNF94NjQtc2V0dXAuZXhlCnJFMi92OHMxdloxVlJSRlpKbzdvTzZMak9xdEVEUzYrY0tVLzRQaGxKZ2YvUnlZekpiNzNBYUhxemtxWUhtQ3hYV1JaZHhZQ3E1UzNCcC9OVlRmNUNBPT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.5/Epos_0.8.5_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0dnY1BxMlBDTkI4djh3WExNbXUvQU5ta09oRHBtVjBqMFhoRE5mTUVqOUJGWjAvdzZRSFNXcnlYWGU1WWZ1Uy81dXZyWGgxTDhIRUtBUFg5bFBpTFFFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODE3MDU5CWZpbGU6RXBvc18wLjguNV94NjQtc2V0dXAuZXhlCnkrUUZweUQxb3BsbGl2RnBwUjZEZWtvZ0RsNnp5ZHh2Zmw4WG9nU3RudmVIbnVrZWk2dG40VHIzdkFaUHVKL3g1N3ZIdk5KcUV6UHgvSUtzU0loQUF3PT0K"
     }
   },
-  "pub_date": "2026-07-11T23:43:56Z"
+  "pub_date": "2026-07-12T00:47:06Z"
 }
