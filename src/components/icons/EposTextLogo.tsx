@@ -14,13 +14,19 @@ const EposTextLogo = ({
   const appName = t("branding.appName", { defaultValue: "Epos" });
 
   return (
-    <div className={`flex items-center justify-center select-none ${className || ''}`} style={{ width, height }}>
-      <span className="font-serif text-[2.5rem] tracking-tight font-bold text-text" style={{ letterSpacing: "-0.02em" }}>
-        <span className="text-accent-blue">
-          {appName.charAt(0)}
-        </span>
+    <div
+      className={`flex items-center select-none ${className || ""}`}
+      style={{ width, height }}
+    >
+      <span
+        className="text-[2.5rem] tracking-tight font-bold text-text"
+        style={{ letterSpacing: "-0.02em" }}
+      >
+        {/* Accent letter uses the MDR phosphor `live` color so it stays visible
+            against both the bone and evergreen surfaces. */}
+        <span className="text-live">{appName.charAt(0)}</span>
         {appName.slice(1)}
-        <span className="text-primary italic ml-[1px]">.</span>
+        <span className="text-live ms-[1px]">.</span>
       </span>
     </div>
   );

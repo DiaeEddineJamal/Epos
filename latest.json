@@ -1,11 +1,11 @@
 {
-  "version": "v0.8.6",
-  "notes": "A full visual redesign of Epos: a new brand mark and app icon, a clinical \"Corporate Brutalism\" design language, light & dark themes with a theme switcher in Settings, a custom window titlebar, and a redesigned recording overlay waveform.",
+  "version": "v0.8.7",
+  "notes": "Lumon terminal navigation replaces the sidebar: horizontal department tabs with monospace file designations, a sliding MDR-cyan indicator, and CRT scanlines. Refines the Severance palette (deeper dark evergreen, cyan live states), adds section reveal animations and mechanical button press feedback, and improves the recording overlay with higher voice sensitivity and wider status labels.",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.6/Epos_0.8.6_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0luYzBFSVU0QXErZzd4SkEzM2RYeWVoTTNxVFVlbnhrbU9RQjd3T0JaeW9heDVRSHp4S0dxdEp0OG05MC9rTktORFlZRDRxYVRnMnN0cFZWSHpnN1FBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzODk3NzUwCWZpbGU6RXBvc18wLjguNl94NjQtc2V0dXAuZXhlCjA3NHliZ0oxMzNScFRPK1BYd1pjbUN6eWw2TDM4cnlCRGhZNklVSUZSaG9Wc0w3ZUVlcHZMT0V2TldSUEUyY2lOaEFXc0RxV25jODFzVzNBbm4wUUN3PT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.7/Epos_0.8.7_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY1BKVyswQkQxc1JzWmpLWnh6MmtBWDVlYXpMWEZ3bVdyTWRoYXljcjV4a05YSHgyZ0w3cXdFUHJHL2wzVVZWc0w4NTdrYVgwU29qa0lORFNxTkVneGdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzOTAwOTg3CWZpbGU6RXBvc18wLjguN194NjQtc2V0dXAuZXhlCmkzZ3FIZEtZYS8wdkcxU1N1YU5OcU5jMzdhWmIvRzJVeTF3aXg5SnhEM0VZUlpRQUhEYXc1SGxlWnVtZzRDNlJROXliMStJa2N1VGZGbUFuQUNwU0N3PT0K"
     }
   },
-  "pub_date": "2026-07-12T23:09:33Z"
+  "pub_date": "2026-07-13T00:03:15Z"
 }

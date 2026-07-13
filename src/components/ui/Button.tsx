@@ -23,7 +23,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "font-medium uppercase tracking-wider rounded-sm border focus:outline-none focus-visible:ring-1 focus-visible:ring-live focus-visible:ring-offset-1 focus-visible:ring-offset-background transition-colors duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2";
+    "lumon-press font-medium uppercase tracking-wider rounded-sm border focus:outline-none focus-visible:ring-1 focus-visible:ring-live focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2";
 
   const variantClasses = {
     // Flat fill: hunter on light, sage on dark (label = canvas color).

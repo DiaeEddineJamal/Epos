@@ -30,7 +30,9 @@ tauri_panel! {
     })
 }
 
-const OVERLAY_WIDTH: f64 = 184.0;
+// Wider than the waveform needs so the "Transcribing"/"Processing" status
+// labels (uppercase, tracked) never clip inside the pill.
+const OVERLAY_WIDTH: f64 = 216.0;
 const OVERLAY_HEIGHT: f64 = 40.0;
 
 #[cfg(target_os = "macos")]

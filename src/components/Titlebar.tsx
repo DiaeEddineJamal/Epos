@@ -2,6 +2,7 @@ import React from "react";
 import { Minus, X } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { type } from "@tauri-apps/plugin-os";
+import { useTranslation } from "react-i18next";
 
 // Brand wordmark — a badge, not a decorative logo. Kept out of JSX literals
 // for the i18n lint rule; brand names are never translated.
@@ -14,6 +15,7 @@ const WORDMARK = "EPOS";
  * so we only reserve their space and draw no controls of our own.
  */
 export const Titlebar: React.FC = () => {
+  const { t } = useTranslation();
   const osType = type();
   const isMac = osType === "macos";
   const appWindow = getCurrentWindow();
@@ -21,16 +23,23 @@ export const Titlebar: React.FC = () => {
   return (
     <div
       data-tauri-drag-region
-      className="shrink-0 h-9 w-full flex items-stretch justify-between select-none bg-background border-b hairline z-50"
+      className="shrink-0 h-10 w-full flex items-stretch justify-between select-none bg-background-ui border-b hairline z-50"
     >
-      {/* Wordmark badge. pointer-events-none keeps the drag region active. */}
+      {/* Institutional plaque — wordmark + division micro-label. */}
       <div
-        className={`flex items-center pointer-events-none ${
+        className={`flex items-center gap-3 pointer-events-none ${
           isMac ? "ps-[78px]" : "ps-4"
         }`}
       >
-        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.35em] text-text/80 border border-hairline px-2 py-0.5 rounded-xs">
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.35em] text-text border border-hairline px-2.5 py-0.5 rounded-xs bg-background">
           {WORDMARK}
+        </span>
+        <span
+          aria-hidden
+          className="hidden sm:block h-3 w-px bg-hairline"
+        />
+        <span className="hidden sm:block font-mono text-[9px] uppercase tracking-[0.28em] text-text/40">
+          {t("sidebar.division")}
         </span>
       </div>
 

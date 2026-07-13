@@ -126,15 +126,17 @@
 .status-text {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 2px;
   color: var(--ov-text);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   font-family:
     "IBM Plex Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
   white-space: nowrap;
+  max-width: 100%;
 }
 
 .dots {

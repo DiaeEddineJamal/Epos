@@ -12,7 +12,8 @@ import "./App.css";
 import AccessibilityPermissions from "./components/AccessibilityPermissions";
 import Footer from "./components/footer";
 import Onboarding, { AccessibilityOnboarding } from "./components/onboarding";
-import { Sidebar, SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
+import { TopNav } from "./components/TopNav";
 import { Titlebar } from "./components/Titlebar";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
@@ -288,32 +289,46 @@ function App() {
         }}
       />
 
-      {/* Main content area that takes remaining space */}
-      <div className="flex-1 flex overflow-hidden z-0">
-        <Sidebar
+      {/* Lumon shell: department rail + file drawer workspace */}
+      <div className="flex-1 flex overflow-hidden relative z-0">
+        <TopNav
           activeSection={currentSection}
           onSectionChange={setCurrentSection}
         />
-        {/* Scrollable content area */}
-        <div className="flex-1 flex flex-col overflow-hidden relative">
-          {/* Page header — consistent across every settings section */}
-          <header className="shrink-0 px-8 md:px-12 pt-8 pb-4 border-b hairline">
-            <div className="max-w-4xl mx-auto w-full">
-              <h1 className="text-[1.05rem] leading-tight font-medium uppercase tracking-[0.2em] text-text">
+
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0 lumon-grid">
+          {/* Institutional file masthead */}
+          <header className="shrink-0 px-8 md:px-10 pt-6 pb-5 border-b hairline bg-background/80 backdrop-blur-[2px]">
+            <div className="max-w-4xl w-full flex flex-col gap-2">
+              <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-text/40">
+                <span>{t("sidebar.file")}</span>
+                <span className="text-live tabular-nums tracking-widest">
+                  {String(
+                    Object.keys(SECTIONS_CONFIG).indexOf(currentSection) + 1,
+                  ).padStart(2, "0")}
+                </span>
+                <span className="flex-1 h-px bg-hairline" aria-hidden />
+                <span>{t("sidebar.refinement")}</span>
+              </div>
+              <h1 className="text-[1.35rem] leading-none font-medium uppercase tracking-[0.22em] text-text">
                 {t(SECTIONS_CONFIG[currentSection].labelKey)}
               </h1>
             </div>
           </header>
+
           <div className="flex-1 overflow-y-auto">
-            <div className="max-w-4xl mx-auto flex flex-col px-8 md:px-12 pt-7 pb-12 gap-7">
+            <div
+              key={currentSection}
+              className="max-w-4xl flex flex-col px-8 md:px-10 pt-8 pb-12 gap-7 animate-drawer"
+            >
               <AccessibilityPermissions />
               {renderSettingsContent(currentSection)}
             </div>
           </div>
+
+          <Footer />
         </div>
       </div>
-      {/* Fixed footer at bottom */}
-      <Footer />
     </div>
   );
 }

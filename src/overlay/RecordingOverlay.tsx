@@ -135,7 +135,8 @@ const RecordingOverlay: React.FC = () => {
       for (let b = 0; b < buckets.length; b++) {
         if (buckets[b] > energy) energy = buckets[b];
       }
-      const speaking = energy > 0.03;
+      // High sensitivity: react to quiet/distant speech, not just close-mic.
+      const speaking = energy > 0.008;
       const tSec = now / 1000;
 
       let loudness = 0;
@@ -152,9 +153,13 @@ const RecordingOverlay: React.FC = () => {
           const frac = pos - b0;
           let v = (buckets[b0] ?? 0) * (1 - frac) + (buckets[b1] ?? 0) * frac;
 
+          // Sensitivity boost: gain + soft compression lifts quiet/distant
+          // speech into visible motion while keeping loud peaks from clipping.
+          v = Math.pow(Math.min(1, v * 2.6), 0.62);
+
           // Center-weighted envelope for the classic voice-pill silhouette.
           const envelope =
-            0.32 + 0.68 * Math.pow(Math.cos((dist * Math.PI) / 2), 0.7);
+            0.38 + 0.62 * Math.pow(Math.cos((dist * Math.PI) / 2), 0.7);
           v *= envelope;
 
           // Organic shimmer so bars never move in lockstep.

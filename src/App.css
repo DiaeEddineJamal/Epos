@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   EPOS — Corporate Brutalism / Retro-Futurist design system.
+   EPOS — Corporate Brutalism / Severance design system.
    Clinical mid-century office-machine aesthetic: flat fills, hairline borders,
-   sharp corners, uppercase tracked labels, monospace metadata.
+   sharp corners, uppercase tracked labels, monospace metadata, MDR phosphor.
 
    Tailwind v4 CSS-first config: the palette below is the single source of
    truth (tailwind.config.js is legacy/inert and only mirrors it for editors).
@@ -14,15 +14,32 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* ---- Exact brand palette (do not use default Tailwind colors) ---- */
-  --color-bone: #f0ede4;
+  /* ---- Brand palette — Lumon / Severance corporate brutalism.
+     Warm bone corridors, deep evergreen, MDR phosphor green.
+     (Do not use default Tailwind colors.) ---- */
+  --color-bone: #f0ede4; /* Lumon corridor wall */
+  --color-paper: #e9e6db; /* cooler paper, secondary light surface */
   --color-cream: #e4dfd1;
+  --color-forest-deep: #08130f; /* darkest — dark-mode canvas */
   --color-forest: #0d1f1a;
   --color-forest-light: #16281f;
+  --color-forest-panel: #1b3228; /* elevated dark surface */
   --color-hunter: #1f3d33;
   --color-teal: #3e6259;
+  --color-slate: #6b8790; /* fluorescent office blue-grey */
   --color-sage: #7ba88c;
   --color-sage-bright: #a8c9b5;
+
+  /* MDR phosphor green — the Severance terminal glow (not cyan). */
+  --color-phosphor: #6eb889;
+  --color-phosphor-bright: #9fd4b0;
+  --color-phosphor-deep: #1f6b42; /* AA text/fill on bone */
+
+  /* Legacy aliases — kept so any residual cyan utilities still resolve. */
+  --color-cyan: var(--color-phosphor);
+  --color-cyan-bright: var(--color-phosphor-bright);
+  --color-cyan-deep: var(--color-phosphor-deep);
+
   --color-amber: #c77b3f;
   --color-amber-dark: #d68f55;
   /* AA-adjusted amber (same family, darkened) for text/fills on light
@@ -34,6 +51,7 @@
   --color-text: var(--color-forest);
   --color-background: var(--color-bone);
   --color-background-ui: var(--color-cream);
+  --color-surface: #eef1ea; /* elevated (cards/active) — cool off-white */
   --color-primary: var(--color-hunter);
   --color-secondary: var(--color-cream);
   --color-accent-purple: var(--color-cream);
@@ -44,9 +62,9 @@
   --color-logo-stroke: var(--color-forest);
   --color-text-stroke: var(--color-cream);
   --color-mid-gray: var(--color-teal);
-  /* Live/active states: teal in light (sage fails contrast on bone),
-     sage-bright in dark — both in the sage family. */
-  --color-live: var(--color-teal);
+  /* Live/active/interactive: MDR phosphor (AA-adjusted per mode). */
+  --color-live: var(--color-phosphor-deep);
+  --color-live-glow: var(--color-phosphor);
   /* Recording indicator */
   --color-rec: var(--color-amber-deep);
   /* Hairline borders: hunter/15 light, bone/12 dark */
@@ -71,9 +89,19 @@
   --radius-3xl: 4px;
   --radius-4xl: 4px;
 
-  /* ---- Motion: slow institutional pulse for recording states.
-     (animate-pulse is too fast; 2.5s ease-in-out, no bounce.) ---- */
+  /* ---- Severance motion: slow, deliberate, mechanical. No bounce.
+     Exposed as `ease-lumon` / `ease-lumon-out` utilities. ---- */
+  --ease-lumon: cubic-bezier(0.83, 0, 0.17, 1); /* symmetric, precise */
+  --ease-lumon-out: cubic-bezier(0.16, 1, 0.3, 1); /* decisive settle */
+
   --animate-pulse-slow: pulse-slow 2.5s ease-in-out infinite;
+  --animate-reveal: reveal 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-reveal-fast: reveal 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-drawer: drawer 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-glow: glow 3.4s ease-in-out infinite;
+  --animate-scan: scan 6s linear infinite;
+  --animate-phosphor: phosphor-breathe 3.2s ease-in-out infinite;
+  --animate-rail-in: rail-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
 
   @keyframes pulse-slow {
     0%,
@@ -84,16 +112,77 @@
       opacity: 0.45;
     }
   }
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  /* File-drawer open: content slides in from the rail edge. */
+  @keyframes drawer {
+    from {
+      opacity: 0;
+      transform: translateX(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes rail-in {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes glow {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes phosphor-breathe {
+    0%,
+    100% {
+      opacity: 0.55;
+      filter: brightness(0.92);
+    }
+    50% {
+      opacity: 1;
+      filter: brightness(1.08);
+    }
+  }
+  @keyframes scan {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
 }
 
-/* ---- Dark theme: token remap (forest canvas, bone type, sage accent) ---- */
+/* ---- Dark theme: Lumon after-hours. Layered evergreen depth
+   (deep canvas → panels → elevated), bone type, phosphor MDR glow. ---- */
 :root.dark {
   color-scheme: dark;
 
   --color-text: var(--color-bone);
-  --color-background: var(--color-forest);
+  --color-background: var(--color-forest-deep);
   --color-background-ui: var(--color-forest-light);
-  --color-primary: var(--color-sage);
+  --color-surface: var(--color-forest-panel);
+  --color-primary: var(--color-sage-bright);
   --color-secondary: var(--color-forest-light);
   --color-accent-purple: var(--color-forest-light);
   --color-accent-blue: var(--color-forest-light);
@@ -102,8 +191,9 @@
   --color-logo-primary: var(--color-bone);
   --color-logo-stroke: var(--color-bone);
   --color-text-stroke: var(--color-forest-light);
-  --color-mid-gray: var(--color-sage);
-  --color-live: var(--color-sage-bright);
+  --color-mid-gray: var(--color-slate);
+  --color-live: var(--color-phosphor-bright);
+  --color-live-glow: var(--color-phosphor-bright);
   --color-rec: var(--color-amber-dark);
   --color-hairline: rgba(240, 237, 228, 0.12);
 }
@@ -147,12 +237,10 @@
    edits. No pure white, no pure black, no drop shadows, no elevation.
    ============================================================================ */
 
-/* Pure white is banned: neutral "white" surfaces become cream / forest-light. */
+/* Pure white is banned: neutral "white" surfaces become the elevated
+   surface tone (cool off-white in light, lifted evergreen in dark). */
 .bg-white {
-  background-color: var(--color-cream);
-}
-:root.dark .bg-white {
-  background-color: var(--color-forest-light);
+  background-color: var(--color-surface);
 }
 .text-white {
   color: var(--color-bone);
@@ -239,6 +327,143 @@
   }
   .hairline {
     border-color: var(--color-hairline);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Mechanical press — the deliberate Lumon keypress. Applies a precise
+     depress on :active with the institutional easing. */
+  .lumon-press {
+    transition:
+      transform 120ms var(--ease-lumon-out),
+      background-color 300ms ease-in-out,
+      border-color 300ms ease-in-out,
+      color 300ms ease-in-out;
+  }
+  .lumon-press:active:not(:disabled) {
+    transform: translateY(1px) scale(0.985);
+  }
+
+  /* Faint CRT scanline sweep for terminal surfaces (nav / overlay). */
+  .scanlines {
+    position: relative;
+  }
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-live-glow), transparent 94%) 0px,
+      color-mix(in srgb, var(--color-live-glow), transparent 94%) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    opacity: 0.35;
+    mix-blend-mode: soft-light;
+  }
+
+  /* Institutional corridor atmosphere — faint grid under the work surface. */
+  .lumon-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-text), transparent 94%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-text), transparent 94%) 1px,
+        transparent 1px
+      );
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+  }
+
+  /* Active phosphor lamp — used on the department rail indicator. */
+  .phosphor-lamp {
+    background: var(--color-live);
+    box-shadow: 0 0 10px 0 color-mix(in srgb, var(--color-live-glow), transparent 35%);
+    animation: phosphor-breathe 3.2s ease-in-out infinite;
+  }
+
+  /* Sidebar terminal well — faint scrolling MDR macrodata rain. */
+  .epos-terminal-well {
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0,
+        transparent 11px,
+        color-mix(in srgb, var(--color-live-glow), transparent 94%) 11px,
+        color-mix(in srgb, var(--color-live-glow), transparent 94%) 12px
+      );
+    opacity: 0.55;
+    animation: terminal-rain 14s linear infinite;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 100%);
+  }
+
+  .epos-ascii-pre {
+    font-size: 9px;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--color-live-glow), transparent 55%);
+  }
+
+  .epos-ascii-scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 28%;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--color-live-glow), transparent 82%),
+      transparent
+    );
+    animation: ascii-scan 4.8s ease-in-out infinite;
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+}
+
+@keyframes terminal-rain {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 120px;
+  }
+}
+
+@keyframes ascii-scan {
+  0%,
+  100% {
+    top: -10%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.7;
+  }
+  50% {
+    top: 70%;
+    opacity: 0.5;
+  }
+  85% {
+    opacity: 0.7;
+  }
+}
+
+/* Respect reduced-motion: drop the reveal/glow/scan motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
