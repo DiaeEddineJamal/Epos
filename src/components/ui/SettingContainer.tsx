@@ -54,8 +54,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   void colorVariant;
 
   const containerClasses = grouped
-    ? "px-4 py-3"
-    : "px-4 py-3 rounded-sm border hairline bg-background-ui";
+    ? "lumon-panel px-4 py-3"
+    : "lumon-panel px-4 py-3 rounded-sm border hairline bg-background-ui";
 
   if (layout === "stacked") {
     if (descriptionMode === "tooltip") {
@@ -127,8 +127,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
 
   // Horizontal layout (default)
   const horizontalContainerClasses = grouped
-    ? "flex items-center justify-between px-4 py-3 gap-4"
-    : "flex items-center justify-between px-4 py-3 gap-4 rounded-sm border hairline bg-background-ui";
+    ? "lumon-panel flex items-center justify-between px-4 py-3 gap-4"
+    : "lumon-panel flex items-center justify-between px-4 py-3 gap-4 rounded-sm border hairline bg-background-ui";
 
   if (descriptionMode === "tooltip") {
     return (

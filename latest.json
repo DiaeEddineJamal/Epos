@@ -1,11 +1,11 @@
 {
-  "version": "v0.8.7",
-  "notes": "Lumon terminal navigation replaces the sidebar: horizontal department tabs with monospace file designations, a sliding MDR-cyan indicator, and CRT scanlines. Refines the Severance palette (deeper dark evergreen, cyan live states), adds section reveal animations and mechanical button press feedback, and improves the recording overlay with higher voice sensitivity and wider status labels.",
+  "version": "v0.8.8",
+  "notes": "Severance MDR shell refresh: collapsible Lumon department rail with EPOS ASCII terminal seal, phosphor-green accent palette, and authentic macrodata refinement page transitions (22×8 decimal field, magnifying cursor, bins, coordinates) that reposition per section. Refines light-mode contrast, removes cheap hover motion in favor of phosphor-patch feedback, and fixes transcription icon visibility in dark mode.",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.7/Epos_0.8.7_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY1BKVyswQkQxc1JzWmpLWnh6MmtBWDVlYXpMWEZ3bVdyTWRoYXljcjV4a05YSHgyZ0w3cXdFUHJHL2wzVVZWc0w4NTdrYVgwU29qa0lORFNxTkVneGdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzOTAwOTg3CWZpbGU6RXBvc18wLjguN194NjQtc2V0dXAuZXhlCmkzZ3FIZEtZYS8wdkcxU1N1YU5OcU5jMzdhWmIvRzJVeTF3aXg5SnhEM0VZUlpRQUhEYXc1SGxlWnVtZzRDNlJROXliMStJa2N1VGZGbUFuQUNwU0N3PT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.8/Epos_0.8.8_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0JVcU5uVndDUm5mcnV6Z3RJNElJZ3A5NWhHUUNRSnhZZUVRWU1VZGoyenRGVHFjU3Ivb1YydlFCZTA1aUZQMk9CU2xEZHRYcit6S0JTQWtBVWsvVGdrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzOTA0MDM2CWZpbGU6RXBvc18wLjguOF94NjQtc2V0dXAuZXhlCkVvM2QwSTlGVHArcnNsQUMvMXNWZE1nalRmUHhmSmM5dFZVbzl4NEVtN00yUzd2T0xKdzBNNktzZUVTQXdyVEhvQ1g2VnhnSnJJWXR6MlJ1Wmo2ZURBPT0K"
     }
   },
-  "pub_date": "2026-07-13T00:03:15Z"
+  "pub_date": "2026-07-13T00:53:56Z"
 }

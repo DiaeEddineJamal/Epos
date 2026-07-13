@@ -12,6 +12,7 @@ import "./App.css";
 import AccessibilityPermissions from "./components/AccessibilityPermissions";
 import Footer from "./components/footer";
 import Onboarding, { AccessibilityOnboarding } from "./components/onboarding";
+import { SectionBinaryTransition } from "./components/SectionBinaryTransition";
 import { SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
 import { TopNav } from "./components/TopNav";
 import { Titlebar } from "./components/Titlebar";
@@ -296,7 +297,12 @@ function App() {
           onSectionChange={setCurrentSection}
         />
 
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0 lumon-grid">
+        <div className="relative flex-1 flex flex-col overflow-hidden min-w-0 lumon-grid">
+          <SectionBinaryTransition
+            key={`binary-${currentSection}`}
+            sectionIndex={Object.keys(SECTIONS_CONFIG).indexOf(currentSection)}
+          />
+
           {/* Institutional file masthead */}
           <header className="shrink-0 px-8 md:px-10 pt-6 pb-5 border-b hairline bg-background/80 backdrop-blur-[2px]">
             <div className="max-w-4xl w-full flex flex-col gap-2">

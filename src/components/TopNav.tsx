@@ -55,19 +55,19 @@ export const TopNav: React.FC<TopNavProps> = ({
       aria-label={t("sidebar.directory")}
       data-collapsed={collapsed ? "true" : "false"}
       className={`relative shrink-0 flex flex-col border-e hairline bg-background-ui z-20 scanlines overflow-hidden transition-[width] duration-500 ease-lumon ${
-        collapsed ? "w-[4.25rem]" : "w-[16.5rem]"
+        collapsed ? "w-[4.25rem]" : "w-[16rem]"
       }`}
     >
       {/* Directory masthead */}
       <div
         className={`shrink-0 border-b hairline ${
-          collapsed ? "px-2 pt-4 pb-3" : "px-5 pt-6 pb-5"
+          collapsed ? "px-2 pt-3 pb-2.5" : "px-4 pt-4 pb-3"
         }`}
       >
         {!collapsed ? (
           <>
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-text/40">
+            <div className="flex items-start justify-between gap-2 mb-1.5">
+              <p className="font-mono text-[9px] uppercase tracking-[0.28em] text-text/40">
                 {t("sidebar.directory")}
               </p>
               <CollapseButton
@@ -76,18 +76,18 @@ export const TopNav: React.FC<TopNavProps> = ({
                 label={t("sidebar.collapse")}
               />
             </div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               <span
                 aria-hidden
                 className="phosphor-lamp block h-1.5 w-1.5 rounded-[1px]"
               />
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-live">
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-live">
                 {t("sidebar.online")}
               </span>
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2.5">
             <span
               aria-hidden
               className="phosphor-lamp block h-1.5 w-1.5 rounded-[1px]"
@@ -101,10 +101,10 @@ export const TopNav: React.FC<TopNavProps> = ({
         )}
       </div>
 
-      {/* Department list — roomier rows */}
+      {/* Department list — compact rows to leave room for the seal */}
       <div
         className={`shrink-0 overflow-y-auto no-scrollbar ${
-          collapsed ? "py-2" : "py-3"
+          collapsed ? "py-1" : "py-1.5"
         }`}
       >
         {available.map((section, index) => {
@@ -117,7 +117,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               onClick={() => onSectionChange(section.id)}
               aria-current={isActive ? "page" : undefined}
               title={t(section.labelKey)}
-              style={{ animationDelay: `${index * 45}ms` }}
+              style={{ animationDelay: `${index * 40}ms` }}
               className={`lumon-press animate-rail-in group relative flex w-full items-stretch gap-0 cursor-pointer border-b hairline text-start ${
                 isActive
                   ? "bg-background text-text"
@@ -126,7 +126,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             >
               <span
                 aria-hidden
-                className={`absolute inset-y-0 start-0 w-[3px] transition-opacity duration-300 ${
+                className={`absolute inset-y-0 start-0 w-[2px] transition-opacity duration-300 ${
                   isActive
                     ? "phosphor-lamp opacity-100"
                     : "bg-transparent opacity-0 group-hover:opacity-40 group-hover:bg-live"
@@ -136,8 +136,8 @@ export const TopNav: React.FC<TopNavProps> = ({
               <span
                 className={`flex shrink-0 items-center justify-center font-mono tabular-nums tracking-wider transition-colors duration-300 ${
                   collapsed
-                    ? "w-full py-4 text-[13px]"
-                    : "w-14 border-e hairline py-4 text-[13px]"
+                    ? "w-full py-2.5 text-[12px]"
+                    : "w-11 border-e hairline py-2.5 text-[11px]"
                 } ${
                   isActive
                     ? "text-live bg-[color-mix(in_srgb,var(--color-live),transparent_92%)]"
@@ -146,7 +146,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               >
                 {collapsed ? (
                   <Icon
-                    size={16}
+                    size={15}
                     strokeWidth={1.5}
                     className={isActive ? "text-live" : "text-text/45"}
                   />
@@ -156,15 +156,15 @@ export const TopNav: React.FC<TopNavProps> = ({
               </span>
 
               {!collapsed && (
-                <span className="flex min-w-0 flex-1 items-center gap-3 px-4 py-4">
+                <span className="flex min-w-0 flex-1 items-center gap-2.5 px-3 py-2.5">
                   <Icon
-                    size={16}
+                    size={14}
                     strokeWidth={1.5}
                     className={`shrink-0 transition-colors duration-300 ${
                       isActive ? "text-live" : "text-text/40"
                     }`}
                   />
-                  <span className="truncate text-[12px] font-medium uppercase tracking-[0.16em]">
+                  <span className="truncate text-[11px] font-medium uppercase tracking-[0.14em]">
                     {t(section.labelKey)}
                   </span>
                 </span>
@@ -174,11 +174,12 @@ export const TopNav: React.FC<TopNavProps> = ({
         })}
       </div>
 
-      {/* Leftover terminal well — animated EPOS seal */}
+      {/* Leftover terminal well — animated EPOS seal (no extra top rule;
+          the last department row already draws the separator). */}
       {!collapsed && (
-        <div className="flex-1 min-h-0 flex flex-col justify-end border-t hairline relative overflow-hidden">
+        <div className="flex-1 min-h-[9.5rem] flex items-center justify-center relative overflow-hidden">
           <div className="epos-terminal-well absolute inset-0" aria-hidden />
-          <div className="relative z-[1] px-3 pb-4 pt-6">
+          <div className="relative z-[1] flex items-center justify-center w-full px-3">
             <EposAsciiMark />
           </div>
         </div>
@@ -186,8 +187,8 @@ export const TopNav: React.FC<TopNavProps> = ({
 
       {/* Floor plate */}
       {!collapsed && (
-        <div className="shrink-0 border-t hairline px-5 py-3.5">
-          <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-text/30">
+        <div className="shrink-0 border-t hairline px-4 py-2.5">
+          <p className="font-mono text-[8px] uppercase tracking-[0.24em] text-text/30 text-center">
             {t("sidebar.floorPlate")}
           </p>
         </div>
@@ -214,7 +215,7 @@ const CollapseButton: React.FC<CollapseButtonProps> = ({
       onClick={onToggle}
       aria-label={label}
       title={label}
-      className="lumon-press flex h-7 w-7 items-center justify-center rounded-xs border hairline text-text/45 hover:text-text hover:bg-background transition-colors duration-300 cursor-pointer"
+      className="lumon-press flex h-6 w-6 items-center justify-center rounded-xs border hairline text-text/45 hover:text-text hover:bg-background transition-colors duration-300 cursor-pointer"
     >
       <Icon size={14} strokeWidth={1.5} />
     </button>

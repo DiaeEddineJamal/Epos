@@ -48,7 +48,7 @@
 
   /* ---- Semantic tokens (legacy names kept so utilities cascade) ----
      Light mode values; :root.dark remaps them below. */
-  --color-text: var(--color-forest);
+  --color-text: #071a12;
   --color-background: var(--color-bone);
   --color-background-ui: var(--color-cream);
   --color-surface: #eef1ea; /* elevated (cards/active) — cool off-white */
@@ -97,7 +97,7 @@
   --animate-pulse-slow: pulse-slow 2.5s ease-in-out infinite;
   --animate-reveal: reveal 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-reveal-fast: reveal 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-drawer: drawer 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-drawer: drawer 700ms cubic-bezier(0.16, 1, 0.3, 1) 1.65s both;
   --animate-glow: glow 3.4s ease-in-out infinite;
   --animate-scan: scan 6s linear infinite;
   --animate-phosphor: phosphor-breathe 3.2s ease-in-out infinite;
@@ -124,13 +124,24 @@
   }
   /* File-drawer open: content slides in from the rail edge. */
   @keyframes drawer {
-    from {
+    0% {
       opacity: 0;
-      transform: translateX(14px);
+      transform: translateX(18px);
+      clip-path: inset(0 0 100% 0);
+      filter: brightness(1.18);
     }
-    to {
+    48% {
+      opacity: 0.82;
+      clip-path: inset(0 0 0 0);
+    }
+    72% {
+      transform: translateX(-1px);
+    }
+    100% {
       opacity: 1;
       transform: translateX(0);
+      clip-path: inset(0 0 0 0);
+      filter: brightness(1);
     }
   }
   @keyframes rail-in {
@@ -339,14 +350,63 @@
   /* Mechanical press — the deliberate Lumon keypress. Applies a precise
      depress on :active with the institutional easing. */
   .lumon-press {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(
+      102deg,
+      transparent 0%,
+      transparent 38%,
+      color-mix(in srgb, var(--color-live), transparent 91%) 48%,
+      color-mix(in srgb, var(--color-live), transparent 84%) 52%,
+      transparent 62%,
+      transparent 100%
+    );
+    background-size: 260% 100%;
+    background-position: 115% 0;
     transition:
-      transform 120ms var(--ease-lumon-out),
-      background-color 300ms ease-in-out,
-      border-color 300ms ease-in-out,
-      color 300ms ease-in-out;
+      background-color 320ms var(--ease-lumon),
+      background-position 620ms var(--ease-lumon),
+      border-color 320ms var(--ease-lumon),
+      color 320ms var(--ease-lumon),
+      filter 320ms var(--ease-lumon);
+  }
+  .lumon-press:hover:not(:disabled) {
+    background-position: -15% 0;
+    border-color: color-mix(in srgb, var(--color-live), transparent 62%);
+    filter: brightness(1.018);
   }
   .lumon-press:active:not(:disabled) {
-    transform: translateY(1px) scale(0.985);
+    background-color: color-mix(
+      in srgb,
+      var(--color-background-ui),
+      var(--color-live) 7%
+    );
+    filter: brightness(0.985);
+    transition-duration: 90ms;
+  }
+
+  /* A restrained phosphor patch passes through file rows without moving them. */
+  .lumon-panel {
+    background-image: linear-gradient(
+      100deg,
+      transparent 0%,
+      transparent 42%,
+      color-mix(in srgb, var(--color-live), transparent 94%) 50%,
+      transparent 58%,
+      transparent 100%
+    );
+    background-size: 280% 100%;
+    background-position: 120% 0;
+    transition:
+      background-color 320ms var(--ease-lumon),
+      background-position 720ms var(--ease-lumon),
+      border-color 320ms var(--ease-lumon),
+      filter 320ms var(--ease-lumon);
+  }
+  .lumon-panel:hover {
+    background-position: -20% 0;
+    border-color: color-mix(in srgb, var(--color-live), transparent 70%);
+    filter: brightness(1.012);
   }
 
   /* Faint CRT scanline sweep for terminal surfaces (nav / overlay). */
@@ -400,34 +460,340 @@
         0deg,
         transparent 0,
         transparent 11px,
-        color-mix(in srgb, var(--color-live-glow), transparent 94%) 11px,
-        color-mix(in srgb, var(--color-live-glow), transparent 94%) 12px
+        color-mix(in srgb, var(--color-live-glow), transparent 90%) 11px,
+        color-mix(in srgb, var(--color-live-glow), transparent 90%) 12px
       );
     opacity: 0.55;
     animation: terminal-rain 14s linear infinite;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 100%);
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 18%,
+      black 82%,
+      transparent 100%
+    );
+  }
+
+  /* The phosphor register lines need stronger ink against bone in light mode. */
+  :root:not(.dark) .epos-terminal-well {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 11px,
+      color-mix(in srgb, var(--color-phosphor-deep), transparent 85%) 11px,
+      color-mix(in srgb, var(--color-phosphor-deep), transparent 85%) 12px
+    );
+    opacity: 0.7;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  /* ---- EPOS ASCII seal (borderless, 60fps-driven via CSS vars) ---- */
+  .epos-ascii {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
   .epos-ascii-pre {
-    font-size: 9px;
-    text-shadow: 0 0 6px color-mix(in srgb, var(--color-live-glow), transparent 55%);
+    position: relative;
+    z-index: 1;
+    font-size: 10.5px;
+    /* Light mode: deep saturated phosphor — must read clearly on bone. */
+    color: #145a34;
+    opacity: var(--ascii-glow, 0.9);
+    text-shadow:
+      0 0 1px color-mix(in srgb, #145a34, transparent 35%),
+      0 0 calc(8px + var(--ascii-bloom, 0) * 10px)
+        color-mix(in srgb, var(--color-phosphor), transparent calc(40% - var(--ascii-bloom, 0) * 25%));
+    will-change: opacity, text-shadow;
+  }
+  :root.dark .epos-ascii-pre {
+    color: #b6e6c6;
+    text-shadow:
+      0 0 2px color-mix(in srgb, var(--color-phosphor-bright), transparent 25%),
+      0 0 calc(10px + var(--ascii-bloom, 0) * 12px)
+        color-mix(
+          in srgb,
+          var(--color-phosphor-bright),
+          transparent calc(35% - var(--ascii-bloom, 0) * 20%)
+        );
   }
 
-  .epos-ascii-scan {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 28%;
-    background: linear-gradient(
+}
+
+/* MDR binary matrix — an opaque department handoff, then the file opens. */
+.binary-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--color-background);
+  animation: binary-curtain 1.65s var(--ease-lumon) forwards;
+}
+
+.mdr-transition-header {
+  position: absolute;
+  top: 4.5%;
+  left: 4.5%;
+  right: 4.5%;
+  display: grid;
+  grid-template-columns: auto minmax(7rem, 18rem) auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  color: var(--color-live);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  opacity: 0;
+  animation: mdr-interface-in 1.45s var(--ease-lumon-out) 70ms both;
+}
+
+.mdr-transition-progress {
+  height: 5px;
+  border: 1px solid color-mix(in srgb, var(--color-live), transparent 35%);
+  padding: 1px;
+}
+
+.mdr-transition-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-live);
+  box-shadow: 0 0 7px
+    color-mix(in srgb, var(--color-live-glow), transparent 48%);
+  transform-origin: left;
+  animation: mdr-progress 1.1s var(--ease-lumon-out) 140ms both;
+}
+
+.mdr-transition-field {
+  position: absolute;
+  inset: 13% 3.5% 19%;
+  display: grid;
+  grid-template-columns: repeat(22, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  place-items: center;
+}
+
+.mdr-transition-digit {
+  color: var(--color-live);
+  font-size: clamp(10px, 1.35vw, 16px);
+  line-height: 1;
+  opacity: 0;
+  text-shadow: 0 0 8px
+    color-mix(in srgb, var(--color-live-glow), transparent 48%);
+  animation: mdr-digit 1.32s var(--ease-lumon-out) var(--mdr-delay) both;
+  will-change: transform, opacity, filter;
+}
+
+.mdr-transition-digit.is-refining {
+  color: color-mix(in srgb, var(--color-live), var(--color-text) 12%);
+  text-shadow:
+    0 0 2px var(--color-live),
+    0 0 12px color-mix(in srgb, var(--color-live-glow), transparent 28%);
+}
+
+.mdr-transition-cursor {
+  position: absolute;
+  left: var(--mdr-cursor-x);
+  top: var(--mdr-cursor-y);
+  width: 15%;
+  height: 28%;
+  border: 1px solid color-mix(in srgb, var(--color-live), transparent 20%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-live), transparent 72%),
+    0 0 12px color-mix(in srgb, var(--color-live-glow), transparent 64%);
+  opacity: 0;
+  animation: mdr-cursor 1.28s var(--ease-lumon-out) 170ms both;
+}
+
+.mdr-transition-footer {
+  position: absolute;
+  left: 4.5%;
+  right: 4.5%;
+  bottom: 4.5%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 1.5rem;
+  color: var(--color-live);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  opacity: 0;
+  animation: mdr-interface-in 1.4s var(--ease-lumon-out) 120ms both;
+}
+
+.mdr-transition-coordinates:last-child {
+  text-align: end;
+}
+
+.mdr-transition-bins {
+  display: flex;
+  align-items: end;
+  gap: clamp(0.35rem, 1.1vw, 0.8rem);
+}
+
+.mdr-transition-bin {
+  position: relative;
+  width: clamp(1.75rem, 4.2vw, 3.1rem);
+  height: 2.2rem;
+  border: 1px solid color-mix(in srgb, var(--color-live), transparent 38%);
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding-top: 0.2rem;
+  overflow: hidden;
+}
+
+.mdr-transition-bin i {
+  position: absolute;
+  inset-inline: 2px;
+  bottom: 2px;
+  display: block;
+  background: color-mix(in srgb, var(--color-live), transparent 62%);
+}
+
+.binary-transition::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 38%,
+      color-mix(in srgb, var(--color-background), transparent 36%) 100%
+    ),
+    repeating-linear-gradient(
       to bottom,
-      transparent,
-      color-mix(in srgb, var(--color-live-glow), transparent 82%),
-      transparent
+      transparent 0,
+      transparent 3px,
+      color-mix(in srgb, var(--color-live), transparent 96%) 3px,
+      color-mix(in srgb, var(--color-live), transparent 96%) 4px
     );
-    animation: ascii-scan 4.8s ease-in-out infinite;
-    pointer-events: none;
-    mix-blend-mode: soft-light;
+}
+
+@keyframes binary-curtain {
+  0%,
+  99.5% {
+    opacity: 1;
   }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes mdr-digit {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+    filter: blur(1px);
+  }
+  24% {
+    opacity: 0.78;
+    filter: blur(0);
+  }
+  58% {
+    opacity: 1;
+    transform: scale(var(--mdr-scale));
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(var(--mdr-scale));
+    filter: blur(0.4px);
+  }
+}
+
+@keyframes mdr-interface-in {
+  0% {
+    opacity: 0;
+  }
+  22%,
+  76% {
+    opacity: 0.82;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes mdr-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes mdr-cursor {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -32%) scale(0.65);
+  }
+  30% {
+    opacity: 0.72;
+  }
+  68% {
+    opacity: 0.86;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-46%, -54%) scale(0.98);
+  }
+}
+
+/* Controls outside the shared button primitive only crossfade. No lifting,
+   scaling, edge bars, or other movement that makes the interface feel cheap. */
+:is(
+  button,
+  a,
+  [role="button"],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"]
+):not(.lumon-press) {
+  transition:
+    filter 320ms var(--ease-lumon),
+    border-color 320ms var(--ease-lumon),
+    background-color 320ms var(--ease-lumon),
+    color 320ms var(--ease-lumon),
+    opacity 320ms var(--ease-lumon);
+}
+
+:is(
+  button,
+  a,
+  [role="button"],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"]
+):not(.lumon-press):hover:not(:disabled) {
+  filter: brightness(1.018);
+}
+
+:is(
+  button,
+  a,
+  [role="button"],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"]
+):not(.lumon-press):active:not(:disabled) {
+  filter: brightness(0.975);
+  transition-duration: 90ms;
 }
 
 @keyframes terminal-rain {
@@ -436,24 +802,6 @@
   }
   to {
     background-position: 0 120px;
-  }
-}
-
-@keyframes ascii-scan {
-  0%,
-  100% {
-    top: -10%;
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.7;
-  }
-  50% {
-    top: 70%;
-    opacity: 0.5;
-  }
-  85% {
-    opacity: 0.7;
   }
 }
 
