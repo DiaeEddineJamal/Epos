@@ -112,6 +112,8 @@ pub enum OverlayPosition {
     None,
     Top,
     Bottom,
+    Left,
+    Right,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
@@ -431,10 +433,48 @@ pub struct AppSettings {
     pub whisper_gpu_device: i32,
     #[serde(default)]
     pub extra_recording_buffer_ms: u64,
+    /// Display name for the dashboard greeting. Defaults to the OS username.
+    #[serde(default = "default_user_name")]
+    pub user_name: String,
+    /// Keep the flow bar (recording overlay) visible in its idle state.
+    #[serde(default)]
+    pub show_flowbar_always: bool,
+    #[serde(default = "default_true")]
+    pub notifications_suggestions: bool,
+    #[serde(default = "default_true")]
+    pub notifications_announcements: bool,
+    #[serde(default = "default_true")]
+    pub notifications_milestones: bool,
+    /// Learn new words from manual transcript corrections.
+    #[serde(default)]
+    pub auto_add_to_dictionary: bool,
+    /// Show a "Dictating with Epos" attribution label on the flow bar.
+    #[serde(default)]
+    pub creator_mode: bool,
+    /// Scratchpad open behavior: true = resume last note, false = new note.
+    #[serde(default = "default_true")]
+    pub scratchpad_resume_last: bool,
 }
 
 fn default_model() -> String {
     "".to_string()
+}
+
+fn default_true() -> bool {
+    true
+}
+
+/// Best-effort friendly default for the dashboard greeting: the OS username
+/// with its first letter capitalized. Empty string if unavailable.
+fn default_user_name() -> String {
+    let raw = std::env::var("USERNAME")
+        .or_else(|_| std::env::var("USER"))
+        .unwrap_or_default();
+    let mut chars = raw.trim().chars();
+    match chars.next() {
+        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+        None => String::new(),
+    }
 }
 
 fn default_always_on_microphone() -> bool {
@@ -489,7 +529,9 @@ fn default_auto_submit() -> bool {
 }
 
 fn default_history_limit() -> usize {
-    5
+    // Roomy default so the dashboard activity feed stays useful; unsaved
+    // entries beyond this are still cleaned up per retention settings.
+    100
 }
 
 fn default_recording_retention_period() -> RecordingRetentionPeriod {
@@ -817,6 +859,14 @@ pub fn get_default_settings() -> AppSettings {
         ort_accelerator: OrtAcceleratorSetting::default(),
         whisper_gpu_device: default_whisper_gpu_device(),
         extra_recording_buffer_ms: 0,
+        user_name: default_user_name(),
+        show_flowbar_always: false,
+        notifications_suggestions: true,
+        notifications_announcements: true,
+        notifications_milestones: true,
+        auto_add_to_dictionary: false,
+        creator_mode: false,
+        scratchpad_resume_last: true,
     }
 }
 
@@ -887,7 +937,16 @@ pub fn load_or_create_app_settings(app: &AppHandle) -> AppSettings {
         default_settings
     };
 
-    if ensure_post_process_defaults(&mut settings) {
+    let mut settings_changed = ensure_post_process_defaults(&mut settings);
+    if !matches!(
+        settings.overlay_position,
+        OverlayPosition::Top | OverlayPosition::Bottom
+    ) {
+        settings.overlay_position = OverlayPosition::Bottom;
+        settings_changed = true;
+    }
+
+    if settings_changed {
         store.set("settings", serde_json::to_value(&settings).unwrap());
     }
 
@@ -918,11 +977,17 @@ pub fn get_settings(app: &AppHandle) -> AppSettings {
     settings
 }
 
-pub fn write_settings(app: &AppHandle, settings: AppSettings) {
+pub fn write_settings(app: &AppHandle, mut settings: AppSettings) {
     let store = app
         .store(crate::portable::store_path(SETTINGS_STORE_PATH))
         .expect("Failed to initialize store");
 
+    if !matches!(
+        settings.overlay_position,
+        OverlayPosition::Top | OverlayPosition::Bottom
+    ) {
+        settings.overlay_position = OverlayPosition::Bottom;
+    }
     store.set("settings", serde_json::to_value(&settings).unwrap());
 }
 

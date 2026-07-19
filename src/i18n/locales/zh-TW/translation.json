@@ -15,7 +15,51 @@
     "postProcessing": "後處理",
     "history": "歷史紀錄",
     "debug": "偵錯",
-    "about": "關於"
+    "about": "關於",
+    "directory": "目錄",
+    "online": "線上",
+    "floorPlate": "區域 · 聽寫",
+    "file": "檔案",
+    "refinement": "最佳化",
+    "division": "聽寫部門",
+    "build": "版本",
+    "collapse": "收合目錄",
+    "expand": "展開目錄",
+    "home": "首頁",
+    "system": "系統",
+    "scratchpad": "速記本",
+    "workspace": "工作區",
+    "welcome": "歡迎"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "首先，請選擇一種模型",
@@ -117,7 +161,23 @@
         "checkFailed": "檢查權限失敗，請重試",
         "requestFailed": "請求權限失敗，請重試"
       }
-    }
+    },
+    "induction": "入門",
+    "online": "線上",
+    "stepIndicator": "第 {{current}} / {{total}} 步",
+    "recommendedModels": "推薦引擎",
+    "otherModels": "所有引擎",
+    "beginRefinement": "開始",
+    "permissionsStep": {
+      "title": "授權",
+      "subtitle": "授予 Epos 處理你語音所需的存取權限。"
+    },
+    "modelStep": {
+      "title": "轉錄引擎",
+      "subtitle": "選擇要安裝的轉錄模型。你可以稍後變更。"
+    },
+    "install": "安裝",
+    "installing": "安裝中"
   },
   "modelSelector": {
     "custom": "自訂",
@@ -288,7 +348,9 @@
         "options": {
           "none": "無",
           "bottom": "底部",
-          "top": "頂部"
+          "top": "頂部",
+          "left": "左邊緣",
+          "right": "右邊緣"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos 使用 Whisper.cpp 進行快速的本機語音轉文字處理。感謝 Georgi Gerganov 和貢獻者們的傑出工作"
         }
       }
+    },
+    "appearance": {
+      "title": "外觀",
+      "theme": {
+        "label": "主題",
+        "description": "為 Epos 選擇淺色或深色外觀，或跟隨系統設定。",
+        "light": "淺色",
+        "dark": "深色",
+        "system": "系統"
+      }
+    },
+    "system": {
+      "title": "系統",
+      "groups": {
+        "app": "應用程式設定",
+        "sound": "聲音",
+        "notifications": "通知",
+        "scratchpad": "速記本",
+        "extras": "額外功能"
+      },
+      "userName": {
+        "label": "你的名字",
+        "description": "顯示在主畫面的歡迎問候中。",
+        "placeholder": "輸入你的名字"
+      },
+      "flowbarAlways": {
+        "label": "一律顯示 Flow Bar",
+        "description": "即使沒有在聽寫時也讓 Flow Bar 留在畫面上。"
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "建議",
+          "description": "關於設定或更妥善使用 Epos 的提示。"
+        },
+        "announcements": {
+          "label": "公告",
+          "description": "新功能或新能力。"
+        },
+        "milestones": {
+          "label": "里程碑",
+          "description": "字數里程碑、連續天數與成就。"
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "速記本開啟行為",
+        "description": "開啟速記本時顯示的內容。",
+        "options": {
+          "resumeLast": "繼續上一則筆記",
+          "newNote": "開始新筆記"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "自動加入字典",
+        "description": "自動從你手動修改的轉錄中學習詞語。"
+      },
+      "creatorMode": {
+        "label": "創作者模式",
+        "description": "聽寫時在 Flow Bar 上顯示「使用 Epos 聽寫中」。"
+      },
+      "addedToDictionary_one": "已將「{{words}}」加入你的字典",
+      "addedToDictionary_other": "已將 {{count}} 個詞加入你的字典"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "有可用更新: {{version}}",
     "updateAvailableShort": "有可用更新",
     "upToDate": "已是最新版本",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "下載更新",
     "restart": "重新啟動",
     "updateCheckingDisabled": "更新檢查已停用",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "正在轉錄...",
-    "processing": "處理中..."
+    "processing": "處理中...",
+    "dictate": "聽寫",
+    "dictating": "使用 Epos 聽寫中",
+    "tooltip": "按 {{shortcut}} 開始聽寫",
+    "tooltipNoShortcut": "點擊開始聽寫",
+    "cancel": "取消",
+    "scratchpad": "開啟速記本",
+    "idle": "就緒"
+  },
+  "home": {
+    "greeting": "歡迎回來，{{name}}",
+    "greetingNoName": "歡迎回來",
+    "subtitle": "你的聽寫工作區",
+    "stats": {
+      "totalWords": "總字數",
+      "wpm": "字/分",
+      "dayStreak": "天連續",
+      "dayStreak_one": "天連續",
+      "dayStreak_other": "天連續",
+      "today": "今天",
+      "todayWords": "今日字數",
+      "dictations": "聽寫次數",
+      "avgPace": "平均速度",
+      "bestStreak": "最佳連續",
+      "minutes": "分鐘",
+      "timeSaved": "聽寫時長"
+    },
+    "voiceProfile": {
+      "title": "語音檔案",
+      "subtitle": "情境校準器",
+      "hint": "聽寫會適應你的說話方式。",
+      "toNext": "距「{{tier}}」還有 {{countFmt}} 個字",
+      "maxed": "已達最高等級 — 非凡。",
+      "tiers": {
+        "firstWords": "初語",
+        "cadet": "語音學員",
+        "fluent": "流利表達者",
+        "wordsmith": "文字巧匠",
+        "orator": "演說家",
+        "adept": "語音能手",
+        "master": "聽寫大師",
+        "silverTongue": "銀舌",
+        "luminary": "語音巨擘"
+      }
+    },
+    "nextMilestone": "距下一個里程碑還有 {{count}} 個字",
+    "milestoneReached": "已達成所有里程碑 — 非凡。",
+    "activity": {
+      "title": "近期活動",
+      "search": "搜尋轉錄",
+      "searchClear": "清除搜尋",
+      "empty": "還沒有聽寫。按下你的快速鍵開始吧。",
+      "emptySearch": "沒有符合搜尋的轉錄。",
+      "loading": "正在載入活動...",
+      "today": "今天",
+      "yesterday": "昨天",
+      "copy": "複製到剪貼簿",
+      "copied": "已複製",
+      "flag": "標記",
+      "unflag": "取消標記",
+      "menu": "更多操作",
+      "delete": "刪除",
+      "edit": "編輯文字",
+      "retry": "重新轉錄",
+      "save": "儲存",
+      "cancel": "取消",
+      "editPlaceholder": "編輯轉錄",
+      "words": "{{count}} 個字",
+      "empty_word": "空",
+      "editError": "無法儲存你的編輯"
+    },
+    "banner": {
+      "getStarted": "開始使用",
+      "dismiss": "關閉",
+      "items": {
+        "dictateAnywhere": {
+          "title": "隨處聽寫",
+          "body": "在任何應用程式中按 {{shortcut}}，即可將語音變成文字。"
+        },
+        "flowBar": {
+          "title": "移動 Flow Bar",
+          "body": "在系統設定中將 Flow Bar 停靠到畫面的任一邊緣。"
+        },
+        "postProcess": {
+          "title": "邊說邊整理",
+          "body": "啟用 AI 後處理，自動移除口頭贅詞。"
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "達成里程碑",
+      "body": "你已用 Epos 聽寫了 {{count}} 個字。"
+    },
+    "streak": {
+      "title": "{{count}} 天連續",
+      "body": "你已連續聽寫 {{count}} 天。繼續保持。"
+    }
+  },
+  "scratchpad": {
+    "title": "速記本",
+    "subtitle": "一個安靜的聽寫與起草之處",
+    "notes": "筆記",
+    "newNote": "新增筆記",
+    "deleteNote": "刪除筆記",
+    "untitled": "無標題筆記",
+    "titlePlaceholder": "標題",
+    "contentPlaceholder": "開始輸入，或按下快速鍵聽寫...",
+    "empty": "還沒有筆記。",
+    "emptyEditor": "選擇一則筆記或新增一則。",
+    "saved": "已儲存",
+    "saving": "正在儲存...",
+    "words": "{{count}} 個字",
+    "deleteConfirm": "刪除這則筆記？",
+    "copy": "複製筆記",
+    "copied": "已複製"
+  },
+  "splash": {
+    "division": "聽寫部門",
+    "tagline": "語音，臻於精煉。",
+    "booting": "正在初始化終端機",
+    "ready": "就緒"
   }
 }

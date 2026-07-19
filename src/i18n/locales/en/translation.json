@@ -24,7 +24,42 @@
     "division": "Dictation Division",
     "build": "Build",
     "collapse": "Collapse directory",
-    "expand": "Expand directory"
+    "expand": "Expand directory",
+    "home": "Home",
+    "system": "System",
+    "scratchpad": "Scratchpad",
+    "workspace": "Workspace",
+    "welcome": "Welcome"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "To get started, choose a transcription model",
@@ -126,7 +161,23 @@
         "checkFailed": "Failed to check permissions. Please try again.",
         "requestFailed": "Failed to request permission. Please try again."
       }
-    }
+    },
+    "induction": "Induction",
+    "online": "Online",
+    "stepIndicator": "Step {{current}} / {{total}}",
+    "recommendedModels": "Recommended engines",
+    "otherModels": "All engines",
+    "beginRefinement": "Begin",
+    "permissionsStep": {
+      "title": "Clearance",
+      "subtitle": "Grant Epos the access it needs to refine your speech."
+    },
+    "modelStep": {
+      "title": "Refinement Engine",
+      "subtitle": "Choose a transcription model to install. You can change it later."
+    },
+    "install": "Install",
+    "installing": "Installing"
   },
   "modelSelector": {
     "custom": "Custom",
@@ -307,7 +358,9 @@
         "options": {
           "none": "None",
           "bottom": "Bottom",
-          "top": "Top"
+          "top": "Top",
+          "left": "Left edge",
+          "right": "Right edge"
         }
       },
       "pasteMethod": {
@@ -556,6 +609,57 @@
           "details": "Epos uses Whisper.cpp for fast, local speech-to-text processing. Thanks to the amazing work by Georgi Gerganov and contributors."
         }
       }
+    },
+    "system": {
+      "title": "System",
+      "groups": {
+        "app": "App settings",
+        "sound": "Sound",
+        "notifications": "Notifications",
+        "scratchpad": "Scratchpad",
+        "extras": "Extras"
+      },
+      "userName": {
+        "label": "Your name",
+        "description": "Shown in the welcome greeting on your home screen.",
+        "placeholder": "Enter your name"
+      },
+      "flowbarAlways": {
+        "label": "Show Flow Bar at all times",
+        "description": "Keep a thin Flow Bar line above the taskbar even when you're not dictating."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Suggestions",
+          "description": "Tips about getting set up or improving how you use Epos."
+        },
+        "announcements": {
+          "label": "Announcements",
+          "description": "New features or capabilities."
+        },
+        "milestones": {
+          "label": "Milestones",
+          "description": "Word-count milestones, streaks, and achievements."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Scratchpad open behavior",
+        "description": "What the scratchpad shows when you open it.",
+        "options": {
+          "resumeLast": "Resume last note",
+          "newNote": "Start a new note"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Auto-add to dictionary",
+        "description": "Learn words from your manual transcript corrections automatically."
+      },
+      "creatorMode": {
+        "label": "Creator mode",
+        "description": "Show “Dictating with Epos” on the Flow Bar while dictating."
+      },
+      "addedToDictionary_one": "Added \"{{words}}\" to your dictionary",
+      "addedToDictionary_other": "Added {{count}} words to your dictionary"
     }
   },
   "footer": {
@@ -564,6 +668,7 @@
     "updateAvailable": "Update available: {{version}}",
     "updateAvailableShort": "Update available",
     "upToDate": "Up to date",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Download Update",
     "restart": "Restart",
     "updateCheckingDisabled": "Update Checking Disabled",
@@ -626,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Transcribing...",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "dictate": "Dictate",
+    "dictating": "Dictating with Epos",
+    "tooltip": "Press {{shortcut}} to dictate",
+    "tooltipNoShortcut": "Click to dictate",
+    "cancel": "Cancel",
+    "scratchpad": "Open scratchpad",
+    "idle": "Ready"
+  },
+  "home": {
+    "greeting": "Welcome back, {{name}}",
+    "greetingNoName": "Welcome back",
+    "subtitle": "Your dictation workspace",
+    "stats": {
+      "totalWords": "total words",
+      "wpm": "wpm",
+      "dayStreak": "day streak",
+      "dayStreak_one": "day streak",
+      "dayStreak_other": "day streak",
+      "today": "today",
+      "todayWords": "words today",
+      "dictations": "dictations",
+      "avgPace": "avg pace",
+      "bestStreak": "best streak",
+      "minutes": "minutes",
+      "timeSaved": "time dictated"
+    },
+    "voiceProfile": {
+      "title": "Voice Profile",
+      "subtitle": "Context Aligner",
+      "hint": "Your dictation adapts to how you speak.",
+      "toNext": "{{countFmt}} words to {{tier}}",
+      "maxed": "Top profile reached — remarkable.",
+      "tiers": {
+        "firstWords": "First Words",
+        "cadet": "Voice Cadet",
+        "fluent": "Fluent Speaker",
+        "wordsmith": "Wordsmith",
+        "orator": "Orator",
+        "adept": "Voice Adept",
+        "master": "Dictation Master",
+        "silverTongue": "Silver Tongue",
+        "luminary": "Voice Luminary"
+      }
+    },
+    "nextMilestone": "{{count}} words to your next milestone",
+    "milestoneReached": "All milestones reached — remarkable.",
+    "activity": {
+      "title": "Recent activity",
+      "search": "Search transcriptions",
+      "searchClear": "Clear search",
+      "empty": "No dictations yet. Press your shortcut to start.",
+      "emptySearch": "No transcriptions match your search.",
+      "loading": "Loading activity...",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "copy": "Copy to clipboard",
+      "copied": "Copied",
+      "flag": "Flag",
+      "unflag": "Remove flag",
+      "menu": "More actions",
+      "delete": "Delete",
+      "edit": "Edit text",
+      "retry": "Re-transcribe",
+      "save": "Save",
+      "cancel": "Cancel",
+      "editPlaceholder": "Edit transcription",
+      "words": "{{count}} words",
+      "empty_word": "empty",
+      "editError": "Could not save your edit"
+    },
+    "banner": {
+      "getStarted": "Get started",
+      "dismiss": "Dismiss",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Dictate anywhere",
+          "body": "Press {{shortcut}} in any app to turn your voice into text."
+        },
+        "flowBar": {
+          "title": "Move the Flow Bar",
+          "body": "Dock the Flow Bar to any edge of your screen from System settings."
+        },
+        "postProcess": {
+          "title": "Clean up as you speak",
+          "body": "Enable AI post-processing to remove filler words automatically."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Milestone reached",
+      "body": "You've dictated {{count}} words with Epos."
+    },
+    "streak": {
+      "title": "{{count}}-day streak",
+      "body": "You've dictated {{count}} days in a row. Keep it going."
+    }
+  },
+  "scratchpad": {
+    "title": "Scratchpad",
+    "subtitle": "A quiet place to dictate and draft",
+    "notes": "Notes",
+    "newNote": "New note",
+    "deleteNote": "Delete note",
+    "untitled": "Untitled note",
+    "titlePlaceholder": "Title",
+    "contentPlaceholder": "Start typing, or press your shortcut to dictate...",
+    "empty": "No notes yet.",
+    "emptyEditor": "Select a note or create a new one.",
+    "saved": "Saved",
+    "saving": "Saving...",
+    "words": "{{count}} words",
+    "deleteConfirm": "Delete this note?",
+    "copy": "Copy note",
+    "copied": "Copied"
+  },
+  "splash": {
+    "division": "Dictation Division",
+    "tagline": "Speech, refined.",
+    "booting": "Initializing terminal",
+    "ready": "Ready"
   }
 }

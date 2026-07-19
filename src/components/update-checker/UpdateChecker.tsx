@@ -12,14 +12,28 @@ interface UpdateCheckerProps {
   className?: string;
 }
 
+function formatUpdateError(error: unknown): string {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+  if (typeof error === "string" && error.trim()) {
+    return error;
+  }
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return "Unknown update error";
+  }
+}
+
 const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
   const { t } = useTranslation();
-  // Update checking state
   const [isChecking, setIsChecking] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showUpToDate, setShowUpToDate] = useState(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
   const [showPortableUpdateDialog, setShowPortableUpdateDialog] =
     useState(false);
 
@@ -28,27 +42,35 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
   const updateChecksEnabled = settings?.update_checks_enabled ?? false;
 
   const upToDateTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const isManualCheckRef = useRef(false);
+  const isCheckingRef = useRef(false);
+  const updateChecksEnabledRef = useRef(updateChecksEnabled);
   const downloadedBytesRef = useRef(0);
   const contentLengthRef = useRef(0);
 
+  updateChecksEnabledRef.current = updateChecksEnabled;
+
   useEffect(() => {
-    // Wait for settings to load before doing anything
     if (!settingsLoaded) return;
 
     if (!updateChecksEnabled) {
       if (upToDateTimeoutRef.current) {
         clearTimeout(upToDateTimeoutRef.current);
       }
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
       setIsChecking(false);
+      isCheckingRef.current = false;
       setUpdateAvailable(false);
       setShowUpToDate(false);
+      setCheckError(null);
       return;
     }
 
-    checkForUpdates();
+    void checkForUpdates();
 
-    // Listen for update check events
     const updateUnlisten = listen("check-for-updates", () => {
       handleManualUpdateCheck();
     });
@@ -57,21 +79,38 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
       if (upToDateTimeoutRef.current) {
         clearTimeout(upToDateTimeoutRef.current);
       }
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
       updateUnlisten.then((fn) => fn());
     };
   }, [settingsLoaded, updateChecksEnabled]);
 
-  // Update checking functions
+  const showTransientError = (message: string) => {
+    setCheckError(message);
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+    }
+    errorTimeoutRef.current = setTimeout(() => {
+      setCheckError(null);
+    }, 5000);
+  };
+
   const checkForUpdates = async () => {
-    if (!updateChecksEnabled || isChecking) return;
+    if (!updateChecksEnabledRef.current || isCheckingRef.current) return;
 
     try {
+      isCheckingRef.current = true;
       setIsChecking(true);
+      setCheckError(null);
+      setShowUpToDate(false);
+
       const update = await check();
 
       if (update) {
         setUpdateAvailable(true);
         setShowUpToDate(false);
+        setCheckError(null);
       } else {
         setUpdateAvailable(false);
 
@@ -87,20 +126,26 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
       }
     } catch (error) {
       console.error("Failed to check for updates:", error);
+      setUpdateAvailable(false);
+      setShowUpToDate(false);
+      if (isManualCheckRef.current) {
+        showTransientError(formatUpdateError(error));
+      }
     } finally {
+      isCheckingRef.current = false;
       setIsChecking(false);
       isManualCheckRef.current = false;
     }
   };
 
   const handleManualUpdateCheck = () => {
-    if (!updateChecksEnabled) return;
+    if (!updateChecksEnabledRef.current) return;
     isManualCheckRef.current = true;
-    checkForUpdates();
+    void checkForUpdates();
   };
 
   const installUpdate = async () => {
-    if (!updateChecksEnabled) return;
+    if (!updateChecksEnabledRef.current) return;
 
     const portable = await commands.isPortable();
     if (portable) {
@@ -113,10 +158,12 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
       setDownloadProgress(0);
       downloadedBytesRef.current = 0;
       contentLengthRef.current = 0;
+      setCheckError(null);
       const update = await check();
 
       if (!update) {
         console.log("No update available during install attempt");
+        showTransientError(t("footer.upToDate"));
         return;
       }
 
@@ -137,11 +184,14 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
                 : 0;
             setDownloadProgress(Math.min(progress, 100));
             break;
+          case "Finished":
+            break;
         }
       });
       await relaunch();
     } catch (error) {
       console.error("Failed to install update:", error);
+      showTransientError(formatUpdateError(error));
     } finally {
       setIsInstalling(false);
       setDownloadProgress(0);
@@ -150,7 +200,6 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
     }
   };
 
-  // Update status functions
   const getUpdateStatusText = () => {
     if (!updateChecksEnabled) {
       return t("footer.updateCheckingDisabled");
@@ -165,6 +214,7 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
           : t("footer.preparing");
     }
     if (isChecking) return t("footer.checkingUpdates");
+    if (checkError) return t("footer.updateCheckFailed");
     if (showUpToDate) return t("footer.upToDate");
     if (updateAvailable) return t("footer.updateAvailableShort");
     return t("footer.checkForUpdates");
@@ -180,7 +230,8 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
 
   const isUpdateDisabled = !updateChecksEnabled || isChecking || isInstalling;
   const isUpdateClickable =
-    !isUpdateDisabled && (updateAvailable || (!isChecking && !showUpToDate));
+    !isUpdateDisabled &&
+    (updateAvailable || (!isChecking && !showUpToDate && !checkError));
 
   return (
     <>
@@ -203,7 +254,9 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
               <button
                 className="px-3 py-1.5 text-sm rounded bg-logo-primary text-white hover:bg-logo-primary/80 transition-colors"
                 onClick={() => {
-                  openUrl("https://github.com/DiaeEddineJamal/Epos/releases/latest");
+                  openUrl(
+                    "https://github.com/DiaeEddineJamal/Epos/releases/latest",
+                  );
                   setShowPortableUpdateDialog(false);
                 }}
               >
@@ -218,6 +271,7 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
           <button
             onClick={getUpdateStatusAction()}
             disabled={isUpdateDisabled}
+            title={checkError ?? undefined}
             className={`transition-colors disabled:opacity-50 tabular-nums ${
               updateAvailable
                 ? "text-logo-primary hover:text-logo-primary/80 font-medium"
@@ -227,7 +281,10 @@ const UpdateChecker: React.FC<UpdateCheckerProps> = ({ className = "" }) => {
             {getUpdateStatusText()}
           </button>
         ) : (
-          <span className="text-text/60 tabular-nums">
+          <span
+            className="text-text/60 tabular-nums"
+            title={checkError ?? undefined}
+          >
             {getUpdateStatusText()}
           </span>
         )}

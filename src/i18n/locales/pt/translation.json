@@ -15,7 +15,51 @@
     "postProcessing": "Pós-Processamento",
     "history": "Histórico",
     "debug": "Depuração",
-    "about": "Sobre"
+    "about": "Sobre",
+    "directory": "Diretório",
+    "online": "Online",
+    "floorPlate": "Setor · Ditado",
+    "file": "Arquivo",
+    "refinement": "Refinamento",
+    "division": "Divisão de Ditado",
+    "build": "Versão",
+    "collapse": "Recolher diretório",
+    "expand": "Expandir diretório",
+    "home": "Início",
+    "system": "Sistema",
+    "scratchpad": "Bloco de notas",
+    "workspace": "Espaço de trabalho",
+    "welcome": "Bem-vindo"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "Para começar, escolha um modelo de transcrição",
@@ -117,7 +161,23 @@
         "checkFailed": "Erro ao verificar permissões. Por favor, tente novamente.",
         "requestFailed": "Erro ao solicitar permissão. Por favor, tente novamente."
       }
-    }
+    },
+    "induction": "Integração",
+    "online": "Online",
+    "stepIndicator": "Etapa {{current}} / {{total}}",
+    "recommendedModels": "Motores recomendados",
+    "otherModels": "Todos os motores",
+    "beginRefinement": "Começar",
+    "permissionsStep": {
+      "title": "Autorização",
+      "subtitle": "Conceda ao Epos o acesso de que ele precisa para refinar sua voz."
+    },
+    "modelStep": {
+      "title": "Motor de refinamento",
+      "subtitle": "Escolha um modelo de transcrição para instalar. Você pode trocá-lo depois."
+    },
+    "install": "Instalar",
+    "installing": "Instalando"
   },
   "modelSelector": {
     "custom": "Personalizado",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Nenhum",
           "bottom": "Inferior",
-          "top": "Superior"
+          "top": "Superior",
+          "left": "Borda esquerda",
+          "right": "Borda direita"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "O Epos usa Whisper.cpp para processamento rápido e local de fala para texto. Agradecemos ao incrível trabalho de Georgi Gerganov e colaboradores."
         }
       }
+    },
+    "appearance": {
+      "title": "Aparência",
+      "theme": {
+        "label": "Tema",
+        "description": "Escolha um visual claro ou escuro para o Epos, ou siga a configuração do sistema.",
+        "light": "Claro",
+        "dark": "Escuro",
+        "system": "Sistema"
+      }
+    },
+    "system": {
+      "title": "Sistema",
+      "groups": {
+        "app": "Configurações do app",
+        "sound": "Som",
+        "notifications": "Notificações",
+        "scratchpad": "Bloco de notas",
+        "extras": "Extras"
+      },
+      "userName": {
+        "label": "Seu nome",
+        "description": "Exibido na saudação de boas-vindas da sua tela inicial.",
+        "placeholder": "Digite seu nome"
+      },
+      "flowbarAlways": {
+        "label": "Mostrar a Flow Bar sempre",
+        "description": "Mantenha a Flow Bar na tela mesmo quando não estiver ditando."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Sugestões",
+          "description": "Dicas para configurar ou melhorar seu uso do Epos."
+        },
+        "announcements": {
+          "label": "Anúncios",
+          "description": "Novos recursos ou capacidades."
+        },
+        "milestones": {
+          "label": "Marcos",
+          "description": "Marcos de contagem de palavras, sequências e conquistas."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Comportamento ao abrir o bloco",
+        "description": "O que o bloco de notas mostra ao abrir.",
+        "options": {
+          "resumeLast": "Retomar a última nota",
+          "newNote": "Começar uma nova nota"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Adicionar ao dicionário automaticamente",
+        "description": "Aprende palavras das suas correções manuais de transcrição automaticamente."
+      },
+      "creatorMode": {
+        "label": "Modo criador",
+        "description": "Mostra «Ditando com Epos» na Flow Bar enquanto você dita."
+      },
+      "addedToDictionary_one": "«{{words}}» adicionado ao seu dicionário",
+      "addedToDictionary_other": "{{count}} palavras adicionadas ao seu dicionário"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Atualização disponível: {{version}}",
     "updateAvailableShort": "Atualização disponível",
     "upToDate": "Atualizado",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Baixar Atualização",
     "restart": "Reiniciar",
     "updateCheckingDisabled": "Verificação de Atualização Desabilitada",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Transcrevendo...",
-    "processing": "Processando..."
+    "processing": "Processando...",
+    "dictate": "Ditar",
+    "dictating": "Ditando com Epos",
+    "tooltip": "Pressione {{shortcut}} para ditar",
+    "tooltipNoShortcut": "Clique para ditar",
+    "cancel": "Cancelar",
+    "scratchpad": "Abrir bloco de notas",
+    "idle": "Pronto"
+  },
+  "home": {
+    "greeting": "Bem-vindo de volta, {{name}}",
+    "greetingNoName": "Bem-vindo de volta",
+    "subtitle": "Seu espaço de ditado",
+    "stats": {
+      "totalWords": "palavras no total",
+      "wpm": "ppm",
+      "dayStreak": "dias seguidos",
+      "dayStreak_one": "dia seguido",
+      "dayStreak_other": "dias seguidos",
+      "today": "hoje",
+      "todayWords": "palavras hoje",
+      "dictations": "ditados",
+      "avgPace": "ritmo médio",
+      "bestStreak": "melhor sequência",
+      "minutes": "minutos",
+      "timeSaved": "tempo ditado"
+    },
+    "voiceProfile": {
+      "title": "Perfil de voz",
+      "subtitle": "Alinhador de contexto",
+      "hint": "Seu ditado se adapta ao seu jeito de falar.",
+      "toNext": "{{countFmt}} palavras para {{tier}}",
+      "maxed": "Perfil máximo alcançado — notável.",
+      "tiers": {
+        "firstWords": "Primeiras palavras",
+        "cadet": "Cadete da voz",
+        "fluent": "Falante fluente",
+        "wordsmith": "Artesão das palavras",
+        "orator": "Orador",
+        "adept": "Adepto da voz",
+        "master": "Mestre do ditado",
+        "silverTongue": "Língua de prata",
+        "luminary": "Luminar da voz"
+      }
+    },
+    "nextMilestone": "{{count}} palavras para o seu próximo marco",
+    "milestoneReached": "Todos os marcos alcançados — notável.",
+    "activity": {
+      "title": "Atividade recente",
+      "search": "Pesquisar transcrições",
+      "searchClear": "Limpar pesquisa",
+      "empty": "Ainda não há ditados. Pressione seu atalho para começar.",
+      "emptySearch": "Nenhuma transcrição corresponde à sua pesquisa.",
+      "loading": "Carregando atividade...",
+      "today": "Hoje",
+      "yesterday": "Ontem",
+      "copy": "Copiar para a área de transferência",
+      "copied": "Copiado",
+      "flag": "Sinalizar",
+      "unflag": "Remover sinalização",
+      "menu": "Mais ações",
+      "delete": "Excluir",
+      "edit": "Editar texto",
+      "retry": "Retranscrever",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "editPlaceholder": "Editar transcrição",
+      "words": "{{count}} palavras",
+      "empty_word": "vazio",
+      "editError": "Não foi possível salvar sua edição"
+    },
+    "banner": {
+      "getStarted": "Começar",
+      "dismiss": "Dispensar",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Dite em qualquer lugar",
+          "body": "Pressione {{shortcut}} em qualquer app para transformar sua voz em texto."
+        },
+        "flowBar": {
+          "title": "Mova a Flow Bar",
+          "body": "Fixe a Flow Bar em qualquer borda da tela pelas Configurações do sistema."
+        },
+        "postProcess": {
+          "title": "Limpe enquanto fala",
+          "body": "Ative o pós-processamento com IA para remover palavras de preenchimento automaticamente."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Marco alcançado",
+      "body": "Você ditou {{count}} palavras com o Epos."
+    },
+    "streak": {
+      "title": "Sequência de {{count}} dias",
+      "body": "Você ditou {{count}} dias seguidos. Continue assim."
+    }
+  },
+  "scratchpad": {
+    "title": "Bloco de notas",
+    "subtitle": "Um lugar tranquilo para ditar e rascunhar",
+    "notes": "Notas",
+    "newNote": "Nova nota",
+    "deleteNote": "Excluir nota",
+    "untitled": "Nota sem título",
+    "titlePlaceholder": "Título",
+    "contentPlaceholder": "Comece a digitar, ou pressione seu atalho para ditar...",
+    "empty": "Ainda não há notas.",
+    "emptyEditor": "Selecione uma nota ou crie uma nova.",
+    "saved": "Salvo",
+    "saving": "Salvando...",
+    "words": "{{count}} palavras",
+    "deleteConfirm": "Excluir esta nota?",
+    "copy": "Copiar nota",
+    "copied": "Copiado"
+  },
+  "splash": {
+    "division": "Divisão de Ditado",
+    "tagline": "A fala, refinada.",
+    "booting": "Inicializando terminal",
+    "ready": "Pronto"
   }
 }

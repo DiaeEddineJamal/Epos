@@ -1,223 +1,223 @@
-import React, { useEffect, useState } from "react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import React from "react";
+import {
+  Archive,
+  AudioLines,
+  Folder,
+  FolderClock,
+  FolderOpen,
+  Home,
+  SlidersHorizontal,
+  type LucideIcon,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/useSettings";
-import { SECTIONS_CONFIG, type SidebarSection } from "./Sidebar";
 import { EposAsciiMark } from "./EposAsciiMark";
+import {
+  NAVIGATION_GROUPS,
+  SECTIONS_CONFIG,
+  departmentFor,
+  designationOf,
+  type NavigationDepartment,
+  type SidebarSection,
+} from "./navigation";
 
-interface TopNavProps {
+interface CommandDeckProps {
   activeSection: SidebarSection;
   onSectionChange: (section: SidebarSection) => void;
 }
 
-const STORAGE_KEY = "epos-sidebar-collapsed";
-
-// Stable Lumon-style "file designations" — the index is fixed to the section's
-// position in the full config, so a section keeps its number even when optional
-// sections (post-processing, debug) are hidden.
-const DESIGNATIONS = Object.keys(SECTIONS_CONFIG) as SidebarSection[];
-export const designationOf = (id: SidebarSection) =>
-  String(DESIGNATIONS.indexOf(id) + 1).padStart(2, "0");
+const DEPARTMENT_ICONS = {
+  home: Home,
+  work: FolderClock,
+  voice: AudioLines,
+  control: SlidersHorizontal,
+  archive: Archive,
+} satisfies Record<NavigationDepartment, LucideIcon>;
 
 /**
- * Lumon department directory — a collapsible vertical elevator-panel rail
- * with roomy department rows and an animated EPOS ASCII seal in the leftover
- * terminal space beneath the register.
+ * Horizontal Lumon switchboard. Five stable departments remain visible while
+ * the second register exposes every page in the active department as a
+ * hierarchical MDR-style directory panel.
  */
-export const TopNav: React.FC<TopNavProps> = ({
+export const CommandDeck: React.FC<CommandDeckProps> = ({
   activeSection,
   onSectionChange,
 }) => {
   const { t } = useTranslation();
   const { settings } = useSettings();
-  const [collapsed, setCollapsed] = useState(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
+  const activeDepartment = departmentFor(activeSection);
+  const activeGroup =
+    NAVIGATION_GROUPS.find((group) => group.id === activeDepartment) ??
+    NAVIGATION_GROUPS[0];
+  const availableInGroup = activeGroup.sections.filter((section) =>
+    SECTIONS_CONFIG[section].enabled(settings),
+  );
+  const isLeafDepartment = availableInGroup.length <= 1;
+  const activeIndex = Math.max(0, availableInGroup.indexOf(activeSection)) + 1;
+  const activeLabel = t(SECTIONS_CONFIG[activeSection].labelKey);
+  const departmentLabel = t(activeGroup.labelKey);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, collapsed ? "1" : "0");
-    } catch {
-      /* ignore quota / private mode */
-    }
-  }, [collapsed]);
-
-  const available = Object.entries(SECTIONS_CONFIG)
-    .filter(([, config]) => config.enabled(settings))
-    .map(([id, config]) => ({ id: id as SidebarSection, ...config }));
+  const selectDepartment = (department: NavigationDepartment) => {
+    const group = NAVIGATION_GROUPS.find(
+      (candidate) => candidate.id === department,
+    );
+    const destination = group?.sections.find((section) =>
+      SECTIONS_CONFIG[section].enabled(settings),
+    );
+    if (destination) onSectionChange(destination);
+  };
 
   return (
-    <nav
-      aria-label={t("sidebar.directory")}
-      data-collapsed={collapsed ? "true" : "false"}
-      className={`relative shrink-0 flex flex-col border-e hairline bg-background-ui z-20 scanlines overflow-hidden transition-[width] duration-500 ease-lumon ${
-        collapsed ? "w-[4.25rem]" : "w-[16rem]"
-      }`}
-    >
-      {/* Directory masthead */}
-      <div
-        className={`shrink-0 border-b hairline ${
-          collapsed ? "px-2 pt-3 pb-2.5" : "px-4 pt-4 pb-3"
-        }`}
+    <nav className="command-deck" aria-label={t("navigation.directory")}>
+      <button
+        type="button"
+        className="command-deck-terminal lumon-press"
+        onClick={() => onSectionChange("home")}
+        aria-label={t("sidebar.home")}
       >
-        {!collapsed ? (
-          <>
-            <div className="flex items-start justify-between gap-2 mb-1.5">
-              <p className="font-mono text-[9px] uppercase tracking-[0.28em] text-text/40">
-                {t("sidebar.directory")}
-              </p>
-              <CollapseButton
-                collapsed={collapsed}
-                onToggle={() => setCollapsed((v) => !v)}
-                label={t("sidebar.collapse")}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                aria-hidden
-                className="phosphor-lamp block h-1.5 w-1.5 rounded-[1px]"
-              />
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-live">
-                {t("sidebar.online")}
-              </span>
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center gap-2.5">
-            <span
-              aria-hidden
-              className="phosphor-lamp block h-1.5 w-1.5 rounded-[1px]"
-            />
-            <CollapseButton
-              collapsed={collapsed}
-              onToggle={() => setCollapsed((v) => !v)}
-              label={t("sidebar.expand")}
-            />
+        <EposAsciiMark className="command-deck-ascii" />
+      </button>
+
+      <div className="command-deck-main">
+        <div className="command-deck-register">
+          <div className="command-deck-status" aria-hidden>
+            <span className="phosphor-lamp" />
+            <span>{t("sidebar.online")}</span>
           </div>
-        )}
-      </div>
 
-      {/* Department list — compact rows to leave room for the seal */}
-      <div
-        className={`shrink-0 overflow-y-auto no-scrollbar ${
-          collapsed ? "py-1" : "py-1.5"
-        }`}
-      >
-        {available.map((section, index) => {
-          const Icon = section.icon;
-          const isActive = activeSection === section.id;
-          return (
-            <button
-              key={section.id}
-              type="button"
-              onClick={() => onSectionChange(section.id)}
-              aria-current={isActive ? "page" : undefined}
-              title={t(section.labelKey)}
-              style={{ animationDelay: `${index * 40}ms` }}
-              className={`lumon-press animate-rail-in group relative flex w-full items-stretch gap-0 cursor-pointer border-b hairline text-start ${
-                isActive
-                  ? "bg-background text-text"
-                  : "text-text/55 hover:text-text hover:bg-black/[0.03] dark:hover:bg-bone/[0.04]"
-              }`}
-            >
-              <span
-                aria-hidden
-                className={`absolute inset-y-0 start-0 w-[2px] transition-opacity duration-300 ${
-                  isActive
-                    ? "phosphor-lamp opacity-100"
-                    : "bg-transparent opacity-0 group-hover:opacity-40 group-hover:bg-live"
-                }`}
-              />
+          <div className="command-deck-departments">
+            {NAVIGATION_GROUPS.map((group) => {
+              const Icon = DEPARTMENT_ICONS[group.id];
+              const isActive = group.id === activeDepartment;
+              return (
+                <button
+                  type="button"
+                  key={group.id}
+                  className="command-deck-department lumon-press"
+                  data-active={isActive ? "true" : "false"}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={() => selectDepartment(group.id)}
+                >
+                  <Icon size={13} />
+                  <span>{t(group.labelKey)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-              <span
-                className={`flex shrink-0 items-center justify-center font-mono tabular-nums tracking-wider transition-colors duration-300 ${
-                  collapsed
-                    ? "w-full py-2.5 text-[12px]"
-                    : "w-11 border-e hairline py-2.5 text-[11px]"
-                } ${
-                  isActive
-                    ? "text-live bg-[color-mix(in_srgb,var(--color-live),transparent_92%)]"
-                    : "text-text/30"
-                }`}
-              >
-                {collapsed ? (
-                  <Icon
-                    size={15}
-                    strokeWidth={1.5}
-                    className={isActive ? "text-live" : "text-text/45"}
-                  />
-                ) : (
-                  designationOf(section.id)
+        <div
+          className="command-deck-directory"
+          aria-label={t("navigation.pages")}
+          data-leaf={isLeafDepartment ? "true" : "false"}
+        >
+          <div className="command-deck-directory-frame">
+            <div className="command-deck-directory-head">
+              <span className="command-deck-directory-kicker">
+                {t("navigation.directoryPanel", {
+                  defaultValue: "Directory map",
+                })}
+              </span>
+              <span className="command-deck-directory-path">
+                {departmentLabel}
+                {!isLeafDepartment && (
+                  <>
+                    <span aria-hidden>/</span>
+                    {activeLabel}
+                  </>
                 )}
               </span>
+            </div>
 
-              {!collapsed && (
-                <span className="flex min-w-0 flex-1 items-center gap-2.5 px-3 py-2.5">
-                  <Icon
-                    size={14}
-                    strokeWidth={1.5}
-                    className={`shrink-0 transition-colors duration-300 ${
-                      isActive ? "text-live" : "text-text/40"
-                    }`}
-                  />
-                  <span className="truncate text-[11px] font-medium uppercase tracking-[0.14em]">
-                    {t(section.labelKey)}
-                  </span>
+            <div className="command-deck-directory-body">
+              <div className="command-deck-tree-root" aria-hidden={false}>
+                {isLeafDepartment ? (
+                  <Folder size={13} strokeWidth={1.6} aria-hidden />
+                ) : (
+                  <FolderOpen size={13} strokeWidth={1.6} aria-hidden />
+                )}
+                <span className="command-deck-tree-root-label">
+                  {departmentLabel}
                 </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+                <span className="command-deck-tree-root-meta">
+                  {t("navigation.sector", { defaultValue: "Sector" })}
+                </span>
+              </div>
 
-      {/* Leftover terminal well — animated EPOS seal (no extra top rule;
-          the last department row already draws the separator). */}
-      {!collapsed && (
-        <div className="flex-1 min-h-[9.5rem] flex items-center justify-center relative overflow-hidden">
-          <div className="epos-terminal-well absolute inset-0" aria-hidden />
-          <div className="relative z-[1] flex items-center justify-center w-full px-3">
-            <EposAsciiMark />
+              {!isLeafDepartment && (
+                <ul className="command-deck-tree-list">
+                  {availableInGroup.map((section, index) => {
+                    const config = SECTIONS_CONFIG[section];
+                    const Icon = config.icon;
+                    const isActive = section === activeSection;
+                    const isLast = index === availableInGroup.length - 1;
+                    return (
+                      <li
+                        key={section}
+                        className="command-deck-tree-item"
+                        data-last={isLast ? "true" : "false"}
+                      >
+                        <span className="command-deck-tree-rail" aria-hidden />
+                        <button
+                          type="button"
+                          className="command-deck-destination lumon-press"
+                          data-active={isActive ? "true" : "false"}
+                          aria-current={isActive ? "page" : undefined}
+                          onClick={() => onSectionChange(section)}
+                        >
+                          <span className="command-deck-designation">
+                            {designationOf(section)}
+                          </span>
+                          <Icon size={13} strokeWidth={1.6} />
+                          <span className="command-deck-destination-label">
+                            {t(config.labelKey)}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+
+              <aside className="command-deck-directory-meta" aria-live="polite">
+                <div className="command-deck-meta-block">
+                  <span className="command-deck-meta-label">
+                    {t("sidebar.file")}
+                  </span>
+                  <span className="command-deck-meta-value text-live">
+                    {designationOf(activeSection)}
+                  </span>
+                </div>
+                <div className="command-deck-meta-block">
+                  <span className="command-deck-meta-label">
+                    {t("navigation.openFile", { defaultValue: "Open" })}
+                  </span>
+                  <span className="command-deck-meta-value">{activeLabel}</span>
+                </div>
+                <div className="command-deck-meta-block">
+                  <span className="command-deck-meta-label">
+                    {t("navigation.slot", { defaultValue: "Slot" })}
+                  </span>
+                  <span className="command-deck-meta-value tabular-nums">
+                    {String(activeIndex).padStart(2, "0")}/
+                    {String(availableInGroup.length).padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="command-deck-meta-block">
+                  <span className="command-deck-meta-label">
+                    {t("sidebar.refinement")}
+                  </span>
+                  <span className="command-deck-meta-value command-deck-meta-ready">
+                    {t("navigation.ready", { defaultValue: "Ready" })}
+                  </span>
+                </div>
+              </aside>
+            </div>
           </div>
         </div>
-      )}
-
-      {/* Floor plate */}
-      {!collapsed && (
-        <div className="shrink-0 border-t hairline px-4 py-2.5">
-          <p className="font-mono text-[8px] uppercase tracking-[0.24em] text-text/30 text-center">
-            {t("sidebar.floorPlate")}
-          </p>
-        </div>
-      )}
+      </div>
     </nav>
   );
 };
 
-interface CollapseButtonProps {
-  collapsed: boolean;
-  onToggle: () => void;
-  label: string;
-}
-
-const CollapseButton: React.FC<CollapseButtonProps> = ({
-  collapsed,
-  onToggle,
-  label,
-}) => {
-  const Icon = collapsed ? PanelLeftOpen : PanelLeftClose;
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={label}
-      title={label}
-      className="lumon-press flex h-6 w-6 items-center justify-center rounded-xs border hairline text-text/45 hover:text-text hover:bg-background transition-colors duration-300 cursor-pointer"
-    >
-      <Icon size={14} strokeWidth={1.5} />
-    </button>
-  );
-};
+export const TopNav = CommandDeck;

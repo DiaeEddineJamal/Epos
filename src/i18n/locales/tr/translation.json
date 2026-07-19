@@ -15,7 +15,51 @@
     "postProcessing": "Son İşlem",
     "history": "Geçmiş",
     "debug": "Hata Ayıklama",
-    "about": "Hakkında"
+    "about": "Hakkında",
+    "directory": "Dizin",
+    "online": "Çevrimiçi",
+    "floorPlate": "Sektör · Dikte",
+    "file": "Dosya",
+    "refinement": "İyileştirme",
+    "division": "Dikte Bölümü",
+    "build": "Sürüm",
+    "collapse": "Dizini daralt",
+    "expand": "Dizini genişlet",
+    "home": "Ana sayfa",
+    "system": "Sistem",
+    "scratchpad": "Not defteri",
+    "workspace": "Çalışma alanı",
+    "welcome": "Hoş geldiniz"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "Başlamak için bir transkripsiyon modeli seçin",
@@ -117,7 +161,23 @@
         "checkFailed": "İzinler kontrol edilemedi. Lütfen tekrar deneyin.",
         "requestFailed": "İzin isteği başarısız oldu. Lütfen tekrar deneyin."
       }
-    }
+    },
+    "induction": "Tanıtım",
+    "online": "Çevrimiçi",
+    "stepIndicator": "Adım {{current}} / {{total}}",
+    "recommendedModels": "Önerilen motorlar",
+    "otherModels": "Tüm motorlar",
+    "beginRefinement": "Başla",
+    "permissionsStep": {
+      "title": "Yetkilendirme",
+      "subtitle": "Epos’a konuşmanızı işlemesi için gereken erişimi verin."
+    },
+    "modelStep": {
+      "title": "Dökümleme motoru",
+      "subtitle": "Kurmak için bir dökümleme modeli seçin. Daha sonra değiştirebilirsiniz."
+    },
+    "install": "Kur",
+    "installing": "Kuruluyor"
   },
   "modelSelector": {
     "custom": "Özel",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Yok",
           "bottom": "Alt",
-          "top": "Üst"
+          "top": "Üst",
+          "left": "Sol kenar",
+          "right": "Sağ kenar"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos, hızlı ve yerel konuşmadan metne dönüştürme için Whisper.cpp kullanır. Georgi Gerganov ve katkıda bulunanların harika çalışmaları için teşekkür ederiz."
         }
       }
+    },
+    "appearance": {
+      "title": "Görünüm",
+      "theme": {
+        "label": "Tema",
+        "description": "Epos için açık veya koyu bir görünüm seçin ya da sistem ayarını izleyin.",
+        "light": "Açık",
+        "dark": "Koyu",
+        "system": "Sistem"
+      }
+    },
+    "system": {
+      "title": "Sistem",
+      "groups": {
+        "app": "Uygulama ayarları",
+        "sound": "Ses",
+        "notifications": "Bildirimler",
+        "scratchpad": "Not defteri",
+        "extras": "Ekstralar"
+      },
+      "userName": {
+        "label": "Adınız",
+        "description": "Ana ekranınızdaki karşılama selamlamasında gösterilir.",
+        "placeholder": "Adınızı girin"
+      },
+      "flowbarAlways": {
+        "label": "Flow Bar’ı her zaman göster",
+        "description": "Dikte etmediğinizde bile Flow Bar’ı ekranda tutun."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Öneriler",
+          "description": "Epos’u kurma veya daha iyi kullanma ipuçları."
+        },
+        "announcements": {
+          "label": "Duyurular",
+          "description": "Yeni özellikler veya olanaklar."
+        },
+        "milestones": {
+          "label": "Kilometre taşları",
+          "description": "Kelime sayısı kilometre taşları, seriler ve başarılar."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Not defteri açılış davranışı",
+        "description": "Not defteri açıldığında ne gösterir.",
+        "options": {
+          "resumeLast": "Son nota devam et",
+          "newNote": "Yeni bir not başlat"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Sözlüğe otomatik ekle",
+        "description": "Manuel döküm düzeltmelerinizden kelimeleri otomatik olarak öğrenir."
+      },
+      "creatorMode": {
+        "label": "İçerik üretici modu",
+        "description": "Dikte ederken Flow Bar’da “Epos ile Dikte” gösterir."
+      },
+      "addedToDictionary_one": "“{{words}}” sözlüğünüze eklendi",
+      "addedToDictionary_other": "Sözlüğünüze {{count}} kelime eklendi"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Güncelleme mevcut: {{version}}",
     "updateAvailableShort": "Güncelleme mevcut",
     "upToDate": "Güncel",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Güncellemeyi İndir",
     "restart": "Yeniden Başlat",
     "updateCheckingDisabled": "Güncelleme Kontrolü Devre Dışı",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Transkribe ediliyor...",
-    "processing": "İşleniyor..."
+    "processing": "İşleniyor...",
+    "dictate": "Dikte et",
+    "dictating": "Epos ile dikte",
+    "tooltip": "Dikte etmek için {{shortcut}} tuşuna basın",
+    "tooltipNoShortcut": "Dikte etmek için tıklayın",
+    "cancel": "İptal",
+    "scratchpad": "Not defterini aç",
+    "idle": "Hazır"
+  },
+  "home": {
+    "greeting": "Tekrar hoş geldiniz, {{name}}",
+    "greetingNoName": "Tekrar hoş geldiniz",
+    "subtitle": "Dikte çalışma alanınız",
+    "stats": {
+      "totalWords": "toplam kelime",
+      "wpm": "dk/kelime",
+      "dayStreak": "gün üst üste",
+      "dayStreak_one": "gün üst üste",
+      "dayStreak_other": "gün üst üste",
+      "today": "bugün",
+      "todayWords": "bugün kelime",
+      "dictations": "dikte",
+      "avgPace": "ort. hız",
+      "bestStreak": "en iyi seri",
+      "minutes": "dakika",
+      "timeSaved": "dikte süresi"
+    },
+    "voiceProfile": {
+      "title": "Ses profili",
+      "subtitle": "Bağlam hizalayıcı",
+      "hint": "Dikteniz konuşma biçiminize uyum sağlar.",
+      "toNext": "{{tier}} için {{countFmt}} kelime",
+      "maxed": "En yüksek profile ulaşıldı — olağanüstü.",
+      "tiers": {
+        "firstWords": "İlk Kelimeler",
+        "cadet": "Ses Adayı",
+        "fluent": "Akıcı Konuşmacı",
+        "wordsmith": "Söz Ustası",
+        "orator": "Hatip",
+        "adept": "Ses Uzmanı",
+        "master": "Dikte Ustası",
+        "silverTongue": "Gümüş Dil",
+        "luminary": "Ses Otoritesi"
+      }
+    },
+    "nextMilestone": "Bir sonraki kilometre taşına {{count}} kelime",
+    "milestoneReached": "Tüm kilometre taşlarına ulaşıldı — olağanüstü.",
+    "activity": {
+      "title": "Son etkinlik",
+      "search": "Dökümlerde ara",
+      "searchClear": "Aramayı temizle",
+      "empty": "Henüz dikte yok. Başlamak için kısayolunuza basın.",
+      "emptySearch": "Aramanızla eşleşen döküm yok.",
+      "loading": "Etkinlik yükleniyor...",
+      "today": "Bugün",
+      "yesterday": "Dün",
+      "copy": "Panoya kopyala",
+      "copied": "Kopyalandı",
+      "flag": "İşaretle",
+      "unflag": "İşareti kaldır",
+      "menu": "Diğer eylemler",
+      "delete": "Sil",
+      "edit": "Metni düzenle",
+      "retry": "Yeniden dökümle",
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "editPlaceholder": "Dökümü düzenle",
+      "words": "{{count}} kelime",
+      "empty_word": "boş",
+      "editError": "Düzenlemeniz kaydedilemedi"
+    },
+    "banner": {
+      "getStarted": "Başla",
+      "dismiss": "Kapat",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Her yerde dikte edin",
+          "body": "Sesinizi metne dönüştürmek için herhangi bir uygulamada {{shortcut}} tuşuna basın."
+        },
+        "flowBar": {
+          "title": "Flow Bar’ı taşıyın",
+          "body": "Sistem ayarlarından Flow Bar’ı ekranın herhangi bir kenarına sabitleyin."
+        },
+        "postProcess": {
+          "title": "Konuşurken temizleyin",
+          "body": "Dolgu sözcüklerini otomatik kaldırmak için yapay zeka son işlemeyi etkinleştirin."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Kilometre taşına ulaşıldı",
+      "body": "Epos ile {{count}} kelime dikte ettiniz."
+    },
+    "streak": {
+      "title": "{{count}} günlük seri",
+      "body": "{{count}} gün üst üste dikte ettiniz. Böyle devam edin."
+    }
+  },
+  "scratchpad": {
+    "title": "Not defteri",
+    "subtitle": "Dikte etmek ve taslak yazmak için sakin bir yer",
+    "notes": "Notlar",
+    "newNote": "Yeni not",
+    "deleteNote": "Notu sil",
+    "untitled": "Başlıksız not",
+    "titlePlaceholder": "Başlık",
+    "contentPlaceholder": "Yazmaya başlayın veya dikte etmek için kısayolunuza basın...",
+    "empty": "Henüz not yok.",
+    "emptyEditor": "Bir not seçin veya yeni bir tane oluşturun.",
+    "saved": "Kaydedildi",
+    "saving": "Kaydediliyor...",
+    "words": "{{count}} kelime",
+    "deleteConfirm": "Bu not silinsin mi?",
+    "copy": "Notu kopyala",
+    "copied": "Kopyalandı"
+  },
+  "splash": {
+    "division": "Dikte Bölümü",
+    "tagline": "Konuşma, arıtıldı.",
+    "booting": "Terminal başlatılıyor",
+    "ready": "Hazır"
   }
 }

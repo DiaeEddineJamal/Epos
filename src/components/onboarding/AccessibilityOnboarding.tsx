@@ -10,8 +10,9 @@ import {
 import { toast } from "sonner";
 import { commands } from "@/bindings";
 import { useSettingsStore } from "@/stores/settingsStore";
-import EposTextLogo from "../icons/EposTextLogo";
 import { Keyboard, Mic, Check, Loader2 } from "lucide-react";
+import { Button } from "../ui/Button";
+import { OnboardingShell } from "./OnboardingShell";
 
 interface AccessibilityOnboardingProps {
   onComplete: () => void;
@@ -284,8 +285,11 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
   // Still checking platform/initial permissions
   if (isChecking) {
     return (
-      <div className="h-full w-full flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-text/50" />
+      <div className="h-full w-full flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-7 h-7 animate-spin text-live" strokeWidth={1.5} />
+        <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-text/40">
+          {t("splash.booting")}
+        </p>
       </div>
     );
   }
@@ -293,113 +297,107 @@ const AccessibilityOnboarding: React.FC<AccessibilityOnboardingProps> = ({
   // All permissions granted - show success briefly
   if (allGranted) {
     return (
-      <div className="h-full w-full flex flex-col items-center justify-center gap-4">
-      <div className="p-6 rounded-sm border hairline bg-background-ui">
-        <Check className="w-16 h-16 text-live" strokeWidth={1.5} />
-      </div>
-      <p className="text-lg font-medium text-text uppercase tracking-wider">
-        {t("onboarding.permissions.allGranted")}
-      </p>
+      <div className="h-full w-full flex flex-col items-center justify-center gap-5">
+        <div className="flex h-16 w-16 items-center justify-center rounded-sm border hairline bg-[color-mix(in_srgb,var(--color-live),transparent_90%)]">
+          <Check className="w-8 h-8 text-live" strokeWidth={1.5} />
+        </div>
+        <p className="font-mono text-[11px] font-medium text-live uppercase tracking-[0.24em]">
+          {t("onboarding.permissions.allGranted")}
+        </p>
       </div>
     );
   }
 
-  // Show permissions request screen
+  // Build the ordered list of permission rows for this platform.
+  const rows: {
+    key: "microphone" | "accessibility";
+    icon: typeof Mic;
+    status: PermissionStatus;
+    onGrant: () => void;
+    grantLabel: string;
+  }[] = [];
+  if (showMicrophonePermission) {
+    rows.push({
+      key: "microphone",
+      icon: Mic,
+      status: permissions.microphone,
+      onGrant: handleGrantMicrophone,
+      grantLabel: isWindows
+        ? t("accessibility.openSettings")
+        : t("onboarding.permissions.grant"),
+    });
+  }
+  if (showAccessibilityPermission) {
+    rows.push({
+      key: "accessibility",
+      icon: Keyboard,
+      status: permissions.accessibility,
+      onGrant: handleGrantAccessibility,
+      grantLabel: t("onboarding.permissions.grant"),
+    });
+  }
+
   return (
-    <div className="h-full w-full flex flex-col p-8 gap-10 items-center justify-center relative overflow-hidden">
-      {/* Flat institutional canvas — no ambient glows. */}
-
-      <div className="flex flex-col items-center gap-4">
-        <EposTextLogo width={300} />
-      </div>
-
-      <div className="max-w-md w-full flex flex-col items-center gap-4">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-serif font-bold text-text mb-3 tracking-tight">
-            {t("onboarding.permissions.title")}
-          </h2>
-          <p className="text-mid-gray/80 text-[17px] font-medium max-w-sm mx-auto leading-relaxed italic">
-            {t("onboarding.permissions.description")}
-          </p>
-        </div>
-
-        {/* Microphone Permission Card */}
-        {showMicrophonePermission && (
-          <div className="w-full p-6 bg-white rounded-2xl border border-primary/10 shadow-md transition-all duration-200 ease-out">
-            <div className="flex items-center gap-6">
-              <div className="p-4 rounded-2xl bg-background-ui shrink-0 shadow-inner ring-1 ring-primary/5">
-                <Mic className="w-7 h-7 text-primary" />
+    <OnboardingShell
+      step={1}
+      totalSteps={2}
+      title={t("onboarding.permissionsStep.title")}
+      subtitle={t("onboarding.permissionsStep.subtitle")}
+    >
+      <div className="flex flex-col gap-3">
+        {rows.map((row, index) => {
+          const Icon = row.icon;
+          const granted = row.status === "granted";
+          const waiting = row.status === "waiting";
+          return (
+            <div
+              key={row.key}
+              className={`epos-file-row ${granted ? "is-active" : ""}`}
+            >
+              <div className="epos-file-desig">
+                {String(index + 1).padStart(2, "0")}
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-serif font-medium text-text tracking-tight">
-                  {t("onboarding.permissions.microphone.title")}
-                </h3>
-                <p className="text-sm text-text/70 mb-3">
-                  {t("onboarding.permissions.microphone.description")}
-                </p>
-                {permissions.microphone === "granted" ? (
-                <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm tracking-wide">
-                  <Check className="w-4.5 h-4.5 text-emerald-600" />
-                  {t("onboarding.permissions.granted")}
+              <div className="flex flex-1 items-center gap-4 px-5 py-4 min-w-0">
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border hairline ${
+                    granted
+                      ? "text-live bg-[color-mix(in_srgb,var(--color-live),transparent_90%)]"
+                      : "text-text/70 bg-background"
+                  }`}
+                >
+                  <Icon size={18} strokeWidth={1.5} />
                 </div>
-                ) : permissions.microphone === "waiting" ? (
-                  <div className="flex items-center gap-2 text-text/50 text-sm">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t("onboarding.permissions.waiting")}
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleGrantMicrophone}
-                    className="px-6 py-2.5 rounded-xl bg-primary hover:bg-text text-background text-[15px] font-medium shadow-sm transition-all duration-200 ease-out"
-                  >
-                    {isWindows
-                      ? t("accessibility.openSettings")
-                      : t("onboarding.permissions.grant")}
-                  </button>
-                )}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[13px] font-medium uppercase tracking-[0.12em] text-text">
+                    {t(`onboarding.permissions.${row.key}.title`)}
+                  </h3>
+                  <p className="text-[13px] text-text/55 leading-relaxed mt-0.5">
+                    {t(`onboarding.permissions.${row.key}.description`)}
+                  </p>
+                </div>
+                <div className="shrink-0">
+                  {granted ? (
+                    <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-live">
+                      <Check size={14} strokeWidth={2} />
+                      {t("onboarding.permissions.granted")}
+                    </span>
+                  ) : waiting ? (
+                    <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-text/45">
+                      <Loader2 size={13} className="animate-spin" />
+                      {t("onboarding.permissions.waiting")}
+                    </span>
+                  ) : (
+                    <Button variant="primary" size="sm" onClick={row.onGrant}>
+                      {row.grantLabel}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Accessibility Permission Card */}
-        {showAccessibilityPermission && (
-          <div className="w-full p-6 bg-white rounded-2xl border border-primary/10 shadow-md transition-all duration-200 ease-out">
-            <div className="flex items-center gap-6">
-              <div className="p-4 rounded-2xl bg-background-ui shrink-0 shadow-inner ring-1 ring-primary/5">
-                <Keyboard className="w-7 h-7 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-serif font-medium text-text tracking-tight">
-                  {t("onboarding.permissions.accessibility.title")}
-                </h3>
-                <p className="text-sm text-text/70 mb-3">
-                  {t("onboarding.permissions.accessibility.description")}
-                </p>
-                {permissions.accessibility === "granted" ? (
-                  <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm tracking-wide">
-                    <Check className="w-4.5 h-4.5 text-emerald-600" />
-                    {t("onboarding.permissions.granted")}
-                  </div>
-                ) : permissions.accessibility === "waiting" ? (
-                  <div className="flex items-center gap-2 text-text/50 text-sm">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t("onboarding.permissions.waiting")}
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleGrantAccessibility}
-                    className="px-6 py-2.5 rounded-xl bg-primary hover:bg-text text-background text-[15px] font-medium shadow-sm transition-all duration-200 ease-out"
-                  >
-                    {t("onboarding.permissions.grant")}
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+          );
+        })}
       </div>
-    </div>
+    </OnboardingShell>
   );
 };
 

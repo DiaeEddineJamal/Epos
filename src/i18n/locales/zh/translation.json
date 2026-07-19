@@ -15,7 +15,51 @@
     "postProcessing": "后处理",
     "history": "历史记录",
     "debug": "调试",
-    "about": "关于"
+    "about": "关于",
+    "directory": "目录",
+    "online": "在线",
+    "floorPlate": "区域 · 听写",
+    "file": "文件",
+    "refinement": "优化",
+    "division": "听写部门",
+    "build": "版本",
+    "collapse": "折叠目录",
+    "expand": "展开目录",
+    "home": "主页",
+    "system": "系统",
+    "scratchpad": "速记本",
+    "workspace": "工作区",
+    "welcome": "欢迎"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "请选择一个转录模型以开始使用",
@@ -117,7 +161,23 @@
         "checkFailed": "检查权限失败。请重试。",
         "requestFailed": "请求权限失败。请重试。"
       }
-    }
+    },
+    "induction": "入门",
+    "online": "在线",
+    "stepIndicator": "第 {{current}} / {{total}} 步",
+    "recommendedModels": "推荐引擎",
+    "otherModels": "所有引擎",
+    "beginRefinement": "开始",
+    "permissionsStep": {
+      "title": "授权",
+      "subtitle": "授予 Epos 处理你语音所需的访问权限。"
+    },
+    "modelStep": {
+      "title": "转写引擎",
+      "subtitle": "选择要安装的转写模型。你可以稍后更改。"
+    },
+    "install": "安装",
+    "installing": "安装中"
   },
   "modelSelector": {
     "custom": "自定义",
@@ -288,7 +348,9 @@
         "options": {
           "none": "无",
           "bottom": "底部",
-          "top": "顶部"
+          "top": "顶部",
+          "left": "左边缘",
+          "right": "右边缘"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos 使用 Whisper.cpp 进行快速的本地语音转文字处理。感谢 Georgi Gerganov 和贡献者们的出色工作。"
         }
       }
+    },
+    "appearance": {
+      "title": "外观",
+      "theme": {
+        "label": "主题",
+        "description": "为 Epos 选择浅色或深色外观，或跟随系统设置。",
+        "light": "浅色",
+        "dark": "深色",
+        "system": "系统"
+      }
+    },
+    "system": {
+      "title": "系统",
+      "groups": {
+        "app": "应用设置",
+        "sound": "声音",
+        "notifications": "通知",
+        "scratchpad": "速记本",
+        "extras": "额外功能"
+      },
+      "userName": {
+        "label": "你的名字",
+        "description": "显示在主屏幕的欢迎问候中。",
+        "placeholder": "输入你的名字"
+      },
+      "flowbarAlways": {
+        "label": "始终显示 Flow Bar",
+        "description": "即使不在听写时也让 Flow Bar 保留在屏幕上。"
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "建议",
+          "description": "关于设置或更好使用 Epos 的提示。"
+        },
+        "announcements": {
+          "label": "公告",
+          "description": "新功能或新能力。"
+        },
+        "milestones": {
+          "label": "里程碑",
+          "description": "字数里程碑、连续天数和成就。"
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "速记本打开行为",
+        "description": "打开速记本时显示的内容。",
+        "options": {
+          "resumeLast": "继续上一条笔记",
+          "newNote": "开始新笔记"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "自动加入词典",
+        "description": "自动从你手动修改的转写中学习词语。"
+      },
+      "creatorMode": {
+        "label": "创作者模式",
+        "description": "听写时在 Flow Bar 上显示“使用 Epos 听写中”。"
+      },
+      "addedToDictionary_one": "已将“{{words}}”加入你的词典",
+      "addedToDictionary_other": "已将 {{count}} 个词加入你的词典"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "有可用更新: {{version}}",
     "updateAvailableShort": "有可用更新",
     "upToDate": "已是最新版本",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "下载更新",
     "restart": "重启",
     "updateCheckingDisabled": "更新检查已禁用",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "正在转录...",
-    "processing": "处理中..."
+    "processing": "处理中...",
+    "dictate": "听写",
+    "dictating": "使用 Epos 听写中",
+    "tooltip": "按 {{shortcut}} 开始听写",
+    "tooltipNoShortcut": "点击开始听写",
+    "cancel": "取消",
+    "scratchpad": "打开速记本",
+    "idle": "就绪"
+  },
+  "home": {
+    "greeting": "欢迎回来，{{name}}",
+    "greetingNoName": "欢迎回来",
+    "subtitle": "你的听写工作区",
+    "stats": {
+      "totalWords": "总字数",
+      "wpm": "字/分",
+      "dayStreak": "天连续",
+      "dayStreak_one": "天连续",
+      "dayStreak_other": "天连续",
+      "today": "今天",
+      "todayWords": "今日字数",
+      "dictations": "听写次数",
+      "avgPace": "平均速度",
+      "bestStreak": "最佳连续",
+      "minutes": "分钟",
+      "timeSaved": "听写时长"
+    },
+    "voiceProfile": {
+      "title": "语音档案",
+      "subtitle": "情境校准器",
+      "hint": "听写会适应你的说话方式。",
+      "toNext": "距「{{tier}}」还有 {{countFmt}} 个字",
+      "maxed": "已达最高档位 — 非凡。",
+      "tiers": {
+        "firstWords": "初语",
+        "cadet": "语音学员",
+        "fluent": "流利表达者",
+        "wordsmith": "文字巧匠",
+        "orator": "演说家",
+        "adept": "语音能手",
+        "master": "听写大师",
+        "silverTongue": "银舌",
+        "luminary": "语音巨擘"
+      }
+    },
+    "nextMilestone": "距下一个里程碑还有 {{count}} 个字",
+    "milestoneReached": "已达成所有里程碑 — 非凡。",
+    "activity": {
+      "title": "近期活动",
+      "search": "搜索转写",
+      "searchClear": "清除搜索",
+      "empty": "还没有听写。按下你的快捷键开始吧。",
+      "emptySearch": "没有与搜索匹配的转写。",
+      "loading": "正在加载活动...",
+      "today": "今天",
+      "yesterday": "昨天",
+      "copy": "复制到剪贴板",
+      "copied": "已复制",
+      "flag": "标记",
+      "unflag": "取消标记",
+      "menu": "更多操作",
+      "delete": "删除",
+      "edit": "编辑文本",
+      "retry": "重新转写",
+      "save": "保存",
+      "cancel": "取消",
+      "editPlaceholder": "编辑转写",
+      "words": "{{count}} 个字",
+      "empty_word": "空",
+      "editError": "无法保存你的编辑"
+    },
+    "banner": {
+      "getStarted": "开始使用",
+      "dismiss": "关闭",
+      "items": {
+        "dictateAnywhere": {
+          "title": "随处听写",
+          "body": "在任何应用中按 {{shortcut}}，即可把语音变成文字。"
+        },
+        "flowBar": {
+          "title": "移动 Flow Bar",
+          "body": "在系统设置中将 Flow Bar 停靠到屏幕的任意边缘。"
+        },
+        "postProcess": {
+          "title": "边说边整理",
+          "body": "启用 AI 后处理，自动去除口头填充词。"
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "达成里程碑",
+      "body": "你已用 Epos 听写了 {{count}} 个字。"
+    },
+    "streak": {
+      "title": "{{count}} 天连续",
+      "body": "你已连续听写 {{count}} 天。继续保持。"
+    }
+  },
+  "scratchpad": {
+    "title": "速记本",
+    "subtitle": "一个安静的听写与起草之处",
+    "notes": "笔记",
+    "newNote": "新建笔记",
+    "deleteNote": "删除笔记",
+    "untitled": "无标题笔记",
+    "titlePlaceholder": "标题",
+    "contentPlaceholder": "开始输入，或按下快捷键听写...",
+    "empty": "还没有笔记。",
+    "emptyEditor": "选择一条笔记或新建一条。",
+    "saved": "已保存",
+    "saving": "正在保存...",
+    "words": "{{count}} 个字",
+    "deleteConfirm": "删除这条笔记？",
+    "copy": "复制笔记",
+    "copied": "已复制"
+  },
+  "splash": {
+    "division": "听写部门",
+    "tagline": "语音，臻于精炼。",
+    "booting": "正在初始化终端",
+    "ready": "就绪"
   }
 }

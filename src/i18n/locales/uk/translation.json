@@ -15,7 +15,51 @@
     "postProcessing": "Постобробка",
     "history": "Історія",
     "debug": "Дебаг",
-    "about": "Інфо"
+    "about": "Інфо",
+    "directory": "Каталог",
+    "online": "У мережі",
+    "floorPlate": "Сектор · Диктування",
+    "file": "Файл",
+    "refinement": "Уточнення",
+    "division": "Відділ диктування",
+    "build": "Збірка",
+    "collapse": "Згорнути каталог",
+    "expand": "Розгорнути каталог",
+    "home": "Головна",
+    "system": "Система",
+    "scratchpad": "Нотатник",
+    "workspace": "Робоча область",
+    "welcome": "Ласкаво просимо"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "Для початку оберіть модель транскрипції",
@@ -117,7 +161,23 @@
         "checkFailed": "Не вдалося перевірити дозволи. Будь ласка, спробуйте ще раз.",
         "requestFailed": "Не вдалося запросити дозвіл. Будь ласка, спробуйте ще раз."
       }
-    }
+    },
+    "induction": "Ознайомлення",
+    "online": "У мережі",
+    "stepIndicator": "Крок {{current}} / {{total}}",
+    "recommendedModels": "Рекомендовані рушії",
+    "otherModels": "Усі рушії",
+    "beginRefinement": "Почати",
+    "permissionsStep": {
+      "title": "Доступ",
+      "subtitle": "Надайте Epos доступ, потрібний для обробки вашого мовлення."
+    },
+    "modelStep": {
+      "title": "Рушій розпізнавання",
+      "subtitle": "Виберіть модель розпізнавання для встановлення. Її можна змінити пізніше."
+    },
+    "install": "Встановити",
+    "installing": "Встановлення"
   },
   "modelSelector": {
     "custom": "Користувацька",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Немає",
           "bottom": "Внизу",
-          "top": "Вгорі"
+          "top": "Вгорі",
+          "left": "Лівий край",
+          "right": "Правий край"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos використовує Whisper.cpp для швидкої локальної обробки мовлення в текст. Дякуємо за чудову роботу Георгію Герганову та контриб'юторам."
         }
       }
+    },
+    "appearance": {
+      "title": "Вигляд",
+      "theme": {
+        "label": "Тема",
+        "description": "Оберіть світле або темне оформлення Epos чи дотримуйтесь налаштувань системи.",
+        "light": "Світла",
+        "dark": "Темна",
+        "system": "Системна"
+      }
+    },
+    "system": {
+      "title": "Система",
+      "groups": {
+        "app": "Налаштування застосунку",
+        "sound": "Звук",
+        "notifications": "Сповіщення",
+        "scratchpad": "Нотатник",
+        "extras": "Додатково"
+      },
+      "userName": {
+        "label": "Ваше ім’я",
+        "description": "Відображається у привітанні на головному екрані.",
+        "placeholder": "Введіть ваше ім’я"
+      },
+      "flowbarAlways": {
+        "label": "Завжди показувати Flow Bar",
+        "description": "Тримайте Flow Bar на екрані, навіть коли не диктуєте."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Підказки",
+          "description": "Поради щодо налаштування чи покращення роботи з Epos."
+        },
+        "announcements": {
+          "label": "Анонси",
+          "description": "Нові функції або можливості."
+        },
+        "milestones": {
+          "label": "Досягнення",
+          "description": "Рубежі за кількістю слів, серії та досягнення."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Поведінка під час відкриття нотатника",
+        "description": "Що показує нотатник під час відкриття.",
+        "options": {
+          "resumeLast": "Відкрити останню нотатку",
+          "newNote": "Почати нову нотатку"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Автододавання до словника",
+        "description": "Автоматично вчить слова з ваших ручних виправлень транскрипції."
+      },
+      "creatorMode": {
+        "label": "Режим автора",
+        "description": "Показує «Диктування з Epos» на Flow Bar під час диктування."
+      },
+      "addedToDictionary_one": "«{{words}}» додано до вашого словника",
+      "addedToDictionary_other": "{{count}} слів додано до вашого словника"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Доступне оновлення: {{version}}",
     "updateAvailableShort": "Доступне оновлення",
     "upToDate": "Актуальна версія",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Завантажити оновлення",
     "restart": "Перезапустити",
     "updateCheckingDisabled": "Перевірка оновлень вимкнена",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Обробка...",
-    "processing": "Постобробка..."
+    "processing": "Постобробка...",
+    "dictate": "Диктувати",
+    "dictating": "Диктування з Epos",
+    "tooltip": "Натисніть {{shortcut}}, щоб диктувати",
+    "tooltipNoShortcut": "Натисніть, щоб диктувати",
+    "cancel": "Скасувати",
+    "scratchpad": "Відкрити нотатник",
+    "idle": "Готово"
+  },
+  "home": {
+    "greeting": "З поверненням, {{name}}",
+    "greetingNoName": "З поверненням",
+    "subtitle": "Ваш простір для диктування",
+    "stats": {
+      "totalWords": "усього слів",
+      "wpm": "сл/хв",
+      "dayStreak": "днів поспіль",
+      "dayStreak_one": "день поспіль",
+      "dayStreak_other": "днів поспіль",
+      "today": "сьогодні",
+      "todayWords": "слів сьогодні",
+      "dictations": "диктувань",
+      "avgPace": "середній темп",
+      "bestStreak": "найкраща серія",
+      "minutes": "хвилин",
+      "timeSaved": "час диктування"
+    },
+    "voiceProfile": {
+      "title": "Голосовий профіль",
+      "subtitle": "Налаштування контексту",
+      "hint": "Диктування підлаштовується під вашу манеру мовлення.",
+      "toNext": "{{countFmt}} слів до «{{tier}}»",
+      "maxed": "Досягнуто найвищий профіль — вражаюче.",
+      "tiers": {
+        "firstWords": "Перші слова",
+        "cadet": "Голосовий кадет",
+        "fluent": "Вправний оратор",
+        "wordsmith": "Майстер слова",
+        "orator": "Оратор",
+        "adept": "Знавець голосу",
+        "master": "Майстер диктування",
+        "silverTongue": "Срібний язик",
+        "luminary": "Голосове світило"
+      }
+    },
+    "nextMilestone": "{{count}} слів до наступного рубежу",
+    "milestoneReached": "Усі рубежі досягнуто — вражаюче.",
+    "activity": {
+      "title": "Нещодавня активність",
+      "search": "Пошук у транскрипціях",
+      "searchClear": "Очистити пошук",
+      "empty": "Ще немає диктувань. Натисніть своє сполучення клавіш, щоб почати.",
+      "emptySearch": "Немає транскрипцій за вашим запитом.",
+      "loading": "Завантаження активності...",
+      "today": "Сьогодні",
+      "yesterday": "Учора",
+      "copy": "Копіювати в буфер обміну",
+      "copied": "Скопійовано",
+      "flag": "Позначити",
+      "unflag": "Зняти позначку",
+      "menu": "Більше дій",
+      "delete": "Видалити",
+      "edit": "Редагувати текст",
+      "retry": "Транскрибувати знову",
+      "save": "Зберегти",
+      "cancel": "Скасувати",
+      "editPlaceholder": "Редагувати транскрипцію",
+      "words": "{{count}} слів",
+      "empty_word": "порожньо",
+      "editError": "Не вдалося зберегти зміну"
+    },
+    "banner": {
+      "getStarted": "Почати",
+      "dismiss": "Приховати",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Диктуйте будь-де",
+          "body": "Натисніть {{shortcut}} у будь-якому застосунку, щоб перетворити голос на текст."
+        },
+        "flowBar": {
+          "title": "Переміщуйте Flow Bar",
+          "body": "Закріпіть Flow Bar біля будь-якого краю екрана в налаштуваннях системи."
+        },
+        "postProcess": {
+          "title": "Очищення на ходу",
+          "body": "Увімкніть ШІ-постобробку, щоб автоматично прибирати слова-паразити."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Рубіж досягнуто",
+      "body": "Ви надиктували {{count}} слів з Epos."
+    },
+    "streak": {
+      "title": "Серія {{count}} днів",
+      "body": "Ви диктуєте {{count}} днів поспіль. Так тримати."
+    }
+  },
+  "scratchpad": {
+    "title": "Нотатник",
+    "subtitle": "Тихе місце, щоб диктувати й робити чернетки",
+    "notes": "Нотатки",
+    "newNote": "Нова нотатка",
+    "deleteNote": "Видалити нотатку",
+    "untitled": "Нотатка без назви",
+    "titlePlaceholder": "Заголовок",
+    "contentPlaceholder": "Почніть друкувати або натисніть своє сполучення клавіш, щоб диктувати...",
+    "empty": "Ще немає нотаток.",
+    "emptyEditor": "Виберіть нотатку або створіть нову.",
+    "saved": "Збережено",
+    "saving": "Збереження...",
+    "words": "{{count}} слів",
+    "deleteConfirm": "Видалити цю нотатку?",
+    "copy": "Копіювати нотатку",
+    "copied": "Скопійовано"
+  },
+  "splash": {
+    "division": "Відділ диктування",
+    "tagline": "Мовлення, відточене.",
+    "booting": "Ініціалізація термінала",
+    "ready": "Готово"
   }
 }

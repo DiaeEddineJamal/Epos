@@ -15,7 +15,51 @@
     "postProcessing": "Постобработка",
     "history": "История",
     "debug": "Отстраняване",
-    "about": "За приложението"
+    "about": "За приложението",
+    "directory": "Директория",
+    "online": "Онлайн",
+    "floorPlate": "Сектор · Диктовка",
+    "file": "Файл",
+    "refinement": "Прецизиране",
+    "division": "Отдел „Диктовка“",
+    "build": "Компилация",
+    "collapse": "Свий директорията",
+    "expand": "Разгъни директорията",
+    "home": "Начало",
+    "system": "Система",
+    "scratchpad": "Бележник",
+    "workspace": "Работна област",
+    "welcome": "Добре дошли"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "За да започнете, изберете модел за транскрипция",
@@ -117,7 +161,23 @@
         "checkFailed": "Проверката на разрешенията не бе успешна. Опитайте отново.",
         "requestFailed": "Заявката за разрешение не бе успешна. Опитайте отново."
       }
-    }
+    },
+    "induction": "Въведение",
+    "online": "Онлайн",
+    "stepIndicator": "Стъпка {{current}} / {{total}}",
+    "recommendedModels": "Препоръчани двигатели",
+    "otherModels": "Всички двигатели",
+    "beginRefinement": "Започни",
+    "permissionsStep": {
+      "title": "Разрешение",
+      "subtitle": "Дайте на Epos достъпа, който му е нужен, за да обработва речта ви."
+    },
+    "modelStep": {
+      "title": "Двигател за разпознаване",
+      "subtitle": "Изберете модел за транскрипция за инсталиране. Можете да го смените по-късно."
+    },
+    "install": "Инсталирай",
+    "installing": "Инсталиране"
   },
   "modelSelector": {
     "custom": "Персонализиран",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Няма",
           "bottom": "Долу",
-          "top": "Горе"
+          "top": "Горе",
+          "left": "Ляв ръб",
+          "right": "Десен ръб"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos използва Whisper.cpp за бързо локално реч-към-текст. Благодарности на Georgi Gerganov и сътрудниците за отличната работа."
         }
       }
+    },
+    "appearance": {
+      "title": "Външен вид",
+      "theme": {
+        "label": "Тема",
+        "description": "Изберете светъл или тъмен вид на Epos или следвайте системната настройка.",
+        "light": "Светла",
+        "dark": "Тъмна",
+        "system": "Системна"
+      }
+    },
+    "system": {
+      "title": "Система",
+      "groups": {
+        "app": "Настройки на приложението",
+        "sound": "Звук",
+        "notifications": "Известия",
+        "scratchpad": "Бележник",
+        "extras": "Допълнения"
+      },
+      "userName": {
+        "label": "Вашето име",
+        "description": "Показва се в поздрава на началния екран.",
+        "placeholder": "Въведете името си"
+      },
+      "flowbarAlways": {
+        "label": "Винаги показвай Flow Bar",
+        "description": "Дръжте Flow Bar на екрана, дори когато не диктувате."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Предложения",
+          "description": "Съвети за настройка или по-добро използване на Epos."
+        },
+        "announcements": {
+          "label": "Съобщения",
+          "description": "Нови функции или възможности."
+        },
+        "milestones": {
+          "label": "Постижения",
+          "description": "Етапи по брой думи, серии и постижения."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Поведение при отваряне на бележника",
+        "description": "Какво показва бележникът, когато го отворите.",
+        "options": {
+          "resumeLast": "Продължи последната бележка",
+          "newNote": "Започни нова бележка"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Автоматично добавяне в речника",
+        "description": "Автоматично научава думи от ръчните ви корекции на транскрипцията."
+      },
+      "creatorMode": {
+        "label": "Режим на създател",
+        "description": "Показва „Диктовка с Epos“ на Flow Bar по време на диктовка."
+      },
+      "addedToDictionary_one": "„{{words}}“ е добавена в речника ви",
+      "addedToDictionary_other": "Добавени са {{count}} думи в речника ви"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Налична актуализация: {{version}}",
     "updateAvailableShort": "Налична актуализация",
     "upToDate": "Актуална версия",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Изтегляне на актуализацията",
     "restart": "Рестартиране",
     "updateCheckingDisabled": "Проверката за актуализации е изключена",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Транскрибиране...",
-    "processing": "Обработка..."
+    "processing": "Обработка...",
+    "dictate": "Диктувай",
+    "dictating": "Диктовка с Epos",
+    "tooltip": "Натиснете {{shortcut}}, за да диктувате",
+    "tooltipNoShortcut": "Щракнете, за да диктувате",
+    "cancel": "Отказ",
+    "scratchpad": "Отвори бележника",
+    "idle": "Готово"
+  },
+  "home": {
+    "greeting": "Добре дошли отново, {{name}}",
+    "greetingNoName": "Добре дошли отново",
+    "subtitle": "Вашето пространство за диктовка",
+    "stats": {
+      "totalWords": "думи общо",
+      "wpm": "дум/мин",
+      "dayStreak": "поредни дни",
+      "dayStreak_one": "пореден ден",
+      "dayStreak_other": "поредни дни",
+      "today": "днес",
+      "todayWords": "думи днес",
+      "dictations": "диктовки",
+      "avgPace": "средно темпо",
+      "bestStreak": "най-добра серия",
+      "minutes": "минути",
+      "timeSaved": "време на диктовка"
+    },
+    "voiceProfile": {
+      "title": "Гласов профил",
+      "subtitle": "Настройка на контекста",
+      "hint": "Диктовката се адаптира към начина, по който говорите.",
+      "toNext": "{{countFmt}} думи до „{{tier}}“",
+      "maxed": "Достигнат най-висок профил — забележително.",
+      "tiers": {
+        "firstWords": "Първи думи",
+        "cadet": "Гласов кадет",
+        "fluent": "Свободно говорещ",
+        "wordsmith": "Майстор на словото",
+        "orator": "Оратор",
+        "adept": "Гласов познавач",
+        "master": "Майстор на диктовката",
+        "silverTongue": "Сребърен език",
+        "luminary": "Гласово светило"
+      }
+    },
+    "nextMilestone": "{{count}} думи до следващото постижение",
+    "milestoneReached": "Всички постижения са достигнати — забележително.",
+    "activity": {
+      "title": "Скорошна активност",
+      "search": "Търсене в транскрипциите",
+      "searchClear": "Изчисти търсенето",
+      "empty": "Все още няма диктовки. Натиснете клавишната комбинация, за да започнете.",
+      "emptySearch": "Няма транскрипции, отговарящи на търсенето.",
+      "loading": "Зареждане на активността...",
+      "today": "Днес",
+      "yesterday": "Вчера",
+      "copy": "Копирай в клипборда",
+      "copied": "Копирано",
+      "flag": "Маркирай",
+      "unflag": "Премахни маркировката",
+      "menu": "Още действия",
+      "delete": "Изтрий",
+      "edit": "Редактирай текста",
+      "retry": "Транскрибирай отново",
+      "save": "Запази",
+      "cancel": "Отказ",
+      "editPlaceholder": "Редактирай транскрипцията",
+      "words": "{{count}} думи",
+      "empty_word": "празно",
+      "editError": "Промяната не можа да бъде запазена"
+    },
+    "banner": {
+      "getStarted": "Започни",
+      "dismiss": "Отхвърли",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Диктувайте навсякъде",
+          "body": "Натиснете {{shortcut}} в което и да е приложение, за да превърнете гласа си в текст."
+        },
+        "flowBar": {
+          "title": "Преместете Flow Bar",
+          "body": "Закачете Flow Bar към който и да е ръб на екрана от Системни настройки."
+        },
+        "postProcess": {
+          "title": "Изчиствайте, докато говорите",
+          "body": "Включете AI последваща обработка, за да премахвате автоматично паразитни думи."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Постижение достигнато",
+      "body": "Продиктувахте {{count}} думи с Epos."
+    },
+    "streak": {
+      "title": "Серия от {{count}} дни",
+      "body": "Диктувате {{count}} поредни дни. Продължавайте."
+    }
+  },
+  "scratchpad": {
+    "title": "Бележник",
+    "subtitle": "Тихо място за диктуване и чернови",
+    "notes": "Бележки",
+    "newNote": "Нова бележка",
+    "deleteNote": "Изтрий бележката",
+    "untitled": "Бележка без заглавие",
+    "titlePlaceholder": "Заглавие",
+    "contentPlaceholder": "Започнете да пишете или натиснете клавишната комбинация, за да диктувате...",
+    "empty": "Все още няма бележки.",
+    "emptyEditor": "Изберете бележка или създайте нова.",
+    "saved": "Запазено",
+    "saving": "Запазване...",
+    "words": "{{count}} думи",
+    "deleteConfirm": "Да се изтрие ли тази бележка?",
+    "copy": "Копирай бележката",
+    "copied": "Копирано"
+  },
+  "splash": {
+    "division": "Отдел „Диктовка“",
+    "tagline": "Речта, прецизирана.",
+    "booting": "Инициализиране на терминала",
+    "ready": "Готово"
   }
 }

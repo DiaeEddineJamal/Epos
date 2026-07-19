@@ -15,7 +15,51 @@
     "postProcessing": "後処理",
     "history": "履歴",
     "debug": "デバッグ",
-    "about": "概要"
+    "about": "概要",
+    "directory": "ディレクトリ",
+    "online": "オンライン",
+    "floorPlate": "セクター · 音声入力",
+    "file": "ファイル",
+    "refinement": "調整",
+    "division": "音声入力部門",
+    "build": "ビルド",
+    "collapse": "ディレクトリを折りたたむ",
+    "expand": "ディレクトリを展開",
+    "home": "ホーム",
+    "system": "システム",
+    "scratchpad": "スクラッチパッド",
+    "workspace": "ワークスペース",
+    "welcome": "ようこそ"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "開始するには、文字起こしモデルを選択してください",
@@ -117,7 +161,23 @@
         "checkFailed": "権限の確認に失敗しました。もう一度お試しください。",
         "requestFailed": "権限のリクエストに失敗しました。もう一度お試しください。"
       }
-    }
+    },
+    "induction": "初期設定",
+    "online": "オンライン",
+    "stepIndicator": "ステップ {{current}} / {{total}}",
+    "recommendedModels": "おすすめエンジン",
+    "otherModels": "すべてのエンジン",
+    "beginRefinement": "開始",
+    "permissionsStep": {
+      "title": "アクセス許可",
+      "subtitle": "音声を処理するために Epos が必要とするアクセスを許可してください。"
+    },
+    "modelStep": {
+      "title": "文字起こしエンジン",
+      "subtitle": "インストールする文字起こしモデルを選びます。後で変更できます。"
+    },
+    "install": "インストール",
+    "installing": "インストール中"
   },
   "modelSelector": {
     "custom": "カスタム",
@@ -288,7 +348,9 @@
         "options": {
           "none": "なし",
           "bottom": "下",
-          "top": "上"
+          "top": "上",
+          "left": "左端",
+          "right": "右端"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Eposは高速でローカルな音声からテキストへの変換にWhisper.cppを使用しています。Georgi Gerganov氏と貢献者の皆様の素晴らしい仕事に感謝します。"
         }
       }
+    },
+    "appearance": {
+      "title": "外観",
+      "theme": {
+        "label": "テーマ",
+        "description": "Epos のライトまたはダークな外観を選ぶか、システム設定に従います。",
+        "light": "ライト",
+        "dark": "ダーク",
+        "system": "システム"
+      }
+    },
+    "system": {
+      "title": "システム",
+      "groups": {
+        "app": "アプリ設定",
+        "sound": "サウンド",
+        "notifications": "通知",
+        "scratchpad": "スクラッチパッド",
+        "extras": "その他"
+      },
+      "userName": {
+        "label": "お名前",
+        "description": "ホーム画面のウェルカムメッセージに表示されます。",
+        "placeholder": "名前を入力"
+      },
+      "flowbarAlways": {
+        "label": "Flow Bar を常に表示",
+        "description": "音声入力していないときも Flow Bar を画面に表示し続けます。"
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "ヒント",
+          "description": "セットアップや Epos の活用に関するヒント。"
+        },
+        "announcements": {
+          "label": "お知らせ",
+          "description": "新機能や新しい機能性。"
+        },
+        "milestones": {
+          "label": "マイルストーン",
+          "description": "単語数のマイルストーン、連続記録、達成。"
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "スクラッチパッドを開いたときの動作",
+        "description": "スクラッチパッドを開いたときに表示する内容。",
+        "options": {
+          "resumeLast": "最後のメモを再開",
+          "newNote": "新しいメモを開始"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "辞書に自動追加",
+        "description": "手動での文字起こし修正から単語を自動的に学習します。"
+      },
+      "creatorMode": {
+        "label": "クリエイターモード",
+        "description": "音声入力中に Flow Bar に「Epos で音声入力中」と表示します。"
+      },
+      "addedToDictionary_one": "「{{words}}」を辞書に追加しました",
+      "addedToDictionary_other": "{{count}} 語を辞書に追加しました"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "アップデートあり: {{version}}",
     "updateAvailableShort": "アップデートあり",
     "upToDate": "最新です",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "アップデートをダウンロード",
     "restart": "再起動",
     "updateCheckingDisabled": "アップデート確認無効",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "文字起こし中...",
-    "processing": "処理中..."
+    "processing": "処理中...",
+    "dictate": "音声入力",
+    "dictating": "Epos で音声入力中",
+    "tooltip": "{{shortcut}} を押して音声入力",
+    "tooltipNoShortcut": "クリックして音声入力",
+    "cancel": "キャンセル",
+    "scratchpad": "スクラッチパッドを開く",
+    "idle": "準備完了"
+  },
+  "home": {
+    "greeting": "おかえりなさい、{{name}} さん",
+    "greetingNoName": "おかえりなさい",
+    "subtitle": "あなたの音声入力ワークスペース",
+    "stats": {
+      "totalWords": "総単語数",
+      "wpm": "語/分",
+      "dayStreak": "日連続",
+      "dayStreak_one": "日連続",
+      "dayStreak_other": "日連続",
+      "today": "今日",
+      "todayWords": "今日の単語数",
+      "dictations": "音声入力回数",
+      "avgPace": "平均ペース",
+      "bestStreak": "最高連続記録",
+      "minutes": "分",
+      "timeSaved": "音声入力時間"
+    },
+    "voiceProfile": {
+      "title": "音声プロフィール",
+      "subtitle": "コンテキストアライナー",
+      "hint": "音声入力があなたの話し方に適応します。",
+      "toNext": "次の「{{tier}}」まで {{countFmt}} 語",
+      "maxed": "最高プロフィール達成 — 見事です。",
+      "tiers": {
+        "firstWords": "はじめの一語",
+        "cadet": "ボイス見習い",
+        "fluent": "流暢な話し手",
+        "wordsmith": "言葉の匠",
+        "orator": "雄弁家",
+        "adept": "ボイス達人",
+        "master": "音声入力マスター",
+        "silverTongue": "銀の舌",
+        "luminary": "ボイスの巨匠"
+      }
+    },
+    "nextMilestone": "次のマイルストーンまで {{count}} 語",
+    "milestoneReached": "すべてのマイルストーンを達成 — 見事です。",
+    "activity": {
+      "title": "最近のアクティビティ",
+      "search": "文字起こしを検索",
+      "searchClear": "検索をクリア",
+      "empty": "まだ音声入力がありません。ショートカットを押して始めましょう。",
+      "emptySearch": "検索に一致する文字起こしがありません。",
+      "loading": "アクティビティを読み込み中...",
+      "today": "今日",
+      "yesterday": "昨日",
+      "copy": "クリップボードにコピー",
+      "copied": "コピーしました",
+      "flag": "フラグを付ける",
+      "unflag": "フラグを外す",
+      "menu": "その他の操作",
+      "delete": "削除",
+      "edit": "テキストを編集",
+      "retry": "再文字起こし",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "editPlaceholder": "文字起こしを編集",
+      "words": "{{count}} 語",
+      "empty_word": "空",
+      "editError": "編集を保存できませんでした"
+    },
+    "banner": {
+      "getStarted": "始める",
+      "dismiss": "閉じる",
+      "items": {
+        "dictateAnywhere": {
+          "title": "どこでも音声入力",
+          "body": "どのアプリでも {{shortcut}} を押すと、声がテキストになります。"
+        },
+        "flowBar": {
+          "title": "Flow Bar を移動",
+          "body": "システム設定から Flow Bar を画面の任意の端に固定できます。"
+        },
+        "postProcess": {
+          "title": "話しながら整える",
+          "body": "AI 後処理を有効にすると、フィラー語を自動的に取り除きます。"
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "マイルストーン達成",
+      "body": "Epos で {{count}} 語を音声入力しました。"
+    },
+    "streak": {
+      "title": "{{count}} 日連続",
+      "body": "{{count}} 日連続で音声入力しています。この調子で。"
+    }
+  },
+  "scratchpad": {
+    "title": "スクラッチパッド",
+    "subtitle": "音声入力と下書きのための静かな場所",
+    "notes": "メモ",
+    "newNote": "新しいメモ",
+    "deleteNote": "メモを削除",
+    "untitled": "無題のメモ",
+    "titlePlaceholder": "タイトル",
+    "contentPlaceholder": "入力を始めるか、ショートカットを押して音声入力...",
+    "empty": "まだメモがありません。",
+    "emptyEditor": "メモを選ぶか、新しく作成してください。",
+    "saved": "保存しました",
+    "saving": "保存中...",
+    "words": "{{count}} 語",
+    "deleteConfirm": "このメモを削除しますか？",
+    "copy": "メモをコピー",
+    "copied": "コピーしました"
+  },
+  "splash": {
+    "division": "音声入力部門",
+    "tagline": "音声を、洗練へ。",
+    "booting": "ターミナルを初期化中",
+    "ready": "準備完了"
   }
 }

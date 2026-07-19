@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { commands } from "../../bindings";
 import { useSettings } from "../../hooks/useSettings";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
@@ -16,6 +17,9 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
     const { t } = useTranslation();
     const { getSetting, updateSetting, isUpdating } = useSettings();
     const [newWord, setNewWord] = useState("");
+    const [heardText, setHeardText] = useState("");
+    const [correctedText, setCorrectedText] = useState("");
+    const [isTeaching, setIsTeaching] = useState(false);
     const customWords = getSetting("custom_words") || [];
 
     const handleAddWord = () => {
@@ -53,6 +57,32 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
       }
     };
 
+    const handleTeach = async () => {
+      if (!heardText.trim() || !correctedText.trim()) return;
+      setIsTeaching(true);
+      try {
+        const result = await commands.teachEposCorrection(
+          heardText.trim(),
+          correctedText.trim(),
+        );
+        if (result.status === "error") {
+          toast.error(result.error);
+          return;
+        }
+        setHeardText("");
+        setCorrectedText("");
+        toast.success(
+          t("settings.advanced.customWords.taught", {
+            defaultValue: "Correction learned locally",
+          }),
+        );
+      } catch (error) {
+        toast.error(String(error));
+      } finally {
+        setIsTeaching(false);
+      }
+    };
+
     return (
       <>
         <SettingContainer
@@ -84,6 +114,62 @@ export const CustomWords: React.FC<CustomWordsProps> = React.memo(
               size="md"
             >
               {t("settings.advanced.customWords.add")}
+            </Button>
+          </div>
+        </SettingContainer>
+        <SettingContainer
+          title={t("settings.advanced.customWords.teachTitle", {
+            defaultValue: "Teach EPOS a correction",
+          })}
+          description={t("settings.advanced.customWords.teachDescription", {
+            defaultValue:
+              "Save what EPOS heard and the wording you want. Future dictations are corrected locally.",
+          })}
+          descriptionMode={descriptionMode}
+          grouped={grouped}
+          layout="stacked"
+        >
+          <div className="flex w-full min-w-0 flex-col gap-2">
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+              <Input
+                type="text"
+                className="min-w-0 w-full"
+                value={heardText}
+                onChange={(event) => setHeardText(event.target.value)}
+                placeholder={t("settings.advanced.customWords.heard", {
+                  defaultValue: "What EPOS heard",
+                })}
+                variant="compact"
+              />
+              <span aria-hidden className="font-mono text-mid-gray">
+                →
+              </span>
+              <Input
+                type="text"
+                className="min-w-0 w-full"
+                value={correctedText}
+                onChange={(event) => setCorrectedText(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") void handleTeach();
+                }}
+                placeholder={t("settings.advanced.customWords.corrected", {
+                  defaultValue: "Use this instead",
+                })}
+                variant="compact"
+              />
+            </div>
+            <Button
+              className="self-end"
+              onClick={() => void handleTeach()}
+              disabled={
+                isTeaching || !heardText.trim() || !correctedText.trim()
+              }
+              variant="primary"
+              size="sm"
+            >
+              {t("settings.advanced.customWords.teach", {
+                defaultValue: "Teach",
+              })}
             </Button>
           </div>
         </SettingContainer>

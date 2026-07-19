@@ -796,6 +796,182 @@ async updateRecordingRetentionPeriod(period: string) : Promise<Result<null, stri
     else return { status: "error", error: e  as any };
 }
 },
+async getDashboardStats() : Promise<Result<DashboardStats, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_dashboard_stats") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async searchHistory(query: string, limit: number) : Promise<Result<HistoryEntry[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("search_history", { query, limit }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async updateHistoryEntryText(id: number, text: string) : Promise<Result<UpdateEntryTextResult, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("update_history_entry_text", { id, text }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async teachEposCorrection(heardText: string, correctedText: string) : Promise<Result<CorrectionPair, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("teach_epos_correction", { heardText, correctedText }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async listCorrectionPairs() : Promise<Result<CorrectionPair[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("list_correction_pairs") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async listScratchpadNotes() : Promise<Result<ScratchpadNote[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("list_scratchpad_notes") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async createScratchpadNote() : Promise<Result<ScratchpadNote, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("create_scratchpad_note") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async updateScratchpadNote(id: number, title: string, content: string) : Promise<Result<ScratchpadNote, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("update_scratchpad_note", { id, title, content }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async deleteScratchpadNote(id: number) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_scratchpad_note", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Toggle dictation from the flow bar's mic button. Routes through the same
+ * coordinator path as the global shortcut and CLI triggers.
+ */
+async flowbarToggleTranscription() : Promise<void> {
+    await TAURI_INVOKE("flowbar_toggle_transcription");
+},
+/**
+ * Bring the main window to front and ask it to open the given section
+ * (used by milestone toasts and in-app navigation).
+ */
+async navigateMainWindow(section: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("navigate_main_window", { section }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Toggle whether finished dictations are routed into a focused scratchpad
+ * field (see [`crate::ScratchpadCapture`]).
+ */
+async setScratchpadCapture(active: boolean) : Promise<void> {
+    await TAURI_INVOKE("set_scratchpad_capture", { active });
+},
+/**
+ * Open (or focus) the floating Scratchpad window — a small, always-on-top
+ * note surface you can dictate into, à la Wispr Flow. Dedicated Vite entry
+ * (`src/scratchpad/index.html`) — hash routes on the main bundle are unreliable
+ * in WebView2 and produced a blank white window.
+ */
+async openScratchpadWindow() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_scratchpad_window") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeUserNameSetting(name: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_user_name_setting", { name }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeFlowbarAlwaysSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_flowbar_always_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeNotificationsSuggestionsSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_notifications_suggestions_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeNotificationsAnnouncementsSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_notifications_announcements_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeNotificationsMilestonesSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_notifications_milestones_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeAutoAddToDictionarySetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_auto_add_to_dictionary_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeCreatorModeSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_creator_mode_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async changeScratchpadResumeLastSetting(enabled: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("change_scratchpad_resume_last_setting", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 /**
  * Stub implementation for non-macOS platforms
  * Always returns false since laptop detection is macOS-specific
@@ -814,8 +990,10 @@ async isLaptop() : Promise<Result<boolean, string>> {
 
 
 export const events = __makeEvents__<{
+dictationStatsEvent: DictationStatsEvent,
 historyUpdatePayload: HistoryUpdatePayload
 }>({
+dictationStatsEvent: "dictation-stats-event",
 historyUpdatePayload: "history-update-payload"
 })
 
@@ -825,16 +1003,76 @@ historyUpdatePayload: "history-update-payload"
 
 /** user-defined types **/
 
-export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: SecretMap; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number }
+export type AppSettings = { bindings: Partial<{ [key in string]: ShortcutBinding }>; push_to_talk: boolean; audio_feedback: boolean; audio_feedback_volume?: number; sound_theme?: SoundTheme; start_hidden?: boolean; autostart_enabled?: boolean; update_checks_enabled?: boolean; selected_model?: string; always_on_microphone?: boolean; selected_microphone?: string | null; clamshell_microphone?: string | null; selected_output_device?: string | null; translate_to_english?: boolean; selected_language?: string; overlay_position?: OverlayPosition; debug_mode?: boolean; log_level?: LogLevel; custom_words?: string[]; model_unload_timeout?: ModelUnloadTimeout; word_correction_threshold?: number; history_limit?: number; recording_retention_period?: RecordingRetentionPeriod; paste_method?: PasteMethod; clipboard_handling?: ClipboardHandling; auto_submit?: boolean; auto_submit_key?: AutoSubmitKey; post_process_enabled?: boolean; post_process_provider_id?: string; post_process_providers?: PostProcessProvider[]; post_process_api_keys?: SecretMap; post_process_models?: Partial<{ [key in string]: string }>; post_process_prompts?: LLMPrompt[]; post_process_selected_prompt_id?: string | null; mute_while_recording?: boolean; append_trailing_space?: boolean; app_language?: string; experimental_enabled?: boolean; lazy_stream_close?: boolean; keyboard_implementation?: KeyboardImplementation; show_tray_icon?: boolean; paste_delay_ms?: number; typing_tool?: TypingTool; external_script_path: string | null; custom_filler_words?: string[] | null; whisper_accelerator?: WhisperAcceleratorSetting; ort_accelerator?: OrtAcceleratorSetting; whisper_gpu_device?: number; extra_recording_buffer_ms?: number; 
+/**
+ * Display name for the dashboard greeting. Defaults to the OS username.
+ */
+user_name?: string; 
+/**
+ * Keep the flow bar (recording overlay) visible in its idle state.
+ */
+show_flowbar_always?: boolean; notifications_suggestions?: boolean; notifications_announcements?: boolean; notifications_milestones?: boolean; 
+/**
+ * Learn new words from manual transcript corrections.
+ */
+auto_add_to_dictionary?: boolean; 
+/**
+ * Show a "Dictating with Epos" attribution label on the flow bar.
+ */
+creator_mode?: boolean; 
+/**
+ * Scratchpad open behavior: true = resume last note, false = new note.
+ */
+scratchpad_resume_last?: boolean }
 export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
 export type AvailableAccelerators = { whisper: string[]; ort: string[]; gpu_devices: GpuDeviceOption[] }
 export type BindingResponse = { success: boolean; binding: ShortcutBinding | null; error: string | null }
 export type ClipboardHandling = "dont_modify" | "copy_to_clipboard"
+export type CorrectionPair = { id: number; history_id: number | null; heard_text: string; corrected_text: string; source: string; confidence: number; accepted: boolean; created_at: number }
 export type CustomSounds = { start: boolean; stop: boolean }
+export type DailyStat = { 
+/**
+ * Local date, formatted YYYY-MM-DD.
+ */
+day: string; words: number; duration_ms: number; dictations: number }
+export type DashboardStats = { total_words: number; total_dictations: number; total_duration_ms: number; 
+/**
+ * Words per minute of retained speech audio (VAD-gated), lifetime average.
+ */
+average_wpm: number; today_words: number; current_streak: number; best_streak: number; last_milestone: number; 
+/**
+ * Next word milestone ahead of the current total (0 when maxed out).
+ */
+next_milestone: number; 
+/**
+ * Last `RECENT_DAYS` local days, oldest first, gaps filled with zeros.
+ */
+recent_days: DailyStat[] }
+/**
+ * Emitted after every recorded dictation so dashboards update live and the
+ * main window can surface milestone toasts.
+ */
+export type DictationStatsEvent = { stats: DashboardStats; 
+/**
+ * Word milestone crossed by this dictation, if any.
+ */
+new_word_milestone: number | null; 
+/**
+ * Streak milestone reached today (fires on the first dictation of the day).
+ */
+new_streak_milestone: number | null }
 export type EngineType = "Whisper" | "Parakeet" | "Moonshine" | "MoonshineStreaming" | "SenseVoice" | "GigaAM" | "Canary" | "Cohere"
 export type GpuDeviceOption = { id: number; name: string; total_vram_mb: number }
-export type HistoryEntry = { id: number; file_name: string; timestamp: number; saved: boolean; title: string; transcription_text: string; post_processed_text: string | null; post_process_prompt: string | null; post_process_requested: boolean }
+export type HistoryEntry = { id: number; file_name: string; timestamp: number; saved: boolean; title: string; transcription_text: string; post_processed_text: string | null; post_process_prompt: string | null; post_process_requested: boolean; 
+/**
+ * Retained speech audio length in milliseconds (VAD-gated).
+ */
+duration_ms: number; 
+/**
+ * Word count of the displayed text (post-processed when present).
+ */
+word_count: number }
 export type HistoryUpdatePayload = { action: "added"; entry: HistoryEntry } | { action: "updated"; entry: HistoryEntry } | { action: "deleted"; id: number } | { action: "toggled"; id: number }
 /**
  * Result of changing keyboard implementation
@@ -851,16 +1089,23 @@ export type ModelInfo = { id: string; name: string; description: string; filenam
 export type ModelLoadStatus = { is_loaded: boolean; current_model: string | null }
 export type ModelUnloadTimeout = "never" | "immediately" | "min_2" | "min_5" | "min_10" | "min_15" | "hour_1" | "sec_15"
 export type OrtAcceleratorSetting = "auto" | "cpu" | "cuda" | "directml" | "rocm"
-export type OverlayPosition = "none" | "top" | "bottom"
+export type OverlayPosition = "none" | "top" | "bottom" | "left" | "right"
 export type PaginatedHistory = { entries: HistoryEntry[]; has_more: boolean }
 export type PasteMethod = "ctrl_v" | "direct" | "none" | "shift_insert" | "ctrl_shift_v" | "external_script"
 export type PermissionAccess = "allowed" | "denied" | "unknown"
 export type PostProcessProvider = { id: string; label: string; base_url: string; allow_base_url_edit?: boolean; models_endpoint?: string | null; supports_structured_output?: boolean }
 export type RecordingRetentionPeriod = "never" | "preserve_limit" | "days_3" | "weeks_2" | "months_3"
+export type ScratchpadNote = { id: number; title: string; content: string; created_at: number; updated_at: number }
 export type SecretMap = Partial<{ [key in string]: string }>
 export type ShortcutBinding = { id: string; name: string; description: string; default_binding: string; current_binding: string }
 export type SoundTheme = "marimba" | "pop" | "custom"
 export type TypingTool = "auto" | "wtype" | "kwtype" | "dotool" | "ydotool" | "xdotool"
+export type UpdateEntryTextResult = { entry: HistoryEntry; 
+/**
+ * Words newly learned into the custom dictionary from this correction
+ * (empty unless auto-add to dictionary is enabled).
+ */
+added_words: string[] }
 export type WhisperAcceleratorSetting = "auto" | "cpu" | "gpu"
 export type WindowsMicrophonePermissionStatus = { supported: boolean; overall_access: PermissionAccess; device_access: PermissionAccess; app_access: PermissionAccess; desktop_app_access: PermissionAccess }
 

@@ -15,7 +15,51 @@
     "postProcessing": "Následné zpracování",
     "history": "Historie",
     "debug": "Ladění",
-    "about": "O aplikaci"
+    "about": "O aplikaci",
+    "directory": "Adresář",
+    "online": "Online",
+    "floorPlate": "Sektor · Diktování",
+    "file": "Soubor",
+    "refinement": "Zpřesnění",
+    "division": "Oddělení diktování",
+    "build": "Sestavení",
+    "collapse": "Sbalit adresář",
+    "expand": "Rozbalit adresář",
+    "home": "Domů",
+    "system": "Systém",
+    "scratchpad": "Poznámkový blok",
+    "workspace": "Pracovní prostor",
+    "welcome": "Vítejte"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "Pro začátek vyberte model pro přepis",
@@ -117,7 +161,23 @@
         "checkFailed": "Nepodařilo se zkontrolovat oprávnění. Zkuste to prosím znovu.",
         "requestFailed": "Nepodařilo se požádat o oprávnění. Zkuste to prosím znovu."
       }
-    }
+    },
+    "induction": "Uvedení",
+    "online": "Online",
+    "stepIndicator": "Krok {{current}} / {{total}}",
+    "recommendedModels": "Doporučené moduly",
+    "otherModels": "Všechny moduly",
+    "beginRefinement": "Začít",
+    "permissionsStep": {
+      "title": "Oprávnění",
+      "subtitle": "Udělte Eposu přístup, který potřebuje k přepisu vaší řeči."
+    },
+    "modelStep": {
+      "title": "Přepisovací modul",
+      "subtitle": "Vyberte model přepisu k instalaci. Později jej můžete změnit."
+    },
+    "install": "Instalovat",
+    "installing": "Instalace"
   },
   "modelSelector": {
     "custom": "Vlastní",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Žádné",
           "bottom": "Dole",
-          "top": "Nahoře"
+          "top": "Nahoře",
+          "left": "Levý okraj",
+          "right": "Pravý okraj"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos používá Whisper.cpp pro rychlé lokální zpracování řeči na text. Díky skvělé práci Georgiho Gerganova a přispěvatelů."
         }
       }
+    },
+    "appearance": {
+      "title": "Vzhled",
+      "theme": {
+        "label": "Motiv",
+        "description": "Zvolte světlý nebo tmavý vzhled Eposu, nebo se řiďte nastavením systému.",
+        "light": "Světlý",
+        "dark": "Tmavý",
+        "system": "Systém"
+      }
+    },
+    "system": {
+      "title": "Systém",
+      "groups": {
+        "app": "Nastavení aplikace",
+        "sound": "Zvuk",
+        "notifications": "Oznámení",
+        "scratchpad": "Poznámkový blok",
+        "extras": "Doplňky"
+      },
+      "userName": {
+        "label": "Vaše jméno",
+        "description": "Zobrazuje se v uvítání na domovské obrazovce.",
+        "placeholder": "Zadejte své jméno"
+      },
+      "flowbarAlways": {
+        "label": "Vždy zobrazovat Flow Bar",
+        "description": "Ponechte Flow Bar na obrazovce, i když nediktujete."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Tipy",
+          "description": "Tipy k nastavení nebo lepšímu používání Eposu."
+        },
+        "announcements": {
+          "label": "Oznámení",
+          "description": "Nové funkce nebo možnosti."
+        },
+        "milestones": {
+          "label": "Milníky",
+          "description": "Milníky počtu slov, série a úspěchy."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Chování při otevření bloku",
+        "description": "Co poznámkový blok zobrazí při otevření.",
+        "options": {
+          "resumeLast": "Pokračovat v poslední poznámce",
+          "newNote": "Začít novou poznámku"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Automaticky přidávat do slovníku",
+        "description": "Automaticky se učí slova z vašich ručních oprav přepisu."
+      },
+      "creatorMode": {
+        "label": "Režim tvůrce",
+        "description": "Během diktování zobrazuje na Flow Baru „Diktování s Eposem“."
+      },
+      "addedToDictionary_one": "„{{words}}“ přidáno do vašeho slovníku",
+      "addedToDictionary_other": "Přidáno {{count}} slov do vašeho slovníku"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Dostupná aktualizace: {{version}}",
     "updateAvailableShort": "Dostupná aktualizace",
     "upToDate": "Vše aktuální",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Stáhnout aktualizaci",
     "restart": "Restartovat",
     "updateCheckingDisabled": "Kontrola aktualizací vypnuta",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Přepisuji...",
-    "processing": "Zpracovávám..."
+    "processing": "Zpracovávám...",
+    "dictate": "Diktovat",
+    "dictating": "Diktování s Eposem",
+    "tooltip": "Stiskněte {{shortcut}} pro diktování",
+    "tooltipNoShortcut": "Klikněte pro diktování",
+    "cancel": "Zrušit",
+    "scratchpad": "Otevřít poznámkový blok",
+    "idle": "Připraveno"
+  },
+  "home": {
+    "greeting": "Vítejte zpět, {{name}}",
+    "greetingNoName": "Vítejte zpět",
+    "subtitle": "Váš prostor pro diktování",
+    "stats": {
+      "totalWords": "slov celkem",
+      "wpm": "slov/min",
+      "dayStreak": "dní v řadě",
+      "dayStreak_one": "den v řadě",
+      "dayStreak_other": "dní v řadě",
+      "today": "dnes",
+      "todayWords": "slov dnes",
+      "dictations": "diktátů",
+      "avgPace": "prům. tempo",
+      "bestStreak": "nejlepší série",
+      "minutes": "minut",
+      "timeSaved": "čas diktování"
+    },
+    "voiceProfile": {
+      "title": "Hlasový profil",
+      "subtitle": "Slaďovač kontextu",
+      "hint": "Vaše diktování se přizpůsobuje tomu, jak mluvíte.",
+      "toNext": "{{countFmt}} slov do {{tier}}",
+      "maxed": "Dosažen nejvyšší profil — pozoruhodné.",
+      "tiers": {
+        "firstWords": "První slova",
+        "cadet": "Hlasový kadet",
+        "fluent": "Plynulý mluvčí",
+        "wordsmith": "Mistr slova",
+        "orator": "Řečník",
+        "adept": "Hlasový znalec",
+        "master": "Mistr diktování",
+        "silverTongue": "Stříbrný jazyk",
+        "luminary": "Hlasová osobnost"
+      }
+    },
+    "nextMilestone": "{{count}} slov do dalšího milníku",
+    "milestoneReached": "Všechny milníky dosaženy — pozoruhodné.",
+    "activity": {
+      "title": "Nedávná aktivita",
+      "search": "Hledat přepisy",
+      "searchClear": "Vymazat hledání",
+      "empty": "Zatím žádné diktáty. Stiskněte svou zkratku a začněte.",
+      "emptySearch": "Vašemu hledání neodpovídá žádný přepis.",
+      "loading": "Načítání aktivity...",
+      "today": "Dnes",
+      "yesterday": "Včera",
+      "copy": "Kopírovat do schránky",
+      "copied": "Zkopírováno",
+      "flag": "Označit",
+      "unflag": "Odebrat označení",
+      "menu": "Další akce",
+      "delete": "Smazat",
+      "edit": "Upravit text",
+      "retry": "Znovu přepsat",
+      "save": "Uložit",
+      "cancel": "Zrušit",
+      "editPlaceholder": "Upravit přepis",
+      "words": "{{count}} slov",
+      "empty_word": "prázdné",
+      "editError": "Úpravu se nepodařilo uložit"
+    },
+    "banner": {
+      "getStarted": "Začít",
+      "dismiss": "Zavřít",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Diktujte kdekoli",
+          "body": "Stiskněte {{shortcut}} v jakékoli aplikaci a proměňte svůj hlas v text."
+        },
+        "flowBar": {
+          "title": "Přesuňte Flow Bar",
+          "body": "Ukotvěte Flow Bar k libovolnému okraji obrazovky v Nastavení systému."
+        },
+        "postProcess": {
+          "title": "Uklízejte během mluvení",
+          "body": "Zapněte AI dodatečné zpracování pro automatické odstranění výplňových slov."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Milník dosažen",
+      "body": "Nadiktovali jste {{count}} slov s Eposem."
+    },
+    "streak": {
+      "title": "Série {{count}} dní",
+      "body": "Diktovali jste {{count}} dní v řadě. Jen tak dál."
+    }
+  },
+  "scratchpad": {
+    "title": "Poznámkový blok",
+    "subtitle": "Klidné místo pro diktování a psaní konceptů",
+    "notes": "Poznámky",
+    "newNote": "Nová poznámka",
+    "deleteNote": "Smazat poznámku",
+    "untitled": "Poznámka bez názvu",
+    "titlePlaceholder": "Název",
+    "contentPlaceholder": "Začněte psát, nebo stiskněte svou zkratku pro diktování...",
+    "empty": "Zatím žádné poznámky.",
+    "emptyEditor": "Vyberte poznámku nebo vytvořte novou.",
+    "saved": "Uloženo",
+    "saving": "Ukládání...",
+    "words": "{{count}} slov",
+    "deleteConfirm": "Smazat tuto poznámku?",
+    "copy": "Kopírovat poznámku",
+    "copied": "Zkopírováno"
+  },
+  "splash": {
+    "division": "Oddělení diktování",
+    "tagline": "Řeč, zpřesněná.",
+    "booting": "Inicializace terminálu",
+    "ready": "Připraveno"
   }
 }

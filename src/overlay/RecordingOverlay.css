@@ -1,7 +1,6 @@
 /* ============================================================================
-   Recording overlay — Corporate Brutalism. Flat fill, hairline border, sharp
-   corners, no drop shadows. The only permitted glow is the voice-reactive
-   amber halo on the active recording state.
+   Recording overlay — a rounded optical capsule floating on a fully
+   transparent native host.
    ============================================================================ */
 
 :root {
@@ -10,6 +9,8 @@
   --ov-border: rgba(31, 61, 51, 0.15);
   --ov-text: #0d1f1a;
   --ov-rec: #96591f; /* AA-adjusted amber for light surfaces */
+  --ov-control-bg: rgba(240, 237, 228, 0.97);
+  --ov-control-border: rgba(31, 61, 51, 0.24);
 
   /* Waveform bar colors, read by the canvas loop as "r, g, b". */
   --ov-wave: 31, 61, 51; /* hunter base */
@@ -19,13 +20,15 @@
 
 /* Dark: forest panel, sage-family bars, amber-dark indicator. */
 :root.dark {
-  --ov-bg: rgba(13, 31, 26, 0.97);
-  --ov-border: rgba(240, 237, 228, 0.12);
+  --ov-bg: rgba(10, 24, 40, 0.97);
+  --ov-border: rgba(107, 135, 144, 0.34);
   --ov-text: #f0ede4;
   --ov-rec: #d68f55;
+  --ov-control-bg: rgba(24, 38, 52, 0.97);
+  --ov-control-border: rgba(139, 126, 152, 0.42);
 
-  --ov-wave: 123, 168, 140; /* sage base */
-  --ov-wave-top: 168, 201, 181; /* sage-bright highlight */
+  --ov-wave: 110, 184, 137; /* phosphor mint */
+  --ov-wave-top: 139, 126, 152; /* wellness mauve highlight */
   --ov-glow: 214, 143, 85; /* amber-dark glow */
 }
 
@@ -34,35 +37,92 @@
      voice-reactive glow + recording indicator swell. */
   --level: 0;
 
+  position: absolute;
+  left: 0;
+  bottom: 0;
   height: 100vh;
   width: 100vw;
-  display: grid;
-  grid-template-columns: 20px 1fr 20px;
+  display: flex;
   align-items: center;
-  padding: 0 10px;
-  gap: 8px;
+  justify-content: center;
   box-sizing: border-box;
+  overflow: hidden;
 
-  background: var(--ov-bg);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--ov-border);
-  /* No elevation — only the reactive recording glow. */
-  box-shadow: 0 0 calc(var(--level) * 18px) rgba(var(--ov-glow), 0.35);
-  border-radius: 4px;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow: none;
 
   opacity: 0;
   transform: translateY(6px);
   transition:
     opacity 300ms ease-in-out,
-    transform 300ms ease-in-out,
-    background-color 500ms ease-in-out,
-    box-shadow 300ms ease-in-out;
+    transform 300ms ease-in-out;
+}
+
+.overlay-capsule {
+  width: calc(100% - 8px);
+  height: 28px;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) 16px;
+  align-items: center;
+  padding: 0 8px;
+  gap: 8px;
+  box-sizing: border-box;
+  overflow: hidden;
+  pointer-events: auto;
+
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ov-bg), white 5%),
+    var(--ov-bg) 55%,
+    color-mix(in srgb, var(--ov-bg), black 6%)
+  );
+  border: 1px solid var(--ov-border);
+  border-radius: 999px;
+  /* No drop shadow — Windows paints host-window shadows as rectangles. */
+  box-shadow: none;
+  filter: none;
+  transition:
+    background 500ms ease-in-out,
+    border-color 500ms ease-in-out;
 }
 
 .recording-overlay.fade-in {
   opacity: 1;
   transform: translateY(0);
+}
+
+.recording-overlay.dock-top:not(.flow-vertical) {
+  top: 0;
+  bottom: auto;
+}
+
+/* ---------- side docks (left/right): render the horizontal pill rotated ----
+   The window is swapped to a tall, narrow size (40 × 216) by the backend.
+   We lay the pill out at its natural horizontal size (100vh × 100vw = the
+   swapped long × short axis) and rotate it 90° so it fills the window. */
+.recording-overlay.flow-vertical {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vh;
+  height: 100vw;
+  transform: translate(-50%, -50%) rotate(90deg) translateY(6px);
+}
+
+.recording-overlay.flow-vertical.dock-left {
+  transform: translate(-50%, -50%) rotate(-90deg) translateY(6px);
+}
+
+.recording-overlay.flow-vertical.fade-in,
+.recording-overlay.flow-vertical.dock-left.fade-in {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.recording-overlay.flow-vertical.dock-left.fade-in {
+  transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 /* ---------- left: status indicator ---------- */
@@ -74,11 +134,13 @@
 
 /* Square amber indicator lamp with a slow institutional pulse (2.5s). */
 .rec-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 1px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
   background: var(--ov-rec);
-  transform: scale(calc(1 + var(--level) * 0.25));
+  /* Soft circular glow only — never a rectangular host shadow. */
+  box-shadow: 0 0 calc(2px + var(--level) * 3px) rgba(var(--ov-glow), 0.55);
+  transform: scale(calc(1 + var(--level) * 0.2));
   animation: pulse-slow-ov 2.5s ease-in-out infinite;
 }
 
@@ -118,25 +180,28 @@
 
 .wave-canvas {
   width: 100%;
-  height: 28px;
+  height: 16px;
   display: block;
 }
 
 /* ---------- status text (transcribing / processing) ---------- */
 .status-text {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   gap: 2px;
   color: var(--ov-text);
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   font-family:
     "IBM Plex Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
   white-space: nowrap;
   max-width: 100%;
+  padding-inline: 1px 2px;
+  overflow: visible;
+  text-shadow: none;
 }
 
 .dots {
@@ -180,19 +245,266 @@
 }
 
 .cancel-button {
-  width: 20px;
-  height: 20px;
-  border-radius: 2px;
-  background: transparent;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--ov-border), transparent 18%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ov-bg), transparent 18%);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: var(--ov-text);
-  transition: background-color 300ms ease-in-out;
+  box-shadow: none;
+  transition:
+    background-color 180ms ease-in-out,
+    transform 180ms ease-in-out;
   flex-shrink: 0;
 }
 
 .cancel-button:hover {
-  background: color-mix(in srgb, var(--ov-text), transparent 90%);
+  background: color-mix(in srgb, var(--ov-bg), var(--ov-text) 10%);
+  transform: scale(1.08);
+}
+
+/* ============================================================================
+   Idle Flow Bar — a slim resting handle that expands into controls on hover,
+   like Wispr Flow. At rest the window is transparent but for the handle; on
+   hover the pill panel + controls fade in.
+   ============================================================================ */
+.recording-overlay.flow-bar-idle {
+  top: 0;
+  bottom: auto;
+  height: 100vh;
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 300ms ease-in-out,
+    transform 300ms ease-in-out,
+    background-color 260ms ease-in-out,
+    border-color 260ms ease-in-out;
+}
+
+.recording-overlay.flow-bar-idle.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Resting handle — a single quiet line immediately above the taskbar. */
+.flow-idle-handle {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  width: 36px;
+  height: 3px;
+  border-radius: 999px;
+  /* Always light: a dark ink bar disappears over taskbars / dark desktops. */
+  background: linear-gradient(
+    180deg,
+    rgba(250, 248, 242, 0.98) 0%,
+    rgba(232, 228, 216, 0.96) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(13, 31, 26, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.22),
+    0 0 12px rgba(255, 255, 255, 0.18);
+  pointer-events: auto;
+  transition:
+    opacity 180ms ease-in-out,
+    transform 180ms ease-in-out,
+    width 180ms ease-in-out,
+    height 180ms ease-in-out;
+  transform: translateX(-50%);
+}
+.recording-overlay.flow-bar-idle.is-hover-armed:hover .flow-idle-handle {
+  opacity: 0;
+  transform: translateX(-50%) scaleX(0.55);
+}
+
+/* Hover card — compact black prompt above a two-control row, matching the
+   supplied Flow Bar reference while retaining EPOS's sharp instrument detail. */
+.flow-idle-expand {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 3px 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition:
+    opacity 180ms ease-in-out,
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: hidden;
+}
+.recording-overlay.flow-bar-idle.is-hover-armed:hover {
+  background: transparent;
+  border-color: transparent;
+}
+.recording-overlay.flow-bar-idle.is-hover-armed:hover .flow-idle-expand {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.recording-overlay.flow-bar-idle.idle-entry-locked .flow-idle-expand {
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: none;
+}
+
+/* Prompt capsule ("Dictate Ctrl + Win"). */
+.flow-hint {
+  min-width: 0;
+  min-height: 22px;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--ov-control-border);
+  border-radius: 999px;
+  background: var(--ov-control-bg);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 4px 14px rgba(0, 0, 0, 0.34);
+  cursor: pointer;
+  color: var(--ov-text);
+}
+
+.flow-hint-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family:
+    "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk", "Helvetica Neue",
+    Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.flow-keys {
+  color: inherit;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.flow-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.flow-mic,
+.flow-scratchpad {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--ov-control-border);
+  background: var(--ov-control-bg);
+  color: var(--ov-text);
+  cursor: pointer;
+  padding: 0;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 3px 12px rgba(0, 0, 0, 0.28);
+  transition:
+    background-color 180ms ease-in-out,
+    border-color 180ms ease-in-out,
+    color 180ms ease-in-out;
+}
+
+.flow-mic {
+  width: 42px;
+  height: 26px;
+  border-radius: 999px;
+}
+
+.flow-scratchpad {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  opacity: 1;
+}
+
+.flow-hint:hover,
+.flow-mic:hover,
+.flow-scratchpad:hover {
+  background: color-mix(in srgb, var(--ov-control-bg), var(--ov-text) 8%);
+  border-color: color-mix(in srgb, var(--ov-text), transparent 58%);
+}
+
+.flow-hint:focus-visible,
+.flow-mic:focus-visible,
+.flow-scratchpad:focus-visible {
+  outline: 2px solid var(--ov-rec);
+  outline-offset: 1px;
+}
+
+.flow-attribution {
+  font-family:
+    "IBM Plex Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ov-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.flow-attribution {
+  letter-spacing: 0.08em;
+}
+
+.recording-overlay.flow-bar-idle.dock-top .flow-idle-handle {
+  top: 7px;
+  bottom: auto;
+}
+
+.recording-overlay.flow-bar-idle.dock-top .flow-idle-expand {
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding-top: 4px;
+  padding-bottom: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recording-overlay,
+  .flow-idle-handle,
+  .flow-idle-expand {
+    transition-duration: 1ms !important;
+  }
+
+  .rec-dot,
+  .rec-spinner,
+  .dots span {
+    animation: none !important;
+  }
 }

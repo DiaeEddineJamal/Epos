@@ -15,7 +15,51 @@
     "postProcessing": "Постобработка",
     "history": "История",
     "debug": "Отладка",
-    "about": "О программе"
+    "about": "О программе",
+    "directory": "Каталог",
+    "online": "В сети",
+    "floorPlate": "Сектор · Диктовка",
+    "file": "Файл",
+    "refinement": "Уточнение",
+    "division": "Отдел диктовки",
+    "build": "Сборка",
+    "collapse": "Свернуть каталог",
+    "expand": "Развернуть каталог",
+    "home": "Главная",
+    "system": "Система",
+    "scratchpad": "Блокнот",
+    "workspace": "Рабочая область",
+    "welcome": "Добро пожаловать"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "Для начала выберите модель транскрипции",
@@ -117,7 +161,23 @@
         "checkFailed": "Не удалось проверить разрешения. Пожалуйста, попробуйте снова.",
         "requestFailed": "Не удалось запросить разрешение. Пожалуйста, попробуйте снова."
       }
-    }
+    },
+    "induction": "Введение",
+    "online": "В сети",
+    "stepIndicator": "Шаг {{current}} / {{total}}",
+    "recommendedModels": "Рекомендуемые движки",
+    "otherModels": "Все движки",
+    "beginRefinement": "Начать",
+    "permissionsStep": {
+      "title": "Доступ",
+      "subtitle": "Предоставьте Epos доступ, необходимый для обработки вашей речи."
+    },
+    "modelStep": {
+      "title": "Движок распознавания",
+      "subtitle": "Выберите модель распознавания для установки. Позже её можно изменить."
+    },
+    "install": "Установить",
+    "installing": "Установка"
   },
   "modelSelector": {
     "custom": "Пользовательская",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Нет",
           "bottom": "Снизу",
-          "top": "Сверху"
+          "top": "Сверху",
+          "left": "Левый край",
+          "right": "Правый край"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos использует Whisper.cpp для быстрого локального преобразования речи в текст. Спасибо великолепной работе Георгия Герганова и участников."
         }
       }
+    },
+    "appearance": {
+      "title": "Внешний вид",
+      "theme": {
+        "label": "Тема",
+        "description": "Выберите светлое или тёмное оформление Epos либо следуйте настройке системы.",
+        "light": "Светлая",
+        "dark": "Тёмная",
+        "system": "Системная"
+      }
+    },
+    "system": {
+      "title": "Система",
+      "groups": {
+        "app": "Настройки приложения",
+        "sound": "Звук",
+        "notifications": "Уведомления",
+        "scratchpad": "Блокнот",
+        "extras": "Дополнительно"
+      },
+      "userName": {
+        "label": "Ваше имя",
+        "description": "Отображается в приветствии на главном экране.",
+        "placeholder": "Введите ваше имя"
+      },
+      "flowbarAlways": {
+        "label": "Всегда показывать Flow Bar",
+        "description": "Держите Flow Bar на экране, даже когда не диктуете."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Подсказки",
+          "description": "Советы по настройке и улучшению работы с Epos."
+        },
+        "announcements": {
+          "label": "Анонсы",
+          "description": "Новые функции и возможности."
+        },
+        "milestones": {
+          "label": "Достижения",
+          "description": "Рубежи по количеству слов, серии и достижения."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Поведение при открытии блокнота",
+        "description": "Что показывает блокнот при открытии.",
+        "options": {
+          "resumeLast": "Открыть последнюю заметку",
+          "newNote": "Начать новую заметку"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Автодобавление в словарь",
+        "description": "Автоматически учит слова из ваших ручных исправлений транскрипции."
+      },
+      "creatorMode": {
+        "label": "Режим автора",
+        "description": "Показывает «Диктовка в Epos» на Flow Bar во время диктовки."
+      },
+      "addedToDictionary_one": "«{{words}}» добавлено в ваш словарь",
+      "addedToDictionary_other": "{{count}} слов добавлено в ваш словарь"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Доступно обновление: {{version}}",
     "updateAvailableShort": "Доступно обновление",
     "upToDate": "Не требует обновлений",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Скачать обновление",
     "restart": "Перезапуск",
     "updateCheckingDisabled": "Проверка обновлений отключена",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Расшифровка...",
-    "processing": "Обработка..."
+    "processing": "Обработка...",
+    "dictate": "Диктовать",
+    "dictating": "Диктовка в Epos",
+    "tooltip": "Нажмите {{shortcut}} для диктовки",
+    "tooltipNoShortcut": "Нажмите, чтобы диктовать",
+    "cancel": "Отмена",
+    "scratchpad": "Открыть блокнот",
+    "idle": "Готово"
+  },
+  "home": {
+    "greeting": "С возвращением, {{name}}",
+    "greetingNoName": "С возвращением",
+    "subtitle": "Ваше пространство для диктовки",
+    "stats": {
+      "totalWords": "всего слов",
+      "wpm": "сл/мин",
+      "dayStreak": "дней подряд",
+      "dayStreak_one": "день подряд",
+      "dayStreak_other": "дней подряд",
+      "today": "сегодня",
+      "todayWords": "слов сегодня",
+      "dictations": "диктовок",
+      "avgPace": "средний темп",
+      "bestStreak": "лучшая серия",
+      "minutes": "минут",
+      "timeSaved": "время диктовки"
+    },
+    "voiceProfile": {
+      "title": "Голосовой профиль",
+      "subtitle": "Настройка контекста",
+      "hint": "Диктовка подстраивается под вашу манеру речи.",
+      "toNext": "{{countFmt}} слов до «{{tier}}»",
+      "maxed": "Достигнут высший профиль — впечатляюще.",
+      "tiers": {
+        "firstWords": "Первые слова",
+        "cadet": "Голосовой кадет",
+        "fluent": "Беглый оратор",
+        "wordsmith": "Мастер слова",
+        "orator": "Оратор",
+        "adept": "Знаток голоса",
+        "master": "Мастер диктовки",
+        "silverTongue": "Серебряный язык",
+        "luminary": "Голосовое светило"
+      }
+    },
+    "nextMilestone": "{{count}} слов до следующего рубежа",
+    "milestoneReached": "Все рубежи достигнуты — впечатляюще.",
+    "activity": {
+      "title": "Недавняя активность",
+      "search": "Поиск по расшифровкам",
+      "searchClear": "Очистить поиск",
+      "empty": "Пока нет диктовок. Нажмите сочетание клавиш, чтобы начать.",
+      "emptySearch": "Нет расшифровок по вашему запросу.",
+      "loading": "Загрузка активности...",
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "copy": "Копировать в буфер обмена",
+      "copied": "Скопировано",
+      "flag": "Отметить",
+      "unflag": "Снять отметку",
+      "menu": "Ещё действия",
+      "delete": "Удалить",
+      "edit": "Изменить текст",
+      "retry": "Расшифровать заново",
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "editPlaceholder": "Изменить расшифровку",
+      "words": "{{count}} слов",
+      "empty_word": "пусто",
+      "editError": "Не удалось сохранить изменение"
+    },
+    "banner": {
+      "getStarted": "Начать",
+      "dismiss": "Скрыть",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Диктуйте где угодно",
+          "body": "Нажмите {{shortcut}} в любом приложении, чтобы превратить голос в текст."
+        },
+        "flowBar": {
+          "title": "Перемещайте Flow Bar",
+          "body": "Прикрепите Flow Bar к любому краю экрана в настройках системы."
+        },
+        "postProcess": {
+          "title": "Очистка на ходу",
+          "body": "Включите ИИ-постобработку, чтобы автоматически убирать слова-паразиты."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Рубеж достигнут",
+      "body": "Вы надиктовали {{count}} слов с Epos."
+    },
+    "streak": {
+      "title": "Серия {{count}} дней",
+      "body": "Вы диктуете {{count}} дней подряд. Так держать."
+    }
+  },
+  "scratchpad": {
+    "title": "Блокнот",
+    "subtitle": "Тихое место, чтобы диктовать и делать наброски",
+    "notes": "Заметки",
+    "newNote": "Новая заметка",
+    "deleteNote": "Удалить заметку",
+    "untitled": "Заметка без названия",
+    "titlePlaceholder": "Заголовок",
+    "contentPlaceholder": "Начните печатать или нажмите сочетание клавиш, чтобы диктовать...",
+    "empty": "Пока нет заметок.",
+    "emptyEditor": "Выберите заметку или создайте новую.",
+    "saved": "Сохранено",
+    "saving": "Сохранение...",
+    "words": "{{count}} слов",
+    "deleteConfirm": "Удалить эту заметку?",
+    "copy": "Копировать заметку",
+    "copied": "Скопировано"
+  },
+  "splash": {
+    "division": "Отдел диктовки",
+    "tagline": "Речь, отточенная.",
+    "booting": "Инициализация терминала",
+    "ready": "Готово"
   }
 }

@@ -9,8 +9,8 @@
 //! The active implementation is determined by the `keyboard_implementation`
 //! setting and can be changed at runtime.
 
-mod handler;
 pub mod epos_keys;
+mod handler;
 mod tauri_impl;
 
 use log::{error, info, warn};
@@ -541,6 +541,8 @@ pub fn change_overlay_position_setting(app: AppHandle, position: String) -> Resu
         "none" => OverlayPosition::None,
         "top" => OverlayPosition::Top,
         "bottom" => OverlayPosition::Bottom,
+        "left" => OverlayPosition::Left,
+        "right" => OverlayPosition::Right,
         other => {
             warn!("Invalid overlay position '{}', defaulting to bottom", other);
             OverlayPosition::Bottom
@@ -552,6 +554,114 @@ pub fn change_overlay_position_setting(app: AppHandle, position: String) -> Resu
     // Update overlay position without recreating window
     crate::utils::update_overlay_position(&app);
 
+    // Keep the persistent flow bar consistent with the new dock (also hides
+    // it when the position was set to none), and let the webview re-read its
+    // orientation.
+    crate::utils::sync_flowbar_visibility(&app);
+    crate::utils::notify_flowbar_config_changed(&app);
+
+    let _ = app.emit(
+        "settings-changed",
+        serde_json::json!({
+            "setting": "overlay_position",
+            "value": position
+        }),
+    );
+
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_user_name_setting(app: AppHandle, name: String) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.user_name = name;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_flowbar_always_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.show_flowbar_always = enabled;
+    settings::write_settings(&app, settings);
+
+    // Sync visibility off the command thread. Overlay positioning uses
+    // run_on_main_thread; doing that while a sync Tauri command already owns
+    // the UI thread deadlocks and leaves the settings toggle spinner stuck.
+    let app_handle = app.clone();
+    std::thread::spawn(move || {
+        crate::utils::sync_flowbar_visibility(&app_handle);
+    });
+
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_notifications_suggestions_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.notifications_suggestions = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_notifications_announcements_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.notifications_announcements = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_notifications_milestones_setting(
+    app: AppHandle,
+    enabled: bool,
+) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.notifications_milestones = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_auto_add_to_dictionary_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.auto_add_to_dictionary = enabled;
+    settings::write_settings(&app, settings);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_creator_mode_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.creator_mode = enabled;
+    settings::write_settings(&app, settings);
+
+    // The flow bar renders the attribution label; let it re-read config.
+    crate::utils::notify_flowbar_config_changed(&app);
+
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn change_scratchpad_resume_last_setting(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut settings = settings::get_settings(&app);
+    settings.scratchpad_resume_last = enabled;
+    settings::write_settings(&app, settings);
     Ok(())
 }
 

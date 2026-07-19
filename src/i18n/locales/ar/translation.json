@@ -15,7 +15,51 @@
     "history": "السجل",
     "debug": "تصحيح الأخطاء",
     "about": "حول",
-    "models": "النماذج"
+    "models": "النماذج",
+    "directory": "الدليل",
+    "online": "متصل",
+    "floorPlate": "القطاع · الإملاء",
+    "file": "ملف",
+    "refinement": "التحسين",
+    "division": "قسم الإملاء",
+    "build": "الإصدار",
+    "collapse": "طيّ الدليل",
+    "expand": "توسيع الدليل",
+    "home": "الرئيسية",
+    "system": "النظام",
+    "scratchpad": "المفكرة",
+    "workspace": "مساحة العمل",
+    "welcome": "مرحبًا"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "للبدء، اختر نموذج التفريغ الصوتي",
@@ -117,7 +161,23 @@
         "checkFailed": "فشل التحقق من الأذونات. يرجير المحاولة مرة أخرى.",
         "requestFailed": "فشل طلب الإذن. يرجى المحاولة مرة أخرى."
       }
-    }
+    },
+    "induction": "التهيئة",
+    "online": "متصل",
+    "stepIndicator": "الخطوة {{current}} / {{total}}",
+    "recommendedModels": "المحركات الموصى بها",
+    "otherModels": "جميع المحركات",
+    "beginRefinement": "ابدأ",
+    "permissionsStep": {
+      "title": "الأذونات",
+      "subtitle": "امنح Epos الوصول الذي يحتاجه لتحسين صوتك."
+    },
+    "modelStep": {
+      "title": "محرك التفريغ",
+      "subtitle": "اختر نموذج تفريغ لتثبيته. يمكنك تغييره لاحقًا."
+    },
+    "install": "تثبيت",
+    "installing": "جارٍ التثبيت"
   },
   "modelSelector": {
     "custom": "مخصص",
@@ -266,7 +326,9 @@
         "options": {
           "none": "بلا",
           "bottom": "أسفل",
-          "top": "أعلى"
+          "top": "أعلى",
+          "left": "الحافة اليسرى",
+          "right": "الحافة اليمنى"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
         "allLanguages": "جميع اللغات"
       },
       "noModelsMatch": "لا توجد نماذج مطابقة لهذا الفلتر."
+    },
+    "appearance": {
+      "title": "المظهر",
+      "theme": {
+        "label": "السمة",
+        "description": "اختر مظهرًا فاتحًا أو داكنًا لـ Epos، أو اتبع إعداد النظام.",
+        "light": "فاتح",
+        "dark": "داكن",
+        "system": "النظام"
+      }
+    },
+    "system": {
+      "title": "النظام",
+      "groups": {
+        "app": "إعدادات التطبيق",
+        "sound": "الصوت",
+        "notifications": "الإشعارات",
+        "scratchpad": "المفكرة",
+        "extras": "إضافات"
+      },
+      "userName": {
+        "label": "اسمك",
+        "description": "يظهر في رسالة الترحيب على شاشتك الرئيسية.",
+        "placeholder": "أدخل اسمك"
+      },
+      "flowbarAlways": {
+        "label": "إظهار Flow Bar دائمًا",
+        "description": "أبقِ Flow Bar على الشاشة حتى عندما لا تُملي."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "الاقتراحات",
+          "description": "نصائح حول الإعداد أو تحسين استخدامك لـ Epos."
+        },
+        "announcements": {
+          "label": "الإعلانات",
+          "description": "ميزات أو إمكانات جديدة."
+        },
+        "milestones": {
+          "label": "الإنجازات",
+          "description": "إنجازات عدد الكلمات والسلاسل والإنجازات."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "سلوك فتح المفكرة",
+        "description": "ما تعرضه المفكرة عند فتحها.",
+        "options": {
+          "resumeLast": "استئناف آخر ملاحظة",
+          "newNote": "بدء ملاحظة جديدة"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "الإضافة التلقائية إلى القاموس",
+        "description": "يتعلّم الكلمات تلقائيًا من تصحيحاتك اليدوية للنص."
+      },
+      "creatorMode": {
+        "label": "وضع المبدع",
+        "description": "يعرض «الإملاء باستخدام Epos» على Flow Bar أثناء الإملاء."
+      },
+      "addedToDictionary_one": "تمت إضافة «{{words}}» إلى قاموسك",
+      "addedToDictionary_other": "تمت إضافة {{count}} كلمة إلى قاموسك"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "تحديث متاح: {{version}}",
     "updateAvailableShort": "تحديث متاح",
     "upToDate": "محدث",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "تنزيل التحديث",
     "restart": "إعادة تشغيل",
     "updateCheckingDisabled": "تم تعطيل التحقق من التحديث",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "...جاري التفريغ",
-    "processing": "...جاري المعالجة"
+    "processing": "...جاري المعالجة",
+    "dictate": "إملاء",
+    "dictating": "الإملاء باستخدام Epos",
+    "tooltip": "اضغط {{shortcut}} للإملاء",
+    "tooltipNoShortcut": "انقر للإملاء",
+    "cancel": "إلغاء",
+    "scratchpad": "فتح المفكرة",
+    "idle": "جاهز"
+  },
+  "home": {
+    "greeting": "مرحبًا بعودتك، {{name}}",
+    "greetingNoName": "مرحبًا بعودتك",
+    "subtitle": "مساحة الإملاء الخاصة بك",
+    "stats": {
+      "totalWords": "إجمالي الكلمات",
+      "wpm": "كلمة/د",
+      "dayStreak": "أيام متتالية",
+      "dayStreak_one": "يوم متتالٍ",
+      "dayStreak_other": "أيام متتالية",
+      "today": "اليوم",
+      "todayWords": "كلمات اليوم",
+      "dictations": "عمليات الإملاء",
+      "avgPace": "متوسط السرعة",
+      "bestStreak": "أفضل سلسلة",
+      "minutes": "دقائق",
+      "timeSaved": "وقت الإملاء"
+    },
+    "voiceProfile": {
+      "title": "ملف الصوت",
+      "subtitle": "مُوائم السياق",
+      "hint": "يتكيّف الإملاء مع طريقة كلامك.",
+      "toNext": "{{countFmt}} كلمة حتى «{{tier}}»",
+      "maxed": "تم بلوغ أعلى ملف — رائع.",
+      "tiers": {
+        "firstWords": "الكلمات الأولى",
+        "cadet": "مبتدئ الصوت",
+        "fluent": "متحدث طليق",
+        "wordsmith": "صائغ الكلمات",
+        "orator": "خطيب",
+        "adept": "بارع الصوت",
+        "master": "سيد الإملاء",
+        "silverTongue": "لسان فضي",
+        "luminary": "نجم الصوت"
+      }
+    },
+    "nextMilestone": "{{count}} كلمة حتى إنجازك التالي",
+    "milestoneReached": "تم بلوغ كل الإنجازات — رائع.",
+    "activity": {
+      "title": "النشاط الأخير",
+      "search": "البحث في النصوص",
+      "searchClear": "مسح البحث",
+      "empty": "لا إملاءات بعد. اضغط اختصارك للبدء.",
+      "emptySearch": "لا توجد نصوص تطابق بحثك.",
+      "loading": "جارٍ تحميل النشاط...",
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "copy": "نسخ إلى الحافظة",
+      "copied": "تم النسخ",
+      "flag": "وضع علامة",
+      "unflag": "إزالة العلامة",
+      "menu": "إجراءات أخرى",
+      "delete": "حذف",
+      "edit": "تعديل النص",
+      "retry": "إعادة النسخ",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "editPlaceholder": "تعديل النص",
+      "words": "{{count}} كلمة",
+      "empty_word": "فارغ",
+      "editError": "تعذّر حفظ تعديلك"
+    },
+    "banner": {
+      "getStarted": "ابدأ",
+      "dismiss": "تجاهل",
+      "items": {
+        "dictateAnywhere": {
+          "title": "أملِ في أي مكان",
+          "body": "اضغط {{shortcut}} في أي تطبيق لتحويل صوتك إلى نص."
+        },
+        "flowBar": {
+          "title": "حرّك Flow Bar",
+          "body": "ثبّت Flow Bar على أي حافة من الشاشة من إعدادات النظام."
+        },
+        "postProcess": {
+          "title": "التنظيف أثناء الكلام",
+          "body": "فعّل المعالجة اللاحقة بالذكاء الاصطناعي لإزالة كلمات الحشو تلقائيًا."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "تم بلوغ إنجاز",
+      "body": "لقد أمليت {{count}} كلمة باستخدام Epos."
+    },
+    "streak": {
+      "title": "سلسلة {{count}} يوم",
+      "body": "لقد أمليت {{count}} يومًا متتاليًا. واصل."
+    }
+  },
+  "scratchpad": {
+    "title": "المفكرة",
+    "subtitle": "مكان هادئ للإملاء والكتابة",
+    "notes": "الملاحظات",
+    "newNote": "ملاحظة جديدة",
+    "deleteNote": "حذف الملاحظة",
+    "untitled": "ملاحظة بلا عنوان",
+    "titlePlaceholder": "العنوان",
+    "contentPlaceholder": "ابدأ الكتابة، أو اضغط اختصارك للإملاء...",
+    "empty": "لا ملاحظات بعد.",
+    "emptyEditor": "اختر ملاحظة أو أنشئ واحدة جديدة.",
+    "saved": "تم الحفظ",
+    "saving": "جارٍ الحفظ...",
+    "words": "{{count}} كلمة",
+    "deleteConfirm": "حذف هذه الملاحظة؟",
+    "copy": "نسخ الملاحظة",
+    "copied": "تم النسخ"
+  },
+  "splash": {
+    "division": "قسم الإملاء",
+    "tagline": "الكلام، مُنقّحًا.",
+    "booting": "تهيئة الطرفية",
+    "ready": "جاهز"
   }
 }

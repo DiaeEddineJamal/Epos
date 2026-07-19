@@ -39,10 +39,11 @@ type NonCreatableProps = {
 
 export type SelectProps = BaseProps & (CreatableProps | NonCreatableProps);
 
-const baseBackground = "var(--color-white)";
+const baseBackground = "var(--color-surface)";
 const hoverBackground = "var(--color-background-ui)";
 const focusBackground = "var(--color-accent-tan)";
-const neutralBorder = "color-mix(in srgb, var(--color-primary) 20%, transparent)";
+const neutralBorder =
+  "color-mix(in srgb, var(--color-primary) 20%, transparent)";
 
 const selectStyles: StylesConfig<SelectOption, false> = {
   control: (base, state) => ({
@@ -50,8 +51,10 @@ const selectStyles: StylesConfig<SelectOption, false> = {
     minHeight: 42,
     borderRadius: 10,
     borderColor: state.isFocused ? "var(--color-primary)" : neutralBorder,
-    boxShadow: state.isFocused ? "0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)" : "0 1px 2px rgba(0, 0, 0, 0.05)",
-    backgroundColor: state.isFocused ? "var(--color-white)" : baseBackground,
+    boxShadow: state.isFocused
+      ? "0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent)"
+      : "0 1px 2px rgba(0, 0, 0, 0.05)",
+    backgroundColor: state.isFocused ? "var(--color-surface)" : baseBackground,
     fontSize: "0.95rem",
     color: "var(--color-text)",
     transition: "all 200ms ease-out",
@@ -93,7 +96,7 @@ const selectStyles: StylesConfig<SelectOption, false> = {
   menu: (provided) => ({
     ...provided,
     zIndex: 50,
-    backgroundColor: "var(--color-white)",
+    backgroundColor: "var(--color-surface)",
     color: "var(--color-text)",
     borderRadius: 12,
     overflow: "hidden",

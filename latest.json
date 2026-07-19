@@ -1,11 +1,11 @@
 {
-  "version": "v0.8.8",
-  "notes": "Severance MDR shell refresh: collapsible Lumon department rail with EPOS ASCII terminal seal, phosphor-green accent palette, and authentic macrodata refinement page transitions (22×8 decimal field, magnifying cursor, bins, coordinates) that reposition per section. Refines light-mode contrast, removes cheap hover motion in favor of phosphor-patch feedback, and fixes transcription icon visibility in dark mode.",
+  "version": "0.8.9",
+  "notes": "Command Deck navigation, floating dictation capsule, always-on Flow Bar polish, dual-monitor overlay fix, Teach EPOS improvements, and updater reliability so Check for updates can find and install new releases.",
+  "pub_date": "2026-07-19T05:00:21Z",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.8/Epos_0.8.8_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0JVcU5uVndDUm5mcnV6Z3RJNElJZ3A5NWhHUUNRSnhZZUVRWU1VZGoyenRGVHFjU3Ivb1YydlFCZTA1aUZQMk9CU2xEZHRYcit6S0JTQWtBVWsvVGdrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgzOTA0MDM2CWZpbGU6RXBvc18wLjguOF94NjQtc2V0dXAuZXhlCkVvM2QwSTlGVHArcnNsQUMvMXNWZE1nalRmUHhmSmM5dFZVbzl4NEVtN00yUzd2T0xKdzBNNktzZUVTQXdyVEhvQ1g2VnhnSnJJWXR6MlJ1Wmo2ZURBPT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.9/Epos_0.8.9_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0xPbGhVVFdJUWUweFZlR0dtVFA0OWJibkNUUFVUL3FlUk1ZajJ5UkdmQnlyeTN1TEx0OERzMHRESkFqb0twRU11QXNwbTQrMU1vd2tMUENEbkpoQ1FZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0NDM3MTg1CWZpbGU6RXBvc18wLjguOV94NjQtc2V0dXAuZXhlClhWM0xYd0Vaa2FYbnErTmpKRzhLeVQyQkNQVzd3cWJkN3YyaWFkM2pvU1JSdXVNZXBHaUpiWGhoNGZGbUxFM3R4SytiRFd1UTFoc2J6Z3h4MEphOUFRPT0K"
     }
-  },
-  "pub_date": "2026-07-13T00:53:56Z"
+  }
 }

@@ -8,18 +8,18 @@ import {
   checkMicrophonePermission,
 } from "tauri-plugin-macos-permissions-api";
 import { ModelStateEvent, RecordingErrorEvent } from "./lib/types/events";
-import "./App.css";
 import AccessibilityPermissions from "./components/AccessibilityPermissions";
 import Footer from "./components/footer";
 import Onboarding, { AccessibilityOnboarding } from "./components/onboarding";
 import { SectionBinaryTransition } from "./components/SectionBinaryTransition";
-import { SidebarSection, SECTIONS_CONFIG } from "./components/Sidebar";
-import { TopNav } from "./components/TopNav";
+import { type SidebarSection, SECTIONS_CONFIG } from "./components/navigation";
+import { CommandDeck } from "./components/TopNav";
 import { Titlebar } from "./components/Titlebar";
+import { SplashScreen } from "./components/SplashScreen";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
 import { useThemeStore } from "./stores/themeStore";
-import { commands } from "@/bindings";
+import { commands, events } from "@/bindings";
 import { getLanguageDirection, initializeRTL } from "@/lib/utils/rtl";
 
 type OnboardingStep = "accessibility" | "model" | "done";
@@ -38,9 +38,10 @@ function App() {
   // Track if this is a returning user who just needs to grant permissions
   // (vs a new user who needs full onboarding including model selection)
   const [isReturningUser, setIsReturningUser] = useState(false);
-  const [currentSection, setCurrentSection] =
-    useState<SidebarSection>("general");
+  const [currentSection, setCurrentSection] = useState<SidebarSection>("home");
   const { settings, updateSetting } = useSettings();
+  // Lumon cold-boot splash, shown once per app open (skippable).
+  const [showSplash, setShowSplash] = useState(true);
   const resolvedTheme = useThemeStore((state) => state.resolved);
   const direction = getLanguageDirection(i18n.language);
   const refreshAudioDevices = useSettingsStore(
@@ -162,6 +163,49 @@ function App() {
     };
   }, [t]);
 
+  // Milestone celebrations: the backend emits a stats event after every
+  // dictation; surface a toast when a word/streak milestone is crossed
+  // (gated on the Milestones notification preference).
+  useEffect(() => {
+    const unlisten = events.dictationStatsEvent.listen((event) => {
+      if (settings?.notifications_milestones === false) return;
+      const { new_word_milestone, new_streak_milestone } = event.payload;
+      if (new_word_milestone) {
+        toast.success(t("milestone.words.title"), {
+          description: t("milestone.words.body", {
+            count: new_word_milestone,
+          }),
+        });
+      }
+      if (new_streak_milestone) {
+        toast.success(
+          t("milestone.streak.title", { count: new_streak_milestone }),
+          {
+            description: t("milestone.streak.body", {
+              count: new_streak_milestone,
+            }),
+          },
+        );
+      }
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, [t, settings?.notifications_milestones]);
+
+  // The flow bar / tray can request the main window navigate to a section.
+  useEffect(() => {
+    const unlisten = listen<string>("navigate-section", (event) => {
+      const target = event.payload;
+      if (target && target in SECTIONS_CONFIG) {
+        setCurrentSection(target as SidebarSection);
+      }
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
+
   const revealMainWindowForPermissions = async () => {
     try {
       await commands.showMainWindowCommand();
@@ -177,7 +221,7 @@ function App() {
       const hasModels = result.status === "ok" && result.data;
       const currentPlatform = platform();
       // Only require the settings to not be undefined, removing the is_first_run dependency
-      // since the property might have been removed or changed. We assume that if they have 
+      // since the property might have been removed or changed. We assume that if they have
       // models, they've already run the app and finished onboarding.
       const hasCompletedOnboarding = hasModels;
 
@@ -243,30 +287,40 @@ function App() {
     setOnboardingStep("done");
   };
 
-  // Still checking onboarding status
+  const splash = showSplash ? (
+    <SplashScreen onDone={() => setShowSplash(false)} />
+  ) : null;
+
+  // Still checking onboarding status — keep the splash covering the blank.
   if (onboardingStep === null) {
-    return null;
+    return splash;
   }
 
   if (onboardingStep === "accessibility") {
     return (
-      <div className="h-screen flex flex-col bg-background text-text overflow-hidden">
-        <Titlebar />
-        <div className="flex-1 overflow-y-auto">
-          <AccessibilityOnboarding onComplete={handleAccessibilityComplete} />
+      <>
+        {splash}
+        <div className="h-screen flex flex-col bg-background text-text overflow-hidden">
+          <Titlebar />
+          <div className="flex-1 overflow-hidden">
+            <AccessibilityOnboarding onComplete={handleAccessibilityComplete} />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (onboardingStep === "model") {
     return (
-      <div className="h-screen flex flex-col bg-background text-text overflow-hidden">
-        <Titlebar />
-        <div className="flex-1 overflow-y-auto">
-          <Onboarding onModelSelected={handleModelSelected} />
+      <>
+        {splash}
+        <div className="h-screen flex flex-col bg-background text-text overflow-hidden">
+          <Titlebar />
+          <div className="flex-1 overflow-hidden">
+            <Onboarding onModelSelected={handleModelSelected} />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -275,6 +329,7 @@ function App() {
       dir={direction}
       className="h-screen flex flex-col select-none cursor-default bg-background text-text overflow-hidden relative"
     >
+      {splash}
       <Titlebar />
       <Toaster
         theme={resolvedTheme}
@@ -283,16 +338,15 @@ function App() {
           classNames: {
             toast:
               "bg-background-ui rounded-sm px-5 py-4 flex items-center gap-4 text-[15px] border hairline",
-            title:
-              "text-[13px] text-text font-medium uppercase tracking-wider",
+            title: "text-[13px] text-text font-medium uppercase tracking-wider",
             description: "text-text/60 text-[14px] normal-case tracking-normal",
           },
         }}
       />
 
-      {/* Lumon shell: department rail + file drawer workspace */}
-      <div className="flex-1 flex overflow-hidden relative z-0">
-        <TopNav
+      {/* Lumon shell: horizontal command deck + full-width file workspace */}
+      <div className="flex-1 flex flex-col overflow-hidden relative z-0">
+        <CommandDeck
           activeSection={currentSection}
           onSectionChange={setCurrentSection}
         />
@@ -305,7 +359,7 @@ function App() {
 
           {/* Institutional file masthead */}
           <header className="shrink-0 px-8 md:px-10 pt-6 pb-5 border-b hairline bg-background/80 backdrop-blur-[2px]">
-            <div className="max-w-4xl w-full flex flex-col gap-2">
+            <div className="max-w-6xl mx-auto w-full flex flex-col gap-2">
               <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-text/40">
                 <span>{t("sidebar.file")}</span>
                 <span className="text-live tabular-nums tracking-widest">
@@ -325,7 +379,7 @@ function App() {
           <div className="flex-1 overflow-y-auto">
             <div
               key={currentSection}
-              className="max-w-4xl flex flex-col px-8 md:px-10 pt-8 pb-12 gap-7 animate-drawer"
+              className="max-w-6xl mx-auto w-full flex flex-col px-8 md:px-10 pt-8 pb-12 gap-7 animate-drawer"
             >
               <AccessibilityPermissions />
               {renderSettingsContent(currentSection)}

@@ -16,6 +16,7 @@ use ferrous_opencc::{config::BuiltinConfig, OpenCC};
 use log::{debug, error, warn};
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::Instant;
 use tauri::Manager;
@@ -25,6 +26,16 @@ use tauri::{AppHandle, Emitter};
 struct RecordingErrorEvent {
     error_type: String,
     detail: Option<String>,
+}
+
+static TRANSCRIPTION_GENERATION: AtomicU64 = AtomicU64::new(0);
+
+pub fn cancel_pending_transcription() {
+    TRANSCRIPTION_GENERATION.fetch_add(1, Ordering::SeqCst);
+}
+
+fn transcription_is_current(generation: u64) -> bool {
+    TRANSCRIPTION_GENERATION.load(Ordering::SeqCst) == generation
 }
 
 /// Drop guard that notifies the [`TranscriptionCoordinator`] when the
@@ -388,6 +399,7 @@ pub(crate) async fn process_transcription_output(
 
 impl ShortcutAction for TranscribeAction {
     fn start(&self, app: &AppHandle, binding_id: &str, _shortcut_str: &str) {
+        cancel_pending_transcription();
         let start_time = Instant::now();
         debug!("TranscribeAction::start called for binding: {}", binding_id);
 
@@ -405,9 +417,6 @@ impl ShortcutAction for TranscribeAction {
         });
 
         let binding_id = binding_id.to_string();
-        change_tray_icon(app, TrayIconState::Recording);
-        show_recording_overlay(app);
-
         // Get the microphone mode to determine audio feedback timing
         let settings = get_settings(app);
         let is_always_on = settings.always_on_microphone;
@@ -458,6 +467,8 @@ impl ShortcutAction for TranscribeAction {
         }
 
         if recording_error.is_none() {
+            change_tray_icon(app, TrayIconState::Recording);
+            show_recording_overlay(app);
             // Dynamically register the cancel shortcut in a separate task to avoid deadlock
             shortcut::register_cancel_shortcut(app);
         } else {
@@ -512,6 +523,7 @@ impl ShortcutAction for TranscribeAction {
 
         let binding_id = binding_id.to_string(); // Clone binding_id for the async task
         let post_process = self.post_process;
+        let generation = TRANSCRIPTION_GENERATION.load(Ordering::SeqCst);
 
         tauri::async_runtime::spawn(async move {
             let _guard = FinishGuard(ah.clone());
@@ -522,6 +534,9 @@ impl ShortcutAction for TranscribeAction {
 
             let stop_recording_time = Instant::now();
             if let Some(samples) = rm.stop_recording(&binding_id) {
+                if !transcription_is_current(generation) {
+                    return;
+                }
                 debug!(
                     "Recording stopped and samples retrieved in {:?}, sample count: {}",
                     stop_recording_time.elapsed(),
@@ -530,6 +545,7 @@ impl ShortcutAction for TranscribeAction {
 
                 if samples.is_empty() {
                     debug!("Recording produced no audio samples; skipping persistence");
+                    let _ = ah.emit("transcription-empty", "no_audio");
                     utils::hide_recording_overlay(&ah);
                     change_tray_icon(&ah, TrayIconState::Idle);
                 } else {
@@ -573,6 +589,10 @@ impl ShortcutAction for TranscribeAction {
 
                     match transcription_result {
                         Ok(transcription) => {
+                            if !transcription_is_current(generation) {
+                                return;
+                            }
+                            let transcription = hm.apply_learned_corrections(&transcription);
                             debug!(
                                 "Transcription completed in {:?}: '{}'",
                                 transcription_time.elapsed(),
@@ -585,28 +605,73 @@ impl ShortcutAction for TranscribeAction {
                             let processed =
                                 process_transcription_output(&ah, &transcription, post_process)
                                     .await;
+                            if !transcription_is_current(generation) {
+                                return;
+                            }
+
+                            // Retained speech length: samples are mono 16kHz,
+                            // so 16 samples per millisecond.
+                            let duration_ms = (sample_count / 16) as i64;
 
                             // Save to history if WAV was saved
                             if wav_saved {
                                 if let Err(err) = hm.save_entry(
                                     file_name,
-                                    transcription,
+                                    transcription.clone(),
                                     post_process,
                                     processed.post_processed_text.clone(),
                                     processed.post_process_prompt.clone(),
+                                    duration_ms,
                                 ) {
                                     error!("Failed to save history entry: {}", err);
                                 }
                             }
 
+                            // Record dictation stats (words/WPM/streaks) even when
+                            // the WAV save failed — the text was still dictated.
+                            let stats_text = if processed.final_text.is_empty() {
+                                transcription.as_str()
+                            } else {
+                                processed.final_text.as_str()
+                            };
+                            let words = crate::managers::stats::count_words(stats_text);
+                            if words > 0 {
+                                if let Err(err) = hm.record_dictation_stats(words, duration_ms) {
+                                    error!("Failed to record dictation stats: {}", err);
+                                }
+                            }
+
+                            // When a scratchpad field is focused, route the text
+                            // straight into it via an event instead of pasting
+                            // into the foreground app (guarantees dictation lands
+                            // in the note, with no double-insert).
+                            let scratchpad_capturing = ah
+                                .try_state::<crate::ScratchpadCapture>()
+                                .map(|s| s.0.load(std::sync::atomic::Ordering::Relaxed))
+                                .unwrap_or(false);
+
                             if processed.final_text.is_empty() {
+                                let _ = ah.emit("transcription-empty", "empty_result");
+                                utils::hide_recording_overlay(&ah);
+                                change_tray_icon(&ah, TrayIconState::Idle);
+                            } else if scratchpad_capturing {
+                                if !transcription_is_current(generation) {
+                                    return;
+                                }
+                                let _ = ah.emit("scratchpad-insert", &processed.final_text);
                                 utils::hide_recording_overlay(&ah);
                                 change_tray_icon(&ah, TrayIconState::Idle);
                             } else {
+                                if !transcription_is_current(generation) {
+                                    return;
+                                }
                                 let ah_clone = ah.clone();
                                 let paste_time = Instant::now();
                                 let final_text = processed.final_text;
                                 ah.run_on_main_thread(move || {
+                                    if !transcription_is_current(generation) {
+                                        return;
+                                    }
                                     match utils::paste(final_text, ah_clone.clone()) {
                                         Ok(()) => debug!(
                                             "Text pasted successfully in {:?}",
@@ -629,6 +694,7 @@ impl ShortcutAction for TranscribeAction {
                         }
                         Err(err) => {
                             debug!("Global Shortcut Transcription error: {}", err);
+                            let _ = ah.emit("transcription-error", err.to_string());
                             // Save entry with empty text so user can retry
                             if wav_saved {
                                 if let Err(save_err) = hm.save_entry(
@@ -637,6 +703,7 @@ impl ShortcutAction for TranscribeAction {
                                     post_process,
                                     None,
                                     None,
+                                    (sample_count / 16) as i64,
                                 ) {
                                     error!("Failed to save failed history entry: {}", save_err);
                                 }

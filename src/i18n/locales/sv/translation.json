@@ -15,7 +15,51 @@
     "postProcessing": "Efterbearbetning",
     "history": "Historik",
     "debug": "Felsökning",
-    "about": "Om"
+    "about": "Om",
+    "directory": "Katalog",
+    "online": "Online",
+    "floorPlate": "Sektor · Diktering",
+    "file": "Fil",
+    "refinement": "Förfining",
+    "division": "Dikteringsavdelning",
+    "build": "Version",
+    "collapse": "Fäll ihop katalog",
+    "expand": "Expandera katalog",
+    "home": "Hem",
+    "system": "System",
+    "scratchpad": "Anteckningsblock",
+    "workspace": "Arbetsyta",
+    "welcome": "Välkommen"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "För att komma igång, välj en transkriptionsmodell",
@@ -117,7 +161,23 @@
         "checkFailed": "Misslyckades med att kontrollera behörigheter. Försök igen.",
         "requestFailed": "Misslyckades med att begära behörighet. Försök igen."
       }
-    }
+    },
+    "induction": "Introduktion",
+    "online": "Online",
+    "stepIndicator": "Steg {{current}} / {{total}}",
+    "recommendedModels": "Rekommenderade motorer",
+    "otherModels": "Alla motorer",
+    "beginRefinement": "Börja",
+    "permissionsStep": {
+      "title": "Behörighet",
+      "subtitle": "Ge Epos den åtkomst som krävs för att förfina din röst."
+    },
+    "modelStep": {
+      "title": "Förfiningsmotor",
+      "subtitle": "Välj en transkriberingsmodell att installera. Du kan byta senare."
+    },
+    "install": "Installera",
+    "installing": "Installerar"
   },
   "modelSelector": {
     "custom": "Anpassad",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Ingen",
           "bottom": "Nederst",
-          "top": "Överst"
+          "top": "Överst",
+          "left": "Vänster kant",
+          "right": "Höger kant"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos använder Whisper.cpp för snabb, lokal tal-till-text-behandling. Tack till det fantastiska arbete som utförts av Georgi Gerganov med medarbetare."
         }
       }
+    },
+    "appearance": {
+      "title": "Utseende",
+      "theme": {
+        "label": "Tema",
+        "description": "Välj ett ljust eller mörkt utseende för Epos, eller följ systeminställningen.",
+        "light": "Ljust",
+        "dark": "Mörkt",
+        "system": "System"
+      }
+    },
+    "system": {
+      "title": "System",
+      "groups": {
+        "app": "Appinställningar",
+        "sound": "Ljud",
+        "notifications": "Aviseringar",
+        "scratchpad": "Anteckningsblock",
+        "extras": "Extra"
+      },
+      "userName": {
+        "label": "Ditt namn",
+        "description": "Visas i välkomsthälsningen på din startskärm.",
+        "placeholder": "Ange ditt namn"
+      },
+      "flowbarAlways": {
+        "label": "Visa Flow Bar alltid",
+        "description": "Håll Flow Bar på skärmen även när du inte dikterar."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Förslag",
+          "description": "Tips om att komma igång eller använda Epos bättre."
+        },
+        "announcements": {
+          "label": "Meddelanden",
+          "description": "Nya funktioner eller möjligheter."
+        },
+        "milestones": {
+          "label": "Milstolpar",
+          "description": "Milstolpar för ordantal, sviter och prestationer."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Beteende när blocket öppnas",
+        "description": "Vad anteckningsblocket visar när du öppnar det.",
+        "options": {
+          "resumeLast": "Återuppta senaste anteckning",
+          "newNote": "Börja en ny anteckning"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Lägg till i ordlista automatiskt",
+        "description": "Lär sig ord från dina manuella transkriptkorrigeringar automatiskt."
+      },
+      "creatorMode": {
+        "label": "Skaparläge",
+        "description": "Visar ”Dikterar med Epos” på Flow Bar medan du dikterar."
+      },
+      "addedToDictionary_one": "Lade till ”{{words}}” i din ordlista",
+      "addedToDictionary_other": "Lade till {{count}} ord i din ordlista"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Uppdatering tillgänglig: {{version}}",
     "updateAvailableShort": "Uppdatering tillgänglig",
     "upToDate": "Uppdaterad",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Ladda ner uppdatering",
     "restart": "Starta om",
     "updateCheckingDisabled": "Uppdateringskontroll inaktiverad",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Transkriberar...",
-    "processing": "Bearbetar..."
+    "processing": "Bearbetar...",
+    "dictate": "Diktera",
+    "dictating": "Dikterar med Epos",
+    "tooltip": "Tryck på {{shortcut}} för att diktera",
+    "tooltipNoShortcut": "Klicka för att diktera",
+    "cancel": "Avbryt",
+    "scratchpad": "Öppna anteckningsblock",
+    "idle": "Redo"
+  },
+  "home": {
+    "greeting": "Välkommen tillbaka, {{name}}",
+    "greetingNoName": "Välkommen tillbaka",
+    "subtitle": "Din dikteringsyta",
+    "stats": {
+      "totalWords": "ord totalt",
+      "wpm": "opm",
+      "dayStreak": "dagar i rad",
+      "dayStreak_one": "dag i rad",
+      "dayStreak_other": "dagar i rad",
+      "today": "idag",
+      "todayWords": "ord idag",
+      "dictations": "dikteringar",
+      "avgPace": "snitthastighet",
+      "bestStreak": "bästa svit",
+      "minutes": "minuter",
+      "timeSaved": "dikterad tid"
+    },
+    "voiceProfile": {
+      "title": "Röstprofil",
+      "subtitle": "Kontextanpassare",
+      "hint": "Din diktering anpassar sig efter hur du talar.",
+      "toNext": "{{countFmt}} ord till {{tier}}",
+      "maxed": "Högsta profil uppnådd — anmärkningsvärt.",
+      "tiers": {
+        "firstWords": "Första orden",
+        "cadet": "Röstkadett",
+        "fluent": "Flytande talare",
+        "wordsmith": "Ordkonstnär",
+        "orator": "Talare",
+        "adept": "Röstadept",
+        "master": "Dikteringsmästare",
+        "silverTongue": "Silvertunga",
+        "luminary": "Röstlysande"
+      }
+    },
+    "nextMilestone": "{{count}} ord till din nästa milstolpe",
+    "milestoneReached": "Alla milstolpar uppnådda — anmärkningsvärt.",
+    "activity": {
+      "title": "Senaste aktivitet",
+      "search": "Sök transkriptioner",
+      "searchClear": "Rensa sökning",
+      "empty": "Inga dikteringar än. Tryck på ditt kortkommando för att börja.",
+      "emptySearch": "Ingen transkription matchar din sökning.",
+      "loading": "Laddar aktivitet...",
+      "today": "Idag",
+      "yesterday": "Igår",
+      "copy": "Kopiera till urklipp",
+      "copied": "Kopierat",
+      "flag": "Flagga",
+      "unflag": "Ta bort flagga",
+      "menu": "Fler åtgärder",
+      "delete": "Ta bort",
+      "edit": "Redigera text",
+      "retry": "Transkribera igen",
+      "save": "Spara",
+      "cancel": "Avbryt",
+      "editPlaceholder": "Redigera transkription",
+      "words": "{{count}} ord",
+      "empty_word": "tomt",
+      "editError": "Kunde inte spara din redigering"
+    },
+    "banner": {
+      "getStarted": "Kom igång",
+      "dismiss": "Avfärda",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Diktera var som helst",
+          "body": "Tryck på {{shortcut}} i valfri app för att göra din röst till text."
+        },
+        "flowBar": {
+          "title": "Flytta Flow Bar",
+          "body": "Docka Flow Bar vid valfri skärmkant via Systeminställningar."
+        },
+        "postProcess": {
+          "title": "Städa medan du talar",
+          "body": "Aktivera AI-efterbehandling för att ta bort utfyllnadsord automatiskt."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Milstolpe uppnådd",
+      "body": "Du har dikterat {{count}} ord med Epos."
+    },
+    "streak": {
+      "title": "{{count}}-dagarssvit",
+      "body": "Du har dikterat {{count}} dagar i rad. Fortsätt så."
+    }
+  },
+  "scratchpad": {
+    "title": "Anteckningsblock",
+    "subtitle": "En lugn plats att diktera och skriva utkast",
+    "notes": "Anteckningar",
+    "newNote": "Ny anteckning",
+    "deleteNote": "Ta bort anteckning",
+    "untitled": "Namnlös anteckning",
+    "titlePlaceholder": "Titel",
+    "contentPlaceholder": "Börja skriva, eller tryck på ditt kortkommando för att diktera...",
+    "empty": "Inga anteckningar än.",
+    "emptyEditor": "Välj en anteckning eller skapa en ny.",
+    "saved": "Sparat",
+    "saving": "Sparar...",
+    "words": "{{count}} ord",
+    "deleteConfirm": "Ta bort den här anteckningen?",
+    "copy": "Kopiera anteckning",
+    "copied": "Kopierat"
+  },
+  "splash": {
+    "division": "Dikteringsavdelning",
+    "tagline": "Tal, förfinat.",
+    "booting": "Initierar terminal",
+    "ready": "Redo"
   }
 }

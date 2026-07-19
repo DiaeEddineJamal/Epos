@@ -15,7 +15,51 @@
     "postProcessing": "עיבוד משלים",
     "history": "היסטוריה",
     "debug": "ניפוי שגיאות",
-    "about": "אודות"
+    "about": "אודות",
+    "directory": "ספרייה",
+    "online": "מחובר",
+    "floorPlate": "מגזר · הכתבה",
+    "file": "קובץ",
+    "refinement": "עידון",
+    "division": "מחלקת ההכתבה",
+    "build": "גרסה",
+    "collapse": "כיווץ הספרייה",
+    "expand": "הרחבת הספרייה",
+    "home": "בית",
+    "system": "מערכת",
+    "scratchpad": "מחברת טיוטות",
+    "workspace": "סביבת עבודה",
+    "welcome": "ברוך הבא"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "כדי להתחיל, בחר מודל תמלול",
@@ -117,7 +161,23 @@
         "checkFailed": "בדיקת ההרשאות נכשלה. נסה שוב.",
         "requestFailed": "בקשת ההרשאה נכשלה. נסה שוב."
       }
-    }
+    },
+    "induction": "התחלה",
+    "online": "מחובר",
+    "stepIndicator": "שלב {{current}} / {{total}}",
+    "recommendedModels": "מנועים מומלצים",
+    "otherModels": "כל המנועים",
+    "beginRefinement": "התחל",
+    "permissionsStep": {
+      "title": "הרשאות",
+      "subtitle": "העניקו ל-Epos את הגישה הדרושה לו כדי לעבד את הדיבור שלכם."
+    },
+    "modelStep": {
+      "title": "מנוע תמלול",
+      "subtitle": "בחרו מודל תמלול להתקנה. תוכלו לשנות אותו מאוחר יותר."
+    },
+    "install": "התקן",
+    "installing": "מתקין"
   },
   "modelSelector": {
     "custom": "מותאם אישית",
@@ -288,7 +348,9 @@
         "options": {
           "none": "ללא",
           "bottom": "למטה",
-          "top": "למעלה"
+          "top": "למעלה",
+          "left": "קצה שמאלי",
+          "right": "קצה ימני"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos משתמש ב-Whisper.cpp לתמלול מהיר ומקומי. תודה לעבודה המדהימה של Georgi Gerganov וכל התורמים."
         }
       }
+    },
+    "appearance": {
+      "title": "מראה",
+      "theme": {
+        "label": "ערכת נושא",
+        "description": "בחר מראה בהיר או כהה עבור Epos, או עקוב אחר הגדרת המערכת.",
+        "light": "בהיר",
+        "dark": "כהה",
+        "system": "מערכת"
+      }
+    },
+    "system": {
+      "title": "מערכת",
+      "groups": {
+        "app": "הגדרות היישום",
+        "sound": "צליל",
+        "notifications": "התראות",
+        "scratchpad": "מחברת טיוטות",
+        "extras": "תוספות"
+      },
+      "userName": {
+        "label": "השם שלך",
+        "description": "מוצג בברכת הפתיחה במסך הבית.",
+        "placeholder": "הזן את שמך"
+      },
+      "flowbarAlways": {
+        "label": "הצג את Flow Bar תמיד",
+        "description": "השאר את Flow Bar על המסך גם כשאינך מכתיב."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "הצעות",
+          "description": "טיפים להתקנה או לשימוש טוב יותר ב-Epos."
+        },
+        "announcements": {
+          "label": "הודעות",
+          "description": "תכונות או יכולות חדשות."
+        },
+        "milestones": {
+          "label": "אבני דרך",
+          "description": "אבני דרך של מספר מילים, רצפים והישגים."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "התנהגות פתיחת המחברת",
+        "description": "מה המחברת מציגה כשאתה פותח אותה.",
+        "options": {
+          "resumeLast": "המשך מהפתק האחרון",
+          "newNote": "התחל פתק חדש"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "הוספה אוטומטית למילון",
+        "description": "לומד מילים אוטומטית מהתיקונים הידניים שלך לתמלול."
+      },
+      "creatorMode": {
+        "label": "מצב יוצר",
+        "description": "מציג «מכתיב עם Epos» ב-Flow Bar בזמן ההכתבה."
+      },
+      "addedToDictionary_one": "«{{words}}» נוסף למילון שלך",
+      "addedToDictionary_other": "{{count}} מילים נוספו למילון שלך"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "יש עדכון זמין: {{version}}",
     "updateAvailableShort": "יש עדכון זמין",
     "upToDate": "מעודכן",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "הורד עדכון",
     "restart": "הפעל מחדש",
     "updateCheckingDisabled": "בדיקת העדכונים כבויה",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "מתמלל...",
-    "processing": "מעבד..."
+    "processing": "מעבד...",
+    "dictate": "הכתב",
+    "dictating": "מכתיב עם Epos",
+    "tooltip": "הקש {{shortcut}} כדי להכתיב",
+    "tooltipNoShortcut": "לחץ כדי להכתיב",
+    "cancel": "ביטול",
+    "scratchpad": "פתח מחברת טיוטות",
+    "idle": "מוכן"
+  },
+  "home": {
+    "greeting": "ברוך שובך, {{name}}",
+    "greetingNoName": "ברוך שובך",
+    "subtitle": "סביבת ההכתבה שלך",
+    "stats": {
+      "totalWords": "סך המילים",
+      "wpm": "מילים/דק'",
+      "dayStreak": "ימים ברצף",
+      "dayStreak_one": "יום ברצף",
+      "dayStreak_other": "ימים ברצף",
+      "today": "היום",
+      "todayWords": "מילים היום",
+      "dictations": "הכתבות",
+      "avgPace": "קצב ממוצע",
+      "bestStreak": "הרצף הטוב ביותר",
+      "minutes": "דקות",
+      "timeSaved": "זמן הכתבה"
+    },
+    "voiceProfile": {
+      "title": "פרופיל קול",
+      "subtitle": "מיישר הקשר",
+      "hint": "ההכתבה מתאימה את עצמה לאופן שבו אתה מדבר.",
+      "toNext": "{{countFmt}} מילים עד «{{tier}}»",
+      "maxed": "הפרופיל הגבוה ביותר הושג — מרשים.",
+      "tiers": {
+        "firstWords": "מילים ראשונות",
+        "cadet": "צוער קול",
+        "fluent": "דובר שוטף",
+        "wordsmith": "אמן מילים",
+        "orator": "נואם",
+        "adept": "מומחה קול",
+        "master": "אמן ההכתבה",
+        "silverTongue": "לשון כסף",
+        "luminary": "מאור הקול"
+      }
+    },
+    "nextMilestone": "{{count}} מילים לאבן הדרך הבאה",
+    "milestoneReached": "כל אבני הדרך הושגו — מרשים.",
+    "activity": {
+      "title": "פעילות אחרונה",
+      "search": "חיפוש בתמלולים",
+      "searchClear": "נקה חיפוש",
+      "empty": "אין עדיין הכתבות. הקש על קיצור הדרך כדי להתחיל.",
+      "emptySearch": "אין תמלולים התואמים לחיפוש שלך.",
+      "loading": "טוען פעילות...",
+      "today": "היום",
+      "yesterday": "אתמול",
+      "copy": "העתק ללוח",
+      "copied": "הועתק",
+      "flag": "סמן",
+      "unflag": "הסר סימון",
+      "menu": "פעולות נוספות",
+      "delete": "מחק",
+      "edit": "ערוך טקסט",
+      "retry": "תמלל מחדש",
+      "save": "שמור",
+      "cancel": "ביטול",
+      "editPlaceholder": "ערוך תמלול",
+      "words": "{{count}} מילים",
+      "empty_word": "ריק",
+      "editError": "לא ניתן לשמור את העריכה שלך"
+    },
+    "banner": {
+      "getStarted": "בואו נתחיל",
+      "dismiss": "התעלם",
+      "items": {
+        "dictateAnywhere": {
+          "title": "הכתב בכל מקום",
+          "body": "הקש {{shortcut}} בכל יישום כדי להפוך את קולך לטקסט."
+        },
+        "flowBar": {
+          "title": "הזז את Flow Bar",
+          "body": "עגן את Flow Bar לכל קצה של המסך מהגדרות המערכת."
+        },
+        "postProcess": {
+          "title": "נקה תוך כדי דיבור",
+          "body": "הפעל עיבוד AI כדי להסיר מילות מילוי אוטומטית."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "אבן דרך הושגה",
+      "body": "הכתבת {{count}} מילים עם Epos."
+    },
+    "streak": {
+      "title": "רצף של {{count}} ימים",
+      "body": "הכתבת {{count}} ימים ברצף. המשך כך."
+    }
+  },
+  "scratchpad": {
+    "title": "מחברת טיוטות",
+    "subtitle": "מקום שקט להכתיב ולנסח",
+    "notes": "פתקים",
+    "newNote": "פתק חדש",
+    "deleteNote": "מחק פתק",
+    "untitled": "פתק ללא כותרת",
+    "titlePlaceholder": "כותרת",
+    "contentPlaceholder": "התחל להקליד, או הקש על קיצור הדרך כדי להכתיב...",
+    "empty": "אין עדיין פתקים.",
+    "emptyEditor": "בחר פתק או צור חדש.",
+    "saved": "נשמר",
+    "saving": "שומר...",
+    "words": "{{count}} מילים",
+    "deleteConfirm": "למחוק פתק זה?",
+    "copy": "העתק פתק",
+    "copied": "הועתק"
+  },
+  "splash": {
+    "division": "מחלקת ההכתבה",
+    "tagline": "דיבור, מעודן.",
+    "booting": "מאתחל מסוף",
+    "ready": "מוכן"
   }
 }

@@ -14,6 +14,80 @@ pub fn cancel_operation(app: AppHandle) {
     cancel_current_operation(&app);
 }
 
+/// Toggle dictation from the flow bar's mic button. Routes through the same
+/// coordinator path as the global shortcut and CLI triggers.
+#[tauri::command]
+#[specta::specta]
+pub fn flowbar_toggle_transcription(app: AppHandle) {
+    crate::signal_handle::send_transcription_input(&app, "transcribe", "flowbar");
+}
+
+/// Bring the main window to front and ask it to open the given section
+/// (used by milestone toasts and in-app navigation).
+#[tauri::command]
+#[specta::specta]
+pub fn navigate_main_window(app: AppHandle, section: String) -> Result<(), String> {
+    crate::show_main_window(&app);
+    if let Some(main_window) = app.get_webview_window("main") {
+        let _ = tauri::Emitter::emit(&main_window, "navigate-section", section);
+    }
+    Ok(())
+}
+
+/// Toggle whether finished dictations are routed into a focused scratchpad
+/// field (see [`crate::ScratchpadCapture`]).
+#[tauri::command]
+#[specta::specta]
+pub fn set_scratchpad_capture(app: AppHandle, active: bool) {
+    if let Some(state) = app.try_state::<crate::ScratchpadCapture>() {
+        state.0.store(active, std::sync::atomic::Ordering::Relaxed);
+    }
+}
+
+/// Open (or focus) the floating Scratchpad window — a small, always-on-top
+/// note surface you can dictate into, à la Wispr Flow. Dedicated Vite entry
+/// (`src/scratchpad/index.html`) — hash routes on the main bundle are unreliable
+/// in WebView2 and produced a blank white window.
+#[tauri::command]
+#[specta::specta]
+pub async fn open_scratchpad_window(app: AppHandle) -> Result<(), String> {
+    if let Some(existing) = app.get_webview_window("scratchpad") {
+        existing
+            .show()
+            .map_err(|e| format!("Failed to show scratchpad window: {}", e))?;
+        existing
+            .set_focus()
+            .map_err(|e| format!("Failed to focus scratchpad window: {}", e))?;
+        return Ok(());
+    }
+
+    let mut builder = tauri::WebviewWindowBuilder::new(
+        &app,
+        "scratchpad",
+        tauri::WebviewUrl::App("src/scratchpad/index.html".into()),
+    )
+    .title("Scratchpad")
+    .inner_size(440.0, 560.0)
+    .min_inner_size(320.0, 360.0)
+    .resizable(true)
+    .decorations(false)
+    .transparent(false)
+    .always_on_top(true)
+    .skip_taskbar(true)
+    .focused(true)
+    .visible(true);
+
+    if let Some(data_dir) = crate::portable::data_dir() {
+        builder = builder.data_directory(data_dir.join("webview"));
+    }
+
+    builder
+        .build()
+        .map_err(|e| format!("Failed to open scratchpad window: {}", e))?;
+
+    Ok(())
+}
+
 #[tauri::command]
 #[specta::specta]
 pub fn is_portable() -> bool {

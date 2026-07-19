@@ -31,6 +31,50 @@ static MIGRATIONS: &[M] = &[
     M::up("ALTER TABLE transcription_history ADD COLUMN post_processed_text TEXT;"),
     M::up("ALTER TABLE transcription_history ADD COLUMN post_process_prompt TEXT;"),
     M::up("ALTER TABLE transcription_history ADD COLUMN post_process_requested BOOLEAN NOT NULL DEFAULT 0;"),
+    M::up("ALTER TABLE transcription_history ADD COLUMN duration_ms INTEGER NOT NULL DEFAULT 0;"),
+    M::up("ALTER TABLE transcription_history ADD COLUMN word_count INTEGER NOT NULL DEFAULT 0;"),
+    // Dictation stats live in dedicated tables so lifetime totals survive
+    // history retention cleanup (see managers/stats.rs).
+    M::up(
+        "CREATE TABLE IF NOT EXISTS daily_stats (
+            day TEXT PRIMARY KEY,
+            words INTEGER NOT NULL DEFAULT 0,
+            duration_ms INTEGER NOT NULL DEFAULT 0,
+            dictations INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE TABLE IF NOT EXISTS lifetime_stats (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            total_words INTEGER NOT NULL DEFAULT 0,
+            total_duration_ms INTEGER NOT NULL DEFAULT 0,
+            total_dictations INTEGER NOT NULL DEFAULT 0,
+            best_streak INTEGER NOT NULL DEFAULT 0,
+            last_milestone INTEGER NOT NULL DEFAULT 0
+        );
+        INSERT OR IGNORE INTO lifetime_stats (id) VALUES (1);",
+    ),
+    M::up(
+        "CREATE TABLE IF NOT EXISTS scratchpad_notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL DEFAULT '',
+            content TEXT NOT NULL DEFAULT '',
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        );",
+    ),
+    M::up(
+        "CREATE TABLE IF NOT EXISTS correction_pairs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            history_id INTEGER,
+            heard_text TEXT NOT NULL,
+            corrected_text TEXT NOT NULL,
+            source TEXT NOT NULL,
+            confidence REAL NOT NULL DEFAULT 1.0,
+            accepted BOOLEAN NOT NULL DEFAULT 1,
+            created_at INTEGER NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS correction_pairs_accepted
+            ON correction_pairs (accepted, created_at DESC);",
+    ),
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize, Type)]
@@ -63,6 +107,31 @@ pub struct HistoryEntry {
     pub post_processed_text: Option<String>,
     pub post_process_prompt: Option<String>,
     pub post_process_requested: bool,
+    /// Retained speech audio length in milliseconds (VAD-gated).
+    pub duration_ms: i64,
+    /// Word count of the displayed text (post-processed when present).
+    pub word_count: i64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct ScratchpadNote {
+    pub id: i64,
+    pub title: String,
+    pub content: String,
+    pub created_at: i64,
+    pub updated_at: i64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Type)]
+pub struct CorrectionPair {
+    pub id: i64,
+    pub history_id: Option<i64>,
+    pub heard_text: String,
+    pub corrected_text: String,
+    pub source: String,
+    pub confidence: f64,
+    pub accepted: bool,
+    pub created_at: i64,
 }
 
 pub struct HistoryManager {
@@ -207,6 +276,8 @@ impl HistoryManager {
             post_processed_text: row.get("post_processed_text")?,
             post_process_prompt: row.get("post_process_prompt")?,
             post_process_requested: row.get("post_process_requested")?,
+            duration_ms: row.get("duration_ms")?,
+            word_count: row.get("word_count")?,
         })
     }
 
@@ -223,9 +294,15 @@ impl HistoryManager {
         post_process_requested: bool,
         post_processed_text: Option<String>,
         post_process_prompt: Option<String>,
+        duration_ms: i64,
     ) -> Result<HistoryEntry> {
         let timestamp = Utc::now().timestamp();
         let title = self.format_timestamp_title(timestamp);
+        let word_count = super::stats::count_words(
+            post_processed_text
+                .as_deref()
+                .unwrap_or(&transcription_text),
+        );
 
         let conn = self.get_connection()?;
         conn.execute(
@@ -237,8 +314,10 @@ impl HistoryManager {
                 transcription_text,
                 post_processed_text,
                 post_process_prompt,
-                post_process_requested
-            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+                post_process_requested,
+                duration_ms,
+                word_count
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
             params![
                 &file_name,
                 timestamp,
@@ -248,6 +327,8 @@ impl HistoryManager {
                 &post_processed_text,
                 &post_process_prompt,
                 post_process_requested,
+                duration_ms,
+                word_count,
             ],
         )?;
 
@@ -261,6 +342,8 @@ impl HistoryManager {
             post_processed_text,
             post_process_prompt,
             post_process_requested,
+            duration_ms,
+            word_count,
         };
 
         debug!("Saved history entry with id {}", entry.id);
@@ -287,17 +370,25 @@ impl HistoryManager {
         post_processed_text: Option<String>,
         post_process_prompt: Option<String>,
     ) -> Result<HistoryEntry> {
+        let word_count = super::stats::count_words(
+            post_processed_text
+                .as_deref()
+                .unwrap_or(&transcription_text),
+        );
+
         let conn = self.get_connection()?;
         let updated = conn.execute(
             "UPDATE transcription_history
              SET transcription_text = ?1,
                  post_processed_text = ?2,
-                 post_process_prompt = ?3
-             WHERE id = ?4",
+                 post_process_prompt = ?3,
+                 word_count = ?4
+             WHERE id = ?5",
             params![
                 transcription_text,
                 post_processed_text,
                 post_process_prompt,
+                word_count,
                 id
             ],
         )?;
@@ -308,7 +399,7 @@ impl HistoryManager {
 
         let entry = conn
             .query_row(
-                "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested
+                "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested, duration_ms, word_count
                  FROM transcription_history WHERE id = ?1",
                 params![id],
                 Self::map_history_entry,
@@ -459,7 +550,7 @@ impl HistoryManager {
             (Some(cursor_id), Some(lim)) => {
                 let fetch_count = (lim + 1) as i64;
                 let mut stmt = conn.prepare(
-                    "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested
+                    "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested, duration_ms, word_count
                      FROM transcription_history
                      WHERE id < ?1
                      ORDER BY id DESC
@@ -473,7 +564,7 @@ impl HistoryManager {
             (None, Some(lim)) => {
                 let fetch_count = (lim + 1) as i64;
                 let mut stmt = conn.prepare(
-                    "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested
+                    "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested, duration_ms, word_count
                      FROM transcription_history
                      ORDER BY id DESC
                      LIMIT ?1",
@@ -485,7 +576,7 @@ impl HistoryManager {
             }
             (_, None) => {
                 let mut stmt = conn.prepare(
-                    "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested
+                    "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested, duration_ms, word_count
                      FROM transcription_history
                      ORDER BY id DESC",
                 )?;
@@ -516,7 +607,9 @@ impl HistoryManager {
                 transcription_text,
                 post_processed_text,
                 post_process_prompt,
-                post_process_requested
+                post_process_requested,
+                duration_ms,
+                word_count
              FROM transcription_history
              ORDER BY timestamp DESC
              LIMIT 1",
@@ -543,7 +636,9 @@ impl HistoryManager {
                 transcription_text,
                 post_processed_text,
                 post_process_prompt,
-                post_process_requested
+                post_process_requested,
+                duration_ms,
+                word_count
              FROM transcription_history
              WHERE transcription_text != ''
              ORDER BY timestamp DESC
@@ -597,7 +692,9 @@ impl HistoryManager {
                 transcription_text,
                 post_processed_text,
                 post_process_prompt,
-                post_process_requested
+                post_process_requested,
+                duration_ms,
+                word_count
              FROM transcription_history
              WHERE id = ?1",
         )?;
@@ -647,6 +744,234 @@ impl HistoryManager {
             format!("Recording {}", timestamp)
         }
     }
+
+    // ---- Dictation stats (see managers/stats.rs) ----
+
+    /// Record a completed dictation into the stats tables and emit a
+    /// [`super::stats::DictationStatsEvent`].
+    pub fn record_dictation_stats(
+        &self,
+        words: i64,
+        duration_ms: i64,
+    ) -> Result<super::stats::DashboardStats> {
+        let conn = self.get_connection()?;
+        super::stats::record_dictation(&self.app_handle, &conn, words, duration_ms)
+    }
+
+    pub fn get_dashboard_stats(&self) -> Result<super::stats::DashboardStats> {
+        let conn = self.get_connection()?;
+        super::stats::dashboard_stats(&conn)
+    }
+
+    /// Replace the displayed text of an entry (manual correction). Updates the
+    /// post-processed text when present (that is what was pasted), otherwise
+    /// the raw transcription. Emits an Updated event.
+    pub fn update_entry_text(&self, id: i64, text: String) -> Result<HistoryEntry> {
+        let conn = self.get_connection()?;
+        let word_count = super::stats::count_words(&text);
+
+        let updated = conn.execute(
+            "UPDATE transcription_history SET
+                transcription_text = CASE WHEN post_processed_text IS NULL THEN ?1 ELSE transcription_text END,
+                post_processed_text = CASE WHEN post_processed_text IS NULL THEN NULL ELSE ?1 END,
+                word_count = ?2
+             WHERE id = ?3",
+            params![text, word_count, id],
+        )?;
+        if updated == 0 {
+            return Err(anyhow!("History entry {} not found", id));
+        }
+
+        let entry = conn.query_row(
+            "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested, duration_ms, word_count
+             FROM transcription_history WHERE id = ?1",
+            params![id],
+            Self::map_history_entry,
+        )?;
+
+        if let Err(e) = (HistoryUpdatePayload::Updated {
+            entry: entry.clone(),
+        })
+        .emit(&self.app_handle)
+        {
+            error!("Failed to emit history-updated event: {}", e);
+        }
+
+        Ok(entry)
+    }
+
+    /// Case-insensitive substring search over both text columns, newest first.
+    pub fn search_entries(&self, query: &str, limit: usize) -> Result<Vec<HistoryEntry>> {
+        let conn = self.get_connection()?;
+        // Escape LIKE wildcards so user input is matched literally.
+        let escaped = query
+            .replace('\\', "\\\\")
+            .replace('%', "\\%")
+            .replace('_', "\\_");
+        let pattern = format!("%{}%", escaped);
+        let mut stmt = conn.prepare(
+            "SELECT id, file_name, timestamp, saved, title, transcription_text, post_processed_text, post_process_prompt, post_process_requested, duration_ms, word_count
+             FROM transcription_history
+             WHERE transcription_text LIKE ?1 ESCAPE '\\'
+                OR post_processed_text LIKE ?1 ESCAPE '\\'
+             ORDER BY id DESC
+             LIMIT ?2",
+        )?;
+        let entries = stmt
+            .query_map(
+                params![pattern, limit.min(200) as i64],
+                Self::map_history_entry,
+            )?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        Ok(entries)
+    }
+
+    pub fn record_correction_pair(
+        &self,
+        history_id: Option<i64>,
+        heard_text: &str,
+        corrected_text: &str,
+        source: &str,
+        accepted: bool,
+    ) -> Result<CorrectionPair> {
+        if heard_text.trim().is_empty() || corrected_text.trim().is_empty() {
+            return Err(anyhow!("Correction text cannot be empty"));
+        }
+        let conn = self.get_connection()?;
+        let now = Utc::now().timestamp();
+        conn.execute(
+            "INSERT INTO correction_pairs
+                (history_id, heard_text, corrected_text, source, confidence, accepted, created_at)
+             VALUES (?1, ?2, ?3, ?4, 1.0, ?5, ?6)",
+            params![
+                history_id,
+                heard_text.trim(),
+                corrected_text.trim(),
+                source,
+                accepted,
+                now
+            ],
+        )?;
+        Ok(CorrectionPair {
+            id: conn.last_insert_rowid(),
+            history_id,
+            heard_text: heard_text.trim().to_string(),
+            corrected_text: corrected_text.trim().to_string(),
+            source: source.to_string(),
+            confidence: 1.0,
+            accepted,
+            created_at: now,
+        })
+    }
+
+    pub fn list_correction_pairs(&self, accepted_only: bool) -> Result<Vec<CorrectionPair>> {
+        let conn = self.get_connection()?;
+        let sql = if accepted_only {
+            "SELECT id, history_id, heard_text, corrected_text, source, confidence, accepted, created_at
+             FROM correction_pairs WHERE accepted = 1 ORDER BY created_at DESC LIMIT 200"
+        } else {
+            "SELECT id, history_id, heard_text, corrected_text, source, confidence, accepted, created_at
+             FROM correction_pairs ORDER BY created_at DESC LIMIT 200"
+        };
+        let mut stmt = conn.prepare(sql)?;
+        let rows = stmt
+            .query_map([], |row| {
+                Ok(CorrectionPair {
+                    id: row.get(0)?,
+                    history_id: row.get(1)?,
+                    heard_text: row.get(2)?,
+                    corrected_text: row.get(3)?,
+                    source: row.get(4)?,
+                    confidence: row.get(5)?,
+                    accepted: row.get(6)?,
+                    created_at: row.get(7)?,
+                })
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        Ok(rows)
+    }
+
+    pub fn apply_learned_corrections(&self, text: &str) -> String {
+        let Ok(pairs) = self.list_correction_pairs(true) else {
+            return text.to_string();
+        };
+        let learned = pairs
+            .into_iter()
+            .map(|pair| (pair.heard_text, pair.corrected_text))
+            .collect::<Vec<_>>();
+        crate::audio_toolkit::apply_learned_corrections(text, &learned)
+    }
+
+    // ---- Scratchpad notes ----
+
+    fn map_note(row: &rusqlite::Row<'_>) -> rusqlite::Result<ScratchpadNote> {
+        Ok(ScratchpadNote {
+            id: row.get("id")?,
+            title: row.get("title")?,
+            content: row.get("content")?,
+            created_at: row.get("created_at")?,
+            updated_at: row.get("updated_at")?,
+        })
+    }
+
+    /// List notes, most recently updated first.
+    pub fn list_scratchpad_notes(&self) -> Result<Vec<ScratchpadNote>> {
+        let conn = self.get_connection()?;
+        let mut stmt = conn.prepare(
+            "SELECT id, title, content, created_at, updated_at
+             FROM scratchpad_notes ORDER BY updated_at DESC",
+        )?;
+        let notes = stmt
+            .query_map([], Self::map_note)?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        Ok(notes)
+    }
+
+    pub fn create_scratchpad_note(&self) -> Result<ScratchpadNote> {
+        let conn = self.get_connection()?;
+        let now = Utc::now().timestamp();
+        conn.execute(
+            "INSERT INTO scratchpad_notes (title, content, created_at, updated_at)
+             VALUES ('', '', ?1, ?1)",
+            params![now],
+        )?;
+        Ok(ScratchpadNote {
+            id: conn.last_insert_rowid(),
+            title: String::new(),
+            content: String::new(),
+            created_at: now,
+            updated_at: now,
+        })
+    }
+
+    pub fn update_scratchpad_note(
+        &self,
+        id: i64,
+        title: String,
+        content: String,
+    ) -> Result<ScratchpadNote> {
+        let conn = self.get_connection()?;
+        let now = Utc::now().timestamp();
+        let updated = conn.execute(
+            "UPDATE scratchpad_notes SET title = ?1, content = ?2, updated_at = ?3 WHERE id = ?4",
+            params![title, content, now, id],
+        )?;
+        if updated == 0 {
+            return Err(anyhow!("Scratchpad note {} not found", id));
+        }
+        let note = conn.query_row(
+            "SELECT id, title, content, created_at, updated_at FROM scratchpad_notes WHERE id = ?1",
+            params![id],
+            Self::map_note,
+        )?;
+        Ok(note)
+    }
+
+    pub fn delete_scratchpad_note(&self, id: i64) -> Result<()> {
+        let conn = self.get_connection()?;
+        conn.execute("DELETE FROM scratchpad_notes WHERE id = ?1", params![id])?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -666,7 +991,9 @@ mod tests {
                 transcription_text TEXT NOT NULL,
                 post_processed_text TEXT,
                 post_process_prompt TEXT,
-                post_process_requested BOOLEAN NOT NULL DEFAULT 0
+                post_process_requested BOOLEAN NOT NULL DEFAULT 0,
+                duration_ms INTEGER NOT NULL DEFAULT 0,
+                word_count INTEGER NOT NULL DEFAULT 0
             );",
         )
         .expect("create transcription_history table");
@@ -683,8 +1010,10 @@ mod tests {
                 transcription_text,
                 post_processed_text,
                 post_process_prompt,
-                post_process_requested
-            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+                post_process_requested,
+                duration_ms,
+                word_count
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
             params![
                 format!("epos-{}.wav", timestamp),
                 timestamp,
@@ -694,6 +1023,8 @@ mod tests {
                 post_processed,
                 Option::<String>::None,
                 false,
+                0,
+                0,
             ],
         )
         .expect("insert history entry");

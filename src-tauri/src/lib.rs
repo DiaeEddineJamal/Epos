@@ -34,10 +34,16 @@ use managers::transcription::TranscriptionManager;
 use signal_hook::consts::{SIGUSR1, SIGUSR2};
 #[cfg(unix)]
 use signal_hook::iterator::Signals;
-use std::sync::atomic::{AtomicU8, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
 use std::sync::Arc;
 use tauri::image::Image;
 pub use transcription_coordinator::TranscriptionCoordinator;
+
+/// Whether a scratchpad text field currently has focus. When true, a finished
+/// dictation is routed to the scratchpad via a `scratchpad-insert` event
+/// instead of being pasted into the foreground application.
+#[derive(Default)]
+pub struct ScratchpadCapture(pub Arc<AtomicBool>);
 
 use tauri::tray::TrayIconBuilder;
 use tauri::{AppHandle, Emitter, Listener, Manager};
@@ -84,7 +90,7 @@ fn build_console_filter() -> env_filter::Filter {
     builder.build()
 }
 
-fn show_main_window(app: &AppHandle) {
+pub(crate) fn show_main_window(app: &AppHandle) {
     if let Some(main_window) = app.get_webview_window("main") {
         if let Err(e) = main_window.unminimize() {
             log::error!("Failed to unminimize webview window: {}", e);
@@ -292,6 +298,12 @@ fn initialize_core_logic(app_handle: &AppHandle) {
 
     // Create the recording overlay window (hidden by default)
     utils::create_recording_overlay(app_handle);
+
+    // If the user keeps the flow bar visible at all times, show its idle
+    // state now that the overlay window exists.
+    if settings.show_flowbar_always {
+        utils::sync_flowbar_visibility(app_handle);
+    }
 }
 
 #[tauri::command]
@@ -425,9 +437,33 @@ pub fn run(cli_args: CliArgs) {
             commands::history::retry_history_entry_transcription,
             commands::history::update_history_limit,
             commands::history::update_recording_retention_period,
+            commands::history::get_dashboard_stats,
+            commands::history::search_history,
+            commands::history::update_history_entry_text,
+            commands::history::teach_epos_correction,
+            commands::history::list_correction_pairs,
+            commands::history::list_scratchpad_notes,
+            commands::history::create_scratchpad_note,
+            commands::history::update_scratchpad_note,
+            commands::history::delete_scratchpad_note,
+            commands::flowbar_toggle_transcription,
+            commands::navigate_main_window,
+            commands::set_scratchpad_capture,
+            commands::open_scratchpad_window,
+            shortcut::change_user_name_setting,
+            shortcut::change_flowbar_always_setting,
+            shortcut::change_notifications_suggestions_setting,
+            shortcut::change_notifications_announcements_setting,
+            shortcut::change_notifications_milestones_setting,
+            shortcut::change_auto_add_to_dictionary_setting,
+            shortcut::change_creator_mode_setting,
+            shortcut::change_scratchpad_resume_last_setting,
             helpers::clamshell::is_laptop,
         ])
-        .events(collect_events![managers::history::HistoryUpdatePayload,]);
+        .events(collect_events![
+            managers::history::HistoryUpdatePayload,
+            managers::stats::DictationStatsEvent,
+        ]);
 
     #[cfg(debug_assertions)] // <- Only export on non-release builds
     specta_builder
@@ -513,8 +549,8 @@ pub fn run(cli_args: CliArgs) {
             let mut win_builder =
                 tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::App("/".into()))
                     .title("Epos")
-                    .inner_size(860.0, 600.0)
-                    .min_inner_size(820.0, 570.0)
+                    .inner_size(1120.0, 760.0)
+                    .min_inner_size(960.0, 640.0)
                     .resizable(true)
                     .maximizable(false)
                     .visible(false);
@@ -553,6 +589,7 @@ pub fn run(cli_args: CliArgs) {
             FILE_LOG_LEVEL.store(file_log_level.to_level_filter() as u8, Ordering::Relaxed);
             let app_handle = app.handle().clone();
             app.manage(TranscriptionCoordinator::new(app_handle.clone()));
+            app.manage(ScratchpadCapture::default());
 
             initialize_core_logic(&app_handle);
 
@@ -578,6 +615,20 @@ pub fn run(cli_args: CliArgs) {
         })
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
+                // Non-main windows (e.g. the scratchpad popup) hide-and-reuse
+                // without the main window's dock/tray handling. Release the
+                // scratchpad dictation-capture flag so routing resets cleanly.
+                if window.label() != "main" {
+                    api.prevent_close();
+                    let _ = window.hide();
+                    if window.label() == "scratchpad" {
+                        if let Some(s) = window.app_handle().try_state::<ScratchpadCapture>() {
+                            s.0.store(false, Ordering::Relaxed);
+                        }
+                    }
+                    return;
+                }
+
                 api.prevent_close();
                 let _res = window.hide();
 

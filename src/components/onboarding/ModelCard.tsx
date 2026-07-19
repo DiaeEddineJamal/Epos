@@ -86,9 +86,9 @@ const ModelCard: React.FC<ModelCardProps> = ({
 
   const getVariantClasses = () => {
     if (status === "active") {
-      return "border border-primary/20 bg-accent-tan-dark shadow-sm";
+      return "border border-live/35 bg-accent-tan-dark shadow-sm dark:border-slate/45 dark:bg-[color-mix(in_srgb,var(--color-midnight),var(--color-slate-deep)_42%)]";
     }
-    
+
     switch (colorVariant) {
       case "tan":
         return "border border-primary/10 bg-accent-tan";
@@ -154,23 +154,35 @@ const ModelCard: React.FC<ModelCardProps> = ({
               {displayName}
             </h3>
             {showRecommended && model.is_recommended && (
-              <Badge variant="primary" className="bg-[#1A1A1A] text-white rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide border-none uppercase">
+              <Badge
+                variant="primary"
+                className="bg-[#1A1A1A] text-white rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide border-none uppercase"
+              >
                 {t("onboarding.recommended")}
               </Badge>
             )}
             {status === "active" && (
-              <Badge variant="primary" className="bg-[#1A1A1A] text-white rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide border-none uppercase">
+              <Badge
+                variant="primary"
+                className="bg-[#1A1A1A] text-white rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide border-none uppercase"
+              >
                 <Check className="w-3 h-3 mr-1 inline" />
                 {t("modelSelector.active")}
               </Badge>
             )}
             {model.is_custom && (
-              <Badge variant="secondary" className="rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide uppercase bg-black/5">
+              <Badge
+                variant="secondary"
+                className="rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide uppercase bg-black/5"
+              >
                 {t("modelSelector.custom")}
               </Badge>
             )}
             {status === "switching" && (
-              <Badge variant="secondary" className="rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide uppercase bg-black/5">
+              <Badge
+                variant="secondary"
+                className="rounded-full px-3 py-0.5 text-[11px] font-sans tracking-wide uppercase bg-black/5"
+              >
                 <Loader2 className="w-3 h-3 mr-1 animate-spin inline" />
                 {t("modelSelector.switching")}
               </Badge>
@@ -180,7 +192,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
             {displayDescription}
           </p>
         </div>
-        
+
         <div className="flex flex-col items-end gap-3 mt-1 shrink-0">
           {(model.accuracy_score > 0 || model.speed_score > 0) && (
             <div className="hidden sm:flex items-center">
@@ -210,7 +222,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
               </div>
             </div>
           )}
-          
+
           <div className="flex items-center gap-3 w-full justify-end">
             {status === "downloadable" && (
               <div className="flex items-center gap-2 text-[14px] font-medium text-text/60 font-sans border border-primary/10 rounded-full px-3 py-1 bg-white/50">
@@ -218,13 +230,15 @@ const ModelCard: React.FC<ModelCardProps> = ({
                 <span>{formatModelSize(Number(model.size_mb))}</span>
               </div>
             )}
-            
+
             {onDelete && (status === "available" || status === "active") && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleDelete}
-                title={t("modelSelector.deleteModel", { modelName: displayName })}
+                title={t("modelSelector.deleteModel", {
+                  modelName: displayName,
+                })}
                 className="flex items-center gap-1.5 text-primary/80 hover:text-primary hover:bg-primary/5 rounded-full px-3 py-1 font-sans"
               >
                 <Trash2 className="w-3.5 h-3.5" />

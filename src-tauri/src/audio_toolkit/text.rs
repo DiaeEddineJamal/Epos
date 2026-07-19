@@ -155,6 +155,81 @@ pub fn apply_custom_words(text: &str, custom_words: &[String], threshold: f64) -
     result.join(" ")
 }
 
+/// Applies reviewed "heard -> corrected" pairs to fresh transcription text.
+/// Matching is exact first, then narrowly fuzzy when spelling and Soundex both
+/// indicate the same pronunciation. This lets a learned `Los -> Luziv` pair
+/// also correct a later `Loss` without broadly replacing unrelated words.
+pub fn apply_learned_corrections(text: &str, correction_pairs: &[(String, String)]) -> String {
+    if correction_pairs.is_empty() {
+        return text.to_string();
+    }
+
+    let words = text.split_whitespace().collect::<Vec<_>>();
+    let mut result = Vec::with_capacity(words.len());
+    let mut index = 0;
+
+    while index < words.len() {
+        let mut best: Option<(usize, &str, f64)> = None;
+
+        for (heard, corrected) in correction_pairs {
+            let heard_word_count = heard.split_whitespace().count().clamp(1, 3);
+            if index + heard_word_count > words.len() {
+                continue;
+            }
+
+            let candidate_words = &words[index..index + heard_word_count];
+            let candidate = build_ngram(candidate_words);
+            let heard_normalized = heard
+                .chars()
+                .filter(|character| character.is_alphanumeric())
+                .flat_map(char::to_lowercase)
+                .collect::<String>();
+            let corrected_normalized = corrected
+                .chars()
+                .filter(|character| character.is_alphanumeric())
+                .flat_map(char::to_lowercase)
+                .collect::<String>();
+
+            if candidate.is_empty()
+                || heard_normalized.chars().count() < 3
+                || candidate == corrected_normalized
+            {
+                continue;
+            }
+
+            let max_len = candidate.len().max(heard_normalized.len());
+            let score = levenshtein(&candidate, &heard_normalized) as f64 / max_len as f64;
+            let length_delta =
+                (candidate.len() as isize - heard_normalized.len() as isize).unsigned_abs();
+            let exact = candidate == heard_normalized;
+            let fuzzy = heard_normalized.chars().count() >= 4
+                && length_delta <= 2
+                && score <= 0.34
+                && soundex(&candidate, &heard_normalized);
+
+            if exact || fuzzy {
+                let rank = if exact { 0.0 } else { score };
+                if best.map_or(true, |(_, _, best_rank)| rank < best_rank) {
+                    best = Some((heard_word_count, corrected.as_str(), rank));
+                }
+            }
+        }
+
+        if let Some((word_count, corrected, _)) = best {
+            let candidate_words = &words[index..index + word_count];
+            let (prefix, _) = extract_punctuation(candidate_words[0]);
+            let (_, suffix) = extract_punctuation(candidate_words[word_count - 1]);
+            result.push(format!("{prefix}{corrected}{suffix}"));
+            index += word_count;
+        } else {
+            result.push(words[index].to_string());
+            index += 1;
+        }
+    }
+
+    result.join(" ")
+}
+
 /// Preserves the case pattern of the original word when applying a replacement
 fn preserve_case_pattern(original: &str, replacement: &str) -> String {
     if original.chars().all(|c| c.is_uppercase()) {
@@ -230,6 +305,22 @@ fn get_filler_words_for_language(lang: &str) -> &'static [&'static str] {
 }
 
 static MULTI_SPACE_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"\s{2,}").unwrap());
+static SPACE_BEFORE_PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new(r"\s+([,.;:!?])").unwrap());
+static SPOKEN_PUNCTUATION: Lazy<Vec<(Regex, &'static str)>> = Lazy::new(|| {
+    [
+        (r"(?i)\s+\bcomma\b", ","),
+        (r"(?i)\s+\b(?:period|full stop)\b", "."),
+        (r"(?i)\s+\bquestion mark\b", "?"),
+        (r"(?i)\s+\bexclamation (?:mark|point)\b", "!"),
+        (r"(?i)\s+\bcolon\b", ":"),
+        (r"(?i)\s+\bsemicolon\b", ";"),
+        (r"(?i)\s+\bnew paragraph\b\s*", "\n\n"),
+        (r"(?i)\s+\bnew line\b\s*", "\n"),
+    ]
+    .into_iter()
+    .map(|(pattern, replacement)| (Regex::new(pattern).unwrap(), replacement))
+    .collect()
+});
 
 /// Collapses repeated words (3+ repetitions) to a single instance.
 /// E.g., "wh wh wh wh" -> "wh", "I I I I" -> "I"
@@ -319,6 +410,103 @@ pub fn filter_transcription_output(
     filtered.trim().to_string()
 }
 
+/// Applies conservative local punctuation and list formatting. This stage is
+/// deterministic and offline; an enabled post-processing provider may refine
+/// the result later, but is never required for basic structure.
+pub fn format_semantic_transcription(text: &str, lang: &str) -> String {
+    if !lang.eq_ignore_ascii_case("en") && !lang.to_lowercase().starts_with("en-") {
+        return text.to_string();
+    }
+
+    let mut formatted = text.trim().to_string();
+    for (pattern, replacement) in SPOKEN_PUNCTUATION.iter() {
+        formatted = pattern.replace_all(&formatted, *replacement).to_string();
+    }
+    formatted = SPACE_BEFORE_PUNCTUATION
+        .replace_all(&formatted, "$1")
+        .to_string();
+
+    // Spoken ordinal sequences become numbered steps.
+    let lower = formatted.to_lowercase();
+    let markers = ["first", "second", "third", "fourth", "finally"];
+    if lower.contains("first") && lower.contains("second") {
+        let mut positions = Vec::new();
+        for marker in markers {
+            if let Some(index) = lower.find(&format!("{marker} ")) {
+                positions.push((index, marker));
+            }
+        }
+        positions.sort_by_key(|(index, _)| *index);
+        if positions.len() >= 2 {
+            let intro = formatted[..positions[0].0]
+                .trim()
+                .trim_end_matches([':', ',']);
+            let mut items = Vec::new();
+            for (position_index, (start, marker)) in positions.iter().enumerate() {
+                let content_start = start + marker.len();
+                let content_end = positions
+                    .get(position_index + 1)
+                    .map(|(next, _)| *next)
+                    .unwrap_or(formatted.len());
+                let item = formatted[content_start..content_end]
+                    .trim()
+                    .trim_matches([',', '.', ';', ' ']);
+                if !item.is_empty() {
+                    items.push(item);
+                }
+            }
+            if items.len() >= 2 {
+                let prefix = if intro.is_empty() {
+                    String::new()
+                } else {
+                    format!("{}:\n", intro)
+                };
+                return format!(
+                    "{}{}",
+                    prefix,
+                    items
+                        .iter()
+                        .enumerate()
+                        .map(|(index, item)| format!("{}. {}", index + 1, item))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+        }
+    }
+
+    // Shopping/task-style comma chains after an intent cue become bullets.
+    let lower = formatted.to_lowercase();
+    let cue = [" to get ", " to buy ", " shopping list ", " items are "]
+        .iter()
+        .filter_map(|needle| lower.rfind(needle).map(|index| (index, *needle)))
+        .max_by_key(|(index, _)| *index);
+    if let Some((index, needle)) = cue {
+        let content_start = index + needle.len();
+        let items = formatted[content_start..]
+            .split(',')
+            .map(|item| item.trim().trim_matches(['.', ';', ' ']))
+            .filter(|item| !item.is_empty() && item.split_whitespace().count() <= 8)
+            .collect::<Vec<_>>();
+        if items.len() >= 3 {
+            let intro = formatted[..content_start]
+                .trim()
+                .trim_end_matches([',', ':', ' ']);
+            return format!(
+                "{}:\n{}",
+                intro,
+                items
+                    .iter()
+                    .map(|item| format!("- {}", item))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            );
+        }
+    }
+
+    formatted
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -337,6 +525,33 @@ mod tests {
         let custom_words = vec!["hello".to_string(), "world".to_string()];
         let result = apply_custom_words(text, &custom_words, 0.5);
         assert_eq!(result, "hello world");
+    }
+
+    #[test]
+    fn test_learned_correction_matches_close_phonetic_variant() {
+        let pairs = vec![("apples".to_string(), "EPOS".to_string())];
+        assert_eq!(
+            apply_learned_corrections("Open appls settings.", &pairs),
+            "Open EPOS settings."
+        );
+    }
+
+    #[test]
+    fn test_learned_correction_handles_multi_word_artifact() {
+        let pairs = vec![("charge bee".to_string(), "ChargeBee".to_string())];
+        assert_eq!(
+            apply_learned_corrections("Connect charge be now", &pairs),
+            "Connect ChargeBee now"
+        );
+    }
+
+    #[test]
+    fn test_learned_correction_does_not_rewrite_unrelated_word() {
+        let pairs = vec![("Los".to_string(), "Luziv".to_string())];
+        assert_eq!(
+            apply_learned_corrections("The loss was small", &pairs),
+            "The loss was small"
+        );
     }
 
     #[test]
@@ -408,6 +623,39 @@ mod tests {
         let text = "This is a completely normal sentence.";
         let result = filter_transcription_output(text, "en", &None);
         assert_eq!(result, "This is a completely normal sentence.");
+    }
+
+    #[test]
+    fn test_spoken_punctuation_is_local_and_deterministic() {
+        let result = format_semantic_transcription(
+            "Hello comma this is important exclamation mark new line thank you period",
+            "en",
+        );
+        assert_eq!(result, "Hello, this is important!\nthank you.");
+    }
+
+    #[test]
+    fn test_grocery_intent_becomes_bullet_list() {
+        let result = format_semantic_transcription(
+            "I need to go to the grocery store to get butter, bread, juice",
+            "en",
+        );
+        assert_eq!(
+            result,
+            "I need to go to the grocery store to get:\n- butter\n- bread\n- juice"
+        );
+    }
+
+    #[test]
+    fn test_spoken_ordinals_become_numbered_steps() {
+        let result = format_semantic_transcription(
+            "Plan for today first review the draft second call the team finally send the report",
+            "en",
+        );
+        assert_eq!(
+            result,
+            "Plan for today:\n1. review the draft\n2. call the team\n3. send the report"
+        );
     }
 
     #[test]

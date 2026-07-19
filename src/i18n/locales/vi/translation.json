@@ -15,7 +15,51 @@
     "postProcessing": "Xử lý sau",
     "history": "Lịch sử",
     "debug": "Gỡ lỗi",
-    "about": "Giới thiệu"
+    "about": "Giới thiệu",
+    "directory": "Thư mục",
+    "online": "Trực tuyến",
+    "floorPlate": "Khu vực · Đọc chính tả",
+    "file": "Tệp",
+    "refinement": "Tinh chỉnh",
+    "division": "Bộ phận Đọc chính tả",
+    "build": "Bản dựng",
+    "collapse": "Thu gọn thư mục",
+    "expand": "Mở rộng thư mục",
+    "home": "Trang chủ",
+    "system": "Hệ thống",
+    "scratchpad": "Sổ ghi chép",
+    "workspace": "Không gian làm việc",
+    "welcome": "Chào mừng"
+  },
+  "navigation": {
+    "directory": "Command deck",
+    "pages": "Department pages",
+    "terminal": "EPOS terminal",
+    "openPalette": "Open command palette",
+    "jumpTo": "Jump to",
+    "directoryPanel": "Directory map",
+    "sector": "Sector",
+    "openFile": "Open",
+    "slot": "Slot",
+    "ready": "Ready",
+    "departments": {
+      "home": "Home",
+      "work": "Work",
+      "voice": "Voice",
+      "control": "Control",
+      "archive": "Archive"
+    },
+    "palette": {
+      "kicker": "Department directory",
+      "title": "Jump to a file",
+      "close": "Close",
+      "placeholder": "Search departments and files",
+      "search": "Search navigation",
+      "empty": "No files found",
+      "current": "Current",
+      "navigate": "Navigate",
+      "open": "Open"
+    }
   },
   "onboarding": {
     "subtitle": "Để bắt đầu, hãy chọn một mô hình chuyển đổi giọng nói",
@@ -117,7 +161,23 @@
         "checkFailed": "Không thể kiểm tra quyền. Vui lòng thử lại.",
         "requestFailed": "Không thể yêu cầu quyền. Vui lòng thử lại."
       }
-    }
+    },
+    "induction": "Giới thiệu",
+    "online": "Trực tuyến",
+    "stepIndicator": "Bước {{current}} / {{total}}",
+    "recommendedModels": "Công cụ được đề xuất",
+    "otherModels": "Tất cả công cụ",
+    "beginRefinement": "Bắt đầu",
+    "permissionsStep": {
+      "title": "Cấp quyền",
+      "subtitle": "Cấp cho Epos quyền truy cập cần thiết để tinh chỉnh giọng nói của bạn."
+    },
+    "modelStep": {
+      "title": "Công cụ chép lời",
+      "subtitle": "Chọn một mô hình chép lời để cài đặt. Bạn có thể đổi sau."
+    },
+    "install": "Cài đặt",
+    "installing": "Đang cài đặt"
   },
   "modelSelector": {
     "custom": "Tùy chỉnh",
@@ -288,7 +348,9 @@
         "options": {
           "none": "Không có",
           "bottom": "Dưới",
-          "top": "Trên"
+          "top": "Trên",
+          "left": "Cạnh trái",
+          "right": "Cạnh phải"
         }
       },
       "pasteMethod": {
@@ -537,6 +599,67 @@
           "details": "Epos sử dụng Whisper.cpp để xử lý chuyển đổi giọng nói thành văn bản nhanh, cục bộ. Cảm ơn công việc tuyệt vời của Georgi Gerganov và các cộng tác viên."
         }
       }
+    },
+    "appearance": {
+      "title": "Giao diện",
+      "theme": {
+        "label": "Chủ đề",
+        "description": "Chọn giao diện sáng hoặc tối cho Epos, hoặc theo cài đặt hệ thống.",
+        "light": "Sáng",
+        "dark": "Tối",
+        "system": "Hệ thống"
+      }
+    },
+    "system": {
+      "title": "Hệ thống",
+      "groups": {
+        "app": "Cài đặt ứng dụng",
+        "sound": "Âm thanh",
+        "notifications": "Thông báo",
+        "scratchpad": "Sổ ghi chép",
+        "extras": "Bổ sung"
+      },
+      "userName": {
+        "label": "Tên của bạn",
+        "description": "Hiển thị trong lời chào trên màn hình chính.",
+        "placeholder": "Nhập tên của bạn"
+      },
+      "flowbarAlways": {
+        "label": "Luôn hiển thị Flow Bar",
+        "description": "Giữ Flow Bar trên màn hình ngay cả khi bạn không đọc chính tả."
+      },
+      "notifications": {
+        "suggestions": {
+          "label": "Gợi ý",
+          "description": "Mẹo về thiết lập hoặc dùng Epos hiệu quả hơn."
+        },
+        "announcements": {
+          "label": "Thông báo mới",
+          "description": "Tính năng hoặc khả năng mới."
+        },
+        "milestones": {
+          "label": "Cột mốc",
+          "description": "Cột mốc số từ, chuỗi ngày và thành tích."
+        }
+      },
+      "scratchpadBehavior": {
+        "label": "Hành vi khi mở sổ ghi chép",
+        "description": "Sổ ghi chép hiển thị gì khi bạn mở.",
+        "options": {
+          "resumeLast": "Tiếp tục ghi chú gần nhất",
+          "newNote": "Bắt đầu ghi chú mới"
+        }
+      },
+      "autoAddDictionary": {
+        "label": "Tự động thêm vào từ điển",
+        "description": "Tự động học từ từ các chỉnh sửa bản chép tay của bạn."
+      },
+      "creatorMode": {
+        "label": "Chế độ nhà sáng tạo",
+        "description": "Hiển thị “Đọc chính tả với Epos” trên Flow Bar khi bạn đọc."
+      },
+      "addedToDictionary_one": "Đã thêm “{{words}}” vào từ điển của bạn",
+      "addedToDictionary_other": "Đã thêm {{count}} từ vào từ điển của bạn"
     }
   },
   "footer": {
@@ -545,6 +668,7 @@
     "updateAvailable": "Có bản cập nhật: {{version}}",
     "updateAvailableShort": "Có bản cập nhật",
     "upToDate": "Đã cập nhật",
+    "updateCheckFailed": "Update check failed",
     "downloadUpdate": "Tải cập nhật",
     "restart": "Khởi động lại",
     "updateCheckingDisabled": "Đã tắt kiểm tra cập nhật",
@@ -607,6 +731,128 @@
   },
   "overlay": {
     "transcribing": "Đang chuyển đổi...",
-    "processing": "Đang xử lý..."
+    "processing": "Đang xử lý...",
+    "dictate": "Đọc chính tả",
+    "dictating": "Đọc chính tả với Epos",
+    "tooltip": "Nhấn {{shortcut}} để đọc chính tả",
+    "tooltipNoShortcut": "Nhấp để đọc chính tả",
+    "cancel": "Hủy",
+    "scratchpad": "Mở sổ ghi chép",
+    "idle": "Sẵn sàng"
+  },
+  "home": {
+    "greeting": "Chào mừng trở lại, {{name}}",
+    "greetingNoName": "Chào mừng trở lại",
+    "subtitle": "Không gian đọc chính tả của bạn",
+    "stats": {
+      "totalWords": "tổng số từ",
+      "wpm": "từ/phút",
+      "dayStreak": "ngày liên tiếp",
+      "dayStreak_one": "ngày liên tiếp",
+      "dayStreak_other": "ngày liên tiếp",
+      "today": "hôm nay",
+      "todayWords": "từ hôm nay",
+      "dictations": "lần đọc",
+      "avgPace": "tốc độ TB",
+      "bestStreak": "chuỗi tốt nhất",
+      "minutes": "phút",
+      "timeSaved": "thời gian đọc"
+    },
+    "voiceProfile": {
+      "title": "Hồ sơ giọng nói",
+      "subtitle": "Bộ căn chỉnh ngữ cảnh",
+      "hint": "Việc đọc chính tả thích ứng với cách bạn nói.",
+      "toNext": "{{countFmt}} từ nữa đến {{tier}}",
+      "maxed": "Đã đạt hồ sơ cao nhất — đáng nể.",
+      "tiers": {
+        "firstWords": "Những từ đầu tiên",
+        "cadet": "Học viên giọng nói",
+        "fluent": "Người nói trôi chảy",
+        "wordsmith": "Bậc thầy ngôn từ",
+        "orator": "Nhà hùng biện",
+        "adept": "Cao thủ giọng nói",
+        "master": "Bậc thầy đọc chính tả",
+        "silverTongue": "Lưỡi bạc",
+        "luminary": "Ngôi sao giọng nói"
+      }
+    },
+    "nextMilestone": "{{count}} từ nữa đến cột mốc tiếp theo",
+    "milestoneReached": "Đã đạt mọi cột mốc — đáng nể.",
+    "activity": {
+      "title": "Hoạt động gần đây",
+      "search": "Tìm bản chép",
+      "searchClear": "Xóa tìm kiếm",
+      "empty": "Chưa có bản đọc nào. Nhấn phím tắt của bạn để bắt đầu.",
+      "emptySearch": "Không có bản chép nào khớp với tìm kiếm.",
+      "loading": "Đang tải hoạt động...",
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua",
+      "copy": "Sao chép vào clipboard",
+      "copied": "Đã sao chép",
+      "flag": "Gắn cờ",
+      "unflag": "Bỏ gắn cờ",
+      "menu": "Thao tác khác",
+      "delete": "Xóa",
+      "edit": "Sửa văn bản",
+      "retry": "Chép lại",
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "editPlaceholder": "Sửa bản chép",
+      "words": "{{count}} từ",
+      "empty_word": "trống",
+      "editError": "Không thể lưu chỉnh sửa của bạn"
+    },
+    "banner": {
+      "getStarted": "Bắt đầu",
+      "dismiss": "Bỏ qua",
+      "items": {
+        "dictateAnywhere": {
+          "title": "Đọc chính tả ở mọi nơi",
+          "body": "Nhấn {{shortcut}} trong bất kỳ ứng dụng nào để biến giọng nói thành văn bản."
+        },
+        "flowBar": {
+          "title": "Di chuyển Flow Bar",
+          "body": "Gắn Flow Bar vào bất kỳ cạnh nào của màn hình từ Cài đặt hệ thống."
+        },
+        "postProcess": {
+          "title": "Dọn dẹp khi bạn nói",
+          "body": "Bật hậu xử lý AI để tự động loại bỏ các từ đệm."
+        }
+      }
+    }
+  },
+  "milestone": {
+    "words": {
+      "title": "Đã đạt cột mốc",
+      "body": "Bạn đã đọc {{count}} từ với Epos."
+    },
+    "streak": {
+      "title": "Chuỗi {{count}} ngày",
+      "body": "Bạn đã đọc chính tả {{count}} ngày liên tiếp. Cứ tiếp tục nhé."
+    }
+  },
+  "scratchpad": {
+    "title": "Sổ ghi chép",
+    "subtitle": "Một nơi yên tĩnh để đọc chính tả và soạn thảo",
+    "notes": "Ghi chú",
+    "newNote": "Ghi chú mới",
+    "deleteNote": "Xóa ghi chú",
+    "untitled": "Ghi chú không tiêu đề",
+    "titlePlaceholder": "Tiêu đề",
+    "contentPlaceholder": "Bắt đầu nhập, hoặc nhấn phím tắt của bạn để đọc chính tả...",
+    "empty": "Chưa có ghi chú nào.",
+    "emptyEditor": "Chọn một ghi chú hoặc tạo mới.",
+    "saved": "Đã lưu",
+    "saving": "Đang lưu...",
+    "words": "{{count}} từ",
+    "deleteConfirm": "Xóa ghi chú này?",
+    "copy": "Sao chép ghi chú",
+    "copied": "Đã sao chép"
+  },
+  "splash": {
+    "division": "Bộ phận Đọc chính tả",
+    "tagline": "Lời nói, được tinh chỉnh.",
+    "booting": "Đang khởi tạo thiết bị đầu cuối",
+    "ready": "Sẵn sàng"
   }
 }

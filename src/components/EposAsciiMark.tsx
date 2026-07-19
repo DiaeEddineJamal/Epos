@@ -166,8 +166,19 @@ export const EposAsciiMark: React.FC<EposAsciiMarkProps> = ({
 
     let raf = 0;
     const start = performance.now();
+    // PERF: cap the morph to ~24fps (plenty for this slow calibration loop)
+    // instead of 60fps, and pause entirely when the window is hidden, so an
+    // app left open in the tray/background costs almost nothing.
+    const FRAME_MS = 1000 / 24;
+    let last = 0;
+    let lastText = "";
+    let paused = document.hidden;
 
     const paint = (now: number) => {
+      raf = requestAnimationFrame(paint);
+      if (paused || now - last < FRAME_MS) return;
+      last = now;
+
       const elapsed = (now - start) % LOOP_MS;
 
       let cursor = 0;
@@ -196,21 +207,32 @@ export const EposAsciiMark: React.FC<EposAsciiMarkProps> = ({
         cursor = holdEnd;
       }
 
-      pre.textContent = text;
+      // Only touch the DOM when the frame actually changed.
+      if (text !== lastText) {
+        pre.textContent = text;
+        lastText = text;
+      }
 
-      // Continuous 60fps CRT effects
+      // CRT breathe/bloom (cheap CSS-var writes).
       const tSec = (now - start) / 1000;
       const breathe = 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(tSec * 1.35));
       const glow = breathe * (0.85 + 0.35 * bloom);
 
       root.style.setProperty("--ascii-glow", glow.toFixed(3));
       root.style.setProperty("--ascii-bloom", bloom.toFixed(3));
-
-      raf = requestAnimationFrame(paint);
     };
 
+    const onVisibility = () => {
+      paused = document.hidden;
+      last = 0; // repaint immediately on resume
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     raf = requestAnimationFrame(paint);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   return (

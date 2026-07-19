@@ -69,7 +69,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
             </h3>
             <div
               ref={tooltipRef}
-              className="relative"
+              className="relative shrink-0"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               onClick={toggleTooltip}
@@ -113,7 +113,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
     return (
       <div className={containerClasses}>
         <div className="mb-2">
-          <h3 className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}>
+          <h3
+            className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}
+          >
             {title}
           </h3>
           <p className={`text-sm text-text/60 ${disabled ? "opacity-50" : ""}`}>
@@ -142,7 +144,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
             </h3>
             <div
               ref={tooltipRef}
-              className="relative"
+              className="relative shrink-0"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               onClick={toggleTooltip}
@@ -187,7 +189,9 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
   return (
     <div className={horizontalContainerClasses}>
       <div className="max-w-2/3">
-        <h3 className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}>
+        <h3
+          className={`text-[12px] font-medium text-text/70 uppercase tracking-wider ${disabled ? "opacity-50" : ""}`}
+        >
           {title}
         </h3>
         <p className={`text-sm text-text/60 ${disabled ? "opacity-50" : ""}`}>

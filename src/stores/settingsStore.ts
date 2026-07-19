@@ -155,6 +155,20 @@ const settingUpdaters: {
     commands.changeWhisperGpuDevice(value as number),
   extra_recording_buffer_ms: (value) =>
     commands.changeExtraRecordingBufferSetting(value as number),
+  user_name: (value) => commands.changeUserNameSetting(value as string),
+  show_flowbar_always: (value) =>
+    commands.changeFlowbarAlwaysSetting(value as boolean),
+  notifications_suggestions: (value) =>
+    commands.changeNotificationsSuggestionsSetting(value as boolean),
+  notifications_announcements: (value) =>
+    commands.changeNotificationsAnnouncementsSetting(value as boolean),
+  notifications_milestones: (value) =>
+    commands.changeNotificationsMilestonesSetting(value as boolean),
+  auto_add_to_dictionary: (value) =>
+    commands.changeAutoAddToDictionarySetting(value as boolean),
+  creator_mode: (value) => commands.changeCreatorModeSetting(value as boolean),
+  scratchpad_resume_last: (value) =>
+    commands.changeScratchpadResumeLastSetting(value as boolean),
 };
 
 export const useSettingsStore = create<SettingsStore>()(
