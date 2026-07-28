@@ -26,10 +26,32 @@ This document outlines the comprehensive solution for setting up the Handy devel
 
 The Windows build enables **DirectML** for the ONNX model families
 (`transcribe-rs` feature `ort-directml`). This runs Parakeet, NVIDIA Canary,
-Moonshine, SenseVoice, GigaAM, and Cohere on any DirectX 12 GPU (e.g. the
-dedicated NVIDIA/AMD adapter) with **no extra toolkit install**. The accelerator
-defaults to `Auto`, so it uses the GPU when present and falls back to CPU
-otherwise. Pick the GPU explicitly in **Settings → Advanced → Acceleration**.
+Moonshine, SenseVoice, GigaAM, and Cohere on any DirectX 12 adapter —
+**integrated and dedicated alike** — with **no extra toolkit install**.
+
+GPU acceleration is controlled by the master toggle in
+**Settings → Advanced → Performance → GPU acceleration** (on by default). When
+it is on, `apply_accelerator_settings()` resolves the ONNX accelerator to a
+concrete GPU provider; when off, both engines are pinned to CPU and the model is
+unloaded so the next transcription rebuilds its session on the new provider.
+
+> **Note:** `transcribe-rs`'s own `OrtAccelerator::Auto` deliberately *excludes*
+> DirectML and WebGPU, because both require `parallel_execution(false)` +
+> `memory_pattern(false)` which would penalise the other backends. So `Auto`
+> alone resolves to **CPU** on Windows. That is why the app resolves Auto to a
+> concrete provider itself (see `best_gpu_ort_accelerator()` in
+> `managers/transcription.rs`) rather than relying on upstream Auto.
+
+Per-engine overrides remain available under
+**Settings → Advanced → Experimental → Acceleration**.
+
+**XNNPACK** (`ort-xnnpack`) is enabled as a CPU execution provider tuned for the
+Conv/Gemm/MatMul kernels that dominate the ONNX encoders. Note that the
+`xnnpack` feature in `ort-sys` is a no-op marker (`xnnpack = []`) — the provider
+has to be present in the ONNX Runtime binary that `ort` downloads. If it is not,
+registration fails silently (ort defaults to `error_on_failure = false`) and the
+session falls back to plain CPU. Check the startup log for the EP registration
+result before assuming it is active.
 
 **Whisper** models are GPU-accelerated only if whisper.cpp is compiled against a
 GPU backend, which requires a build-time toolkit:

@@ -77,6 +77,14 @@
         "name": "Whisper Small",
         "description": "Fast and fairly accurate."
       },
+      "small-q5_1": {
+        "name": "Whisper Small (Compact)",
+        "description": "Small footprint for low-memory machines."
+      },
+      "tiny-q5_1": {
+        "name": "Whisper Tiny (Compact)",
+        "description": "Smallest option. Lowest accuracy — for very limited hardware."
+      },
       "medium": {
         "name": "Whisper Medium",
         "description": "Good accuracy, medium speed"
@@ -84,6 +92,10 @@
       "turbo": {
         "name": "Whisper Turbo",
         "description": "Balanced accuracy and speed."
+      },
+      "turbo-q5_0": {
+        "name": "Whisper Turbo (Compact)",
+        "description": "Same quality as Whisper Turbo using a third of the memory."
       },
       "large": {
         "name": "Whisper Large",
@@ -312,6 +324,7 @@
       "title": "Advanced",
       "groups": {
         "app": "App",
+        "performance": "Performance",
         "output": "Output",
         "transcription": "Transcription",
         "history": "History",
@@ -428,6 +441,10 @@
         "add": "Add",
         "remove": "Remove {{word}}",
         "duplicate": "\"{{word}}\" already exists"
+      },
+      "gpuAcceleration": {
+        "label": "GPU acceleration",
+        "description": "Use your graphics card to run transcription models. Works with integrated and dedicated GPUs. Turn this off to force CPU-only processing if you hit instability or want to free up the GPU."
       }
     },
     "postProcessing": {
@@ -700,7 +717,8 @@
     "off": "Off",
     "yes": "Yes",
     "no": "No",
-    "noOptionsFound": "No options found"
+    "noOptionsFound": "No options found",
+    "search": "Search..."
   },
   "accessibility": {
     "permissionsRequired": "Accessibility Permissions Required",

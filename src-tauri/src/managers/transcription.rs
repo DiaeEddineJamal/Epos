@@ -256,6 +256,28 @@ impl TranscriptionManager {
         let load_start = std::time::Instant::now();
         debug!("Starting to load model: {}", model_id);
 
+        let model_info = self
+            .model_manager
+            .get_model_info(model_id)
+            .ok_or_else(|| anyhow::anyhow!("Model not found: {}", model_id))?;
+
+        // Already resident — skip the load entirely. Re-loading would allocate a
+        // second copy of the same weights before the first is freed.
+        if self.get_current_model().as_deref() == Some(model_id) && self.is_model_loaded() {
+            debug!("Model {} is already loaded, skipping reload", model_id);
+            self.touch_activity();
+            let _ = self.app_handle.emit(
+                "model-state-changed",
+                ModelStateEvent {
+                    event_type: "loading_completed".to_string(),
+                    model_id: Some(model_id.to_string()),
+                    model_name: Some(model_info.name.clone()),
+                    error: None,
+                },
+            );
+            return Ok(());
+        }
+
         // Emit loading started event
         let _ = self.app_handle.emit(
             "model-state-changed",
@@ -266,11 +288,6 @@ impl TranscriptionManager {
                 error: None,
             },
         );
-
-        let model_info = self
-            .model_manager
-            .get_model_info(model_id)
-            .ok_or_else(|| anyhow::anyhow!("Model not found: {}", model_id))?;
 
         if !model_info.is_downloaded {
             let error_msg = "Model not downloaded";
@@ -287,6 +304,26 @@ impl TranscriptionManager {
         }
 
         let model_path = self.model_manager.get_model_path(model_id)?;
+
+        // Free the currently resident engine BEFORE allocating the new one.
+        // Keeping both alive across the swap doubles peak RSS — for a 1B model
+        // that is ~1GB of avoidable spike. Both callers (`switch_active_model`
+        // and `initiate_model_load`) hold the `is_loading` flag, and
+        // `transcribe()` waits on that flag, so no transcription can observe
+        // the momentarily empty slot.
+        {
+            let previous = {
+                let mut engine = self.lock_engine();
+                engine.take()
+            };
+            if previous.is_some() {
+                *self.current_model_id.lock().unwrap() = None;
+                // Explicit drop with no locks held: returns the old weights to
+                // the allocator before the new load starts.
+                drop(previous);
+                debug!("Freed previously loaded engine before loading {}", model_id);
+            }
+        }
 
         // Create appropriate engine based on model type
         let emit_loading_failed = |error_msg: &str| {
@@ -735,39 +772,111 @@ impl TranscriptionManager {
     }
 }
 
+/// The best GPU execution provider compiled into this build, if any.
+///
+/// `OrtAccelerator::Auto` deliberately skips DirectML and WebGPU upstream,
+/// because both need `parallel_execution(false)` + `memory_pattern(false)` which
+/// would penalise the other backends. That means on Windows — where DirectML is
+/// the only ONNX GPU backend we ship — "Auto" silently resolves to CPU. To
+/// honour the GPU master switch we therefore resolve Auto to a concrete GPU
+/// provider ourselves. DirectML covers *any* DirectX 12 adapter, integrated and
+/// dedicated alike.
+fn best_gpu_ort_accelerator() -> Option<transcribe_rs::accel::OrtAccelerator> {
+    use transcribe_rs::accel::OrtAccelerator;
+
+    let available = OrtAccelerator::available();
+    // Priority order: vendor-native compute APIs first, then DirectML as the
+    // universal Windows fallback that also covers integrated GPUs.
+    for candidate in [
+        OrtAccelerator::Cuda,
+        OrtAccelerator::Rocm,
+        OrtAccelerator::CoreMl,
+        OrtAccelerator::DirectMl,
+    ] {
+        if available.contains(&candidate) {
+            return Some(candidate);
+        }
+    }
+    None
+}
+
+/// Whether this build can do GPU-accelerated inference at all, for either
+/// engine. Surfaced to the frontend so the toggle can be hidden when it would
+/// have no effect.
+pub fn gpu_acceleration_supported() -> bool {
+    use transcribe_rs::accel::WhisperAccelerator;
+
+    best_gpu_ort_accelerator().is_some()
+        || WhisperAccelerator::available().contains(&WhisperAccelerator::Gpu)
+}
+
 /// Apply the user's accelerator preferences to the transcribe-rs global atomics.
 /// Called on startup and whenever the user changes the setting.
 pub fn apply_accelerator_settings(app: &tauri::AppHandle) {
     use transcribe_rs::accel;
 
     let settings = get_settings(app);
+    let gpu_enabled = settings.gpu_acceleration_enabled;
 
-    let whisper_pref = match settings.whisper_accelerator {
-        WhisperAcceleratorSetting::Auto => accel::WhisperAccelerator::Auto,
-        WhisperAcceleratorSetting::Cpu => accel::WhisperAccelerator::CpuOnly,
-        WhisperAcceleratorSetting::Gpu => accel::WhisperAccelerator::Gpu,
+    // --- Whisper (whisper.cpp) ---
+    let whisper_pref = if !gpu_enabled {
+        accel::WhisperAccelerator::CpuOnly
+    } else {
+        match settings.whisper_accelerator {
+            WhisperAcceleratorSetting::Auto => accel::WhisperAccelerator::Auto,
+            WhisperAcceleratorSetting::Cpu => accel::WhisperAccelerator::CpuOnly,
+            WhisperAcceleratorSetting::Gpu => accel::WhisperAccelerator::Gpu,
+        }
     };
     accel::set_whisper_accelerator(whisper_pref);
-    accel::set_whisper_gpu_device(settings.whisper_gpu_device);
+    // Pin to CPU device when GPU is off so a stale device index can't be used.
+    let whisper_device = if gpu_enabled {
+        settings.whisper_gpu_device
+    } else {
+        accel::GPU_DEVICE_AUTO
+    };
+    accel::set_whisper_gpu_device(whisper_device);
     info!(
-        "Whisper accelerator set to: {}, gpu_device: {}",
+        "Whisper accelerator set to: {}, gpu_device: {} (gpu_acceleration_enabled={})",
         whisper_pref,
-        if settings.whisper_gpu_device == accel::GPU_DEVICE_AUTO {
+        if whisper_device == accel::GPU_DEVICE_AUTO {
             "auto".to_string()
         } else {
-            settings.whisper_gpu_device.to_string()
-        }
+            whisper_device.to_string()
+        },
+        gpu_enabled
     );
 
-    let ort_pref = match settings.ort_accelerator {
-        OrtAcceleratorSetting::Auto => accel::OrtAccelerator::Auto,
-        OrtAcceleratorSetting::Cpu => accel::OrtAccelerator::CpuOnly,
-        OrtAcceleratorSetting::Cuda => accel::OrtAccelerator::Cuda,
-        OrtAcceleratorSetting::DirectMl => accel::OrtAccelerator::DirectMl,
-        OrtAcceleratorSetting::Rocm => accel::OrtAccelerator::Rocm,
+    // --- ONNX Runtime ---
+    let requested = settings.ort_accelerator;
+    let ort_pref = if !gpu_enabled {
+        // Master switch off: drop any GPU provider back to CPU, but keep XNNPACK
+        // since it is a CPU provider and still the fastest option on many
+        // machines.
+        if requested == OrtAcceleratorSetting::Xnnpack {
+            accel::OrtAccelerator::Xnnpack
+        } else {
+            accel::OrtAccelerator::CpuOnly
+        }
+    } else {
+        match requested {
+            // Resolve Auto to a real GPU provider (see best_gpu_ort_accelerator).
+            OrtAcceleratorSetting::Auto => {
+                best_gpu_ort_accelerator().unwrap_or(accel::OrtAccelerator::Auto)
+            }
+            OrtAcceleratorSetting::Cpu => accel::OrtAccelerator::CpuOnly,
+            OrtAcceleratorSetting::Cuda => accel::OrtAccelerator::Cuda,
+            OrtAcceleratorSetting::DirectMl => accel::OrtAccelerator::DirectMl,
+            OrtAcceleratorSetting::Rocm => accel::OrtAccelerator::Rocm,
+            OrtAcceleratorSetting::CoreMl => accel::OrtAccelerator::CoreMl,
+            OrtAcceleratorSetting::Xnnpack => accel::OrtAccelerator::Xnnpack,
+        }
     };
     accel::set_ort_accelerator(ort_pref);
-    info!("ORT accelerator set to: {}", ort_pref);
+    info!(
+        "ORT accelerator set to: {} (requested={:?}, gpu_acceleration_enabled={})",
+        ort_pref, requested, gpu_enabled
+    );
 }
 
 #[derive(Serialize, Clone, Debug, Type)]
@@ -809,6 +918,9 @@ pub struct AvailableAccelerators {
     pub whisper: Vec<String>,
     pub ort: Vec<String>,
     pub gpu_devices: Vec<GpuDeviceOption>,
+    /// True when this build has at least one GPU backend for either engine, so
+    /// the frontend knows whether the GPU master toggle does anything.
+    pub gpu_supported: bool,
 }
 
 /// Return which accelerators are compiled into this build.
@@ -826,6 +938,7 @@ pub fn get_available_accelerators() -> AvailableAccelerators {
         whisper: whisper_options,
         ort: ort_options,
         gpu_devices: cached_gpu_devices().to_vec(),
+        gpu_supported: gpu_acceleration_supported(),
     }
 }
 

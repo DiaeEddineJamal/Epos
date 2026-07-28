@@ -146,8 +146,23 @@ pub fn switch_active_model(app: &AppHandle, model_id: &str) -> Result<(), String
     // Load the model. On failure, revert the persisted selection.
     if let Err(e) = transcription_manager.load_model(model_id) {
         let mut settings = get_settings(app);
-        settings.selected_model = old_model;
+        settings.selected_model = old_model.clone();
         write_settings(app, settings);
+
+        // `load_model` frees the previous engine before allocating the new one
+        // (to avoid a double-resident memory spike), so a failed switch leaves
+        // nothing loaded. Bring the previous model back so the next
+        // transcription doesn't fail too.
+        if !old_model.is_empty() && old_model != model_id {
+            if let Err(reload_err) = transcription_manager.load_model(&old_model) {
+                log::warn!(
+                    "Failed to restore previous model {} after failed switch: {}",
+                    old_model,
+                    reload_err
+                );
+            }
+        }
+
         return Err(e.to_string());
     }
 
@@ -162,7 +177,12 @@ pub async fn set_active_model(
     _transcription_manager: State<'_, Arc<TranscriptionManager>>,
     model_id: String,
 ) -> Result<(), String> {
-    switch_active_model(&app_handle, &model_id)
+    // Loading a model is multi-second, fully blocking work. Run it on the
+    // blocking pool so it doesn't occupy an async-runtime worker (which would
+    // stall the IPC calls the frontend makes while the load is in flight).
+    tauri::async_runtime::spawn_blocking(move || switch_active_model(&app_handle, &model_id))
+        .await
+        .map_err(|e| format!("Model switch task failed: {}", e))?
 }
 
 #[tauri::command]

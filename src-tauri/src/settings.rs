@@ -300,6 +300,26 @@ pub enum OrtAcceleratorSetting {
     #[serde(rename = "directml")]
     DirectMl,
     Rocm,
+    #[serde(rename = "coreml")]
+    CoreMl,
+    /// CPU execution provider optimised for Conv/Gemm/MatMul. Not a GPU backend —
+    /// it stays active even when GPU acceleration is switched off.
+    #[serde(rename = "xnnpack")]
+    Xnnpack,
+}
+
+impl OrtAcceleratorSetting {
+    /// Whether this execution provider runs on the GPU. Used to decide what the
+    /// `gpu_acceleration_enabled` master switch has to override.
+    pub fn is_gpu(self) -> bool {
+        matches!(
+            self,
+            OrtAcceleratorSetting::Cuda
+                | OrtAcceleratorSetting::DirectMl
+                | OrtAcceleratorSetting::Rocm
+                | OrtAcceleratorSetting::CoreMl
+        )
+    }
 }
 
 impl Default for OrtAcceleratorSetting {
@@ -431,6 +451,11 @@ pub struct AppSettings {
     pub ort_accelerator: OrtAcceleratorSetting,
     #[serde(default = "default_whisper_gpu_device")]
     pub whisper_gpu_device: i32,
+    /// Master switch for GPU acceleration (integrated and dedicated). When off,
+    /// both engines are pinned to a CPU execution provider regardless of the
+    /// per-engine advanced settings. Defaults to on.
+    #[serde(default = "default_gpu_acceleration_enabled")]
+    pub gpu_acceleration_enabled: bool,
     #[serde(default)]
     pub extra_recording_buffer_ms: u64,
     /// Display name for the dashboard greeting. Defaults to the OS username.
@@ -695,6 +720,10 @@ fn default_whisper_gpu_device() -> i32 {
     -1 // auto
 }
 
+fn default_gpu_acceleration_enabled() -> bool {
+    true
+}
+
 fn default_typing_tool() -> TypingTool {
     TypingTool::Auto
 }
@@ -858,6 +887,7 @@ pub fn get_default_settings() -> AppSettings {
         whisper_accelerator: WhisperAcceleratorSetting::default(),
         ort_accelerator: OrtAcceleratorSetting::default(),
         whisper_gpu_device: default_whisper_gpu_device(),
+        gpu_acceleration_enabled: default_gpu_acceleration_enabled(),
         extra_recording_buffer_ms: 0,
         user_name: default_user_name(),
         show_flowbar_always: false,

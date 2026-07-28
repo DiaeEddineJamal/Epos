@@ -13,8 +13,12 @@ const ORT_LABELS: Record<OrtAcceleratorSetting, string> = {
   auto: "Auto",
   cpu: "CPU",
   cuda: "CUDA",
-  directml: "DirectML",
+  directml: "DirectML (integrated + dedicated GPU)",
   rocm: "ROCm",
+  coreml: "Core ML",
+  // Whether XNNPACK is actually present depends on the ONNX Runtime build we
+  // link against; it degrades to plain CPU when absent.
+  xnnpack: "XNNPACK (CPU, experimental)",
 };
 
 interface AccelerationSelectorProps {
@@ -104,6 +108,11 @@ export const AccelerationSelector: FC<AccelerationSelectorProps> = ({
     currentGpuDevice as number,
   );
   const currentOrt = getSetting("ort_accelerator") ?? "auto";
+  // The master GPU switch overrides these per-engine choices, so the Whisper
+  // picker (which only selects between CPU and GPU devices) is meaningless
+  // while GPU acceleration is off. The ORT picker stays live because CPU and
+  // XNNPACK remain valid selections.
+  const gpuEnabled = getSetting("gpu_acceleration_enabled") ?? true;
 
   const handleWhisperChange = async (value: string) => {
     const { accelerator, gpuDevice } = decodeWhisperValue(value);
@@ -125,6 +134,7 @@ export const AccelerationSelector: FC<AccelerationSelectorProps> = ({
           selectedValue={currentWhisper}
           onSelect={handleWhisperChange}
           disabled={
+            !gpuEnabled ||
             isUpdating("whisper_accelerator") ||
             isUpdating("whisper_gpu_device")
           }

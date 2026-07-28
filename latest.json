@@ -1,11 +1,11 @@
 {
-  "version": "0.8.9",
-  "notes": "Command Deck navigation, floating dictation capsule, always-on Flow Bar polish, dual-monitor overlay fix, Teach EPOS improvements, and updater reliability so Check for updates can find and install new releases.",
-  "pub_date": "2026-07-19T05:00:21Z",
+  "version": "0.9.0",
+  "notes": "GPU acceleration master switch that actually engages the GPU on Windows, XNNPACK and CoreML execution providers, three compact quantized Whisper models for low-memory machines, lower peak memory when switching models, and a searchable language picker.",
+  "pub_date": "2026-07-28T12:39:34Z",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.8.9/Epos_0.8.9_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0xPbGhVVFdJUWUweFZlR0dtVFA0OWJibkNUUFVUL3FlUk1ZajJ5UkdmQnlyeTN1TEx0OERzMHRESkFqb0twRU11QXNwbTQrMU1vd2tMUENEbkpoQ1FZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg0NDM3MTg1CWZpbGU6RXBvc18wLjguOV94NjQtc2V0dXAuZXhlClhWM0xYd0Vaa2FYbnErTmpKRzhLeVQyQkNQVzd3cWJkN3YyaWFkM2pvU1JSdXVNZXBHaUpiWGhoNGZGbUxFM3R4SytiRFd1UTFoc2J6Z3h4MEphOUFRPT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.9.0/Epos_0.9.0_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0dOUk5nSGJaaUpKZ2pCNDZjV3BLY2xRMzl2S05IQnlyQ0RMMG1JU3RPNFBrRGtFR1NGVzV2alRWZWkyYXA1RUFwSWU3b0J2WVk4UzhYUnlDSEVNSHdZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1MjQyMzU0CWZpbGU6RXBvc18wLjkuMF94NjQtc2V0dXAuZXhlCmtncjZDRzM0WDZrMlBPMFM3OU8ySHlLdFp1SldRa1lkUWtKL2xhbUI5VmdmU2krZGs1cjdRNEJDZXphTng2czF3NG1pTkVIUGRBZExldmtOTkFWR0F3PT0K"
     }
   }
 }

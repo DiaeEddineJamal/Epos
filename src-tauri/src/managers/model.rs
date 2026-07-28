@@ -150,6 +150,73 @@ impl ModelManager {
             },
         );
 
+        // Low-footprint Whisper tiers for machines that cannot hold a 450 MB+
+        // model. Both are q5_1 quantizations of the upstream multilingual
+        // weights, served from the whisper.cpp HF repo (sha256 = HF LFS oid).
+        // Accuracy scores are deliberately low: small Whisper decoders are the
+        // most hallucination-prone models in this list on short dictation
+        // clips, so the UI should not present them as accurate options.
+        available_models.insert(
+            "small-q5_1".to_string(),
+            ModelInfo {
+                id: "small-q5_1".to_string(),
+                name: "Whisper Small (Compact)".to_string(),
+                description: "Small footprint for low-memory machines.".to_string(),
+                filename: "ggml-small-q5_1.bin".to_string(),
+                url: Some(
+                    "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin"
+                        .to_string(),
+                ),
+                sha256: Some(
+                    "ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb".to_string(),
+                ),
+                size_mb: 181,
+                is_downloaded: false,
+                is_downloading: false,
+                partial_size: 0,
+                is_directory: false,
+                engine_type: EngineType::Whisper,
+                accuracy_score: 0.58,
+                speed_score: 0.88,
+                supports_translation: true,
+                is_recommended: false,
+                supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
+                is_custom: false,
+            },
+        );
+
+        available_models.insert(
+            "tiny-q5_1".to_string(),
+            ModelInfo {
+                id: "tiny-q5_1".to_string(),
+                name: "Whisper Tiny (Compact)".to_string(),
+                description: "Smallest option. Lowest accuracy — for very limited hardware."
+                    .to_string(),
+                filename: "ggml-tiny-q5_1.bin".to_string(),
+                url: Some(
+                    "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny-q5_1.bin"
+                        .to_string(),
+                ),
+                sha256: Some(
+                    "818710568da3ca15689e31a743197b520007872ff9576237bda97bd1b469c3d7".to_string(),
+                ),
+                size_mb: 30,
+                is_downloaded: false,
+                is_downloading: false,
+                partial_size: 0,
+                is_directory: false,
+                engine_type: EngineType::Whisper,
+                accuracy_score: 0.35,
+                speed_score: 0.95,
+                supports_translation: true,
+                is_recommended: false,
+                supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
+                is_custom: false,
+            },
+        );
+
         // Add downloadable models
         available_models.insert(
             "medium".to_string(),
@@ -197,6 +264,40 @@ impl ModelManager {
                 engine_type: EngineType::Whisper,
                 accuracy_score: 0.80,
                 speed_score: 0.40,
+                supports_translation: false, // Turbo doesn't support translation
+                is_recommended: false,
+                supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
+                is_custom: false,
+            },
+        );
+
+        // Same weights as "turbo" above, q5_0-quantized: ~1/3 the disk and RSS
+        // (547 MB vs 1549 MB) for a marginal WER cost. Served straight from the
+        // upstream whisper.cpp HF repo — the sha256 is HuggingFace's LFS oid.
+        available_models.insert(
+            "turbo-q5_0".to_string(),
+            ModelInfo {
+                id: "turbo-q5_0".to_string(),
+                name: "Whisper Turbo (Compact)".to_string(),
+                description: "Same quality as Whisper Turbo using a third of the memory."
+                    .to_string(),
+                filename: "ggml-large-v3-turbo-q5_0.bin".to_string(),
+                url: Some(
+                    "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin"
+                        .to_string(),
+                ),
+                sha256: Some(
+                    "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2".to_string(),
+                ),
+                size_mb: 547,
+                is_downloaded: false,
+                is_downloading: false,
+                partial_size: 0,
+                is_directory: false,
+                engine_type: EngineType::Whisper,
+                accuracy_score: 0.79,
+                speed_score: 0.50, // Quantized weights are less memory-bandwidth bound
                 supports_translation: false, // Turbo doesn't support translation
                 is_recommended: false,
                 supported_languages: whisper_languages.clone(),

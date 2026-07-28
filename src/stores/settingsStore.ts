@@ -153,6 +153,8 @@ const settingUpdaters: {
     commands.changeOrtAcceleratorSetting(value as OrtAcceleratorSetting),
   whisper_gpu_device: (value) =>
     commands.changeWhisperGpuDevice(value as number),
+  gpu_acceleration_enabled: (value) =>
+    commands.changeGpuAccelerationEnabled(value as boolean),
   extra_recording_buffer_ms: (value) =>
     commands.changeExtraRecordingBufferSetting(value as number),
   user_name: (value) => commands.changeUserNameSetting(value as string),

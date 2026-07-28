@@ -209,7 +209,11 @@ fn initialize_core_logic(app_handle: &AppHandle) {
         )
         .tooltip(tray::tray_tooltip())
         .show_menu_on_left_click(true)
-        .icon_as_template(true)
+        // The tray uses the full-colour app icon, so it must NOT be treated as a
+        // macOS template image — template mode keeps only the alpha channel and
+        // would render the icon as a solid black square. Matches the
+        // set_icon_as_template(false) call in update_tray_menu().
+        .icon_as_template(false)
         .on_menu_event(|app, event| match event.id.as_ref() {
             "settings" => {
                 show_main_window(app);
@@ -383,6 +387,7 @@ pub fn run(cli_args: CliArgs) {
             shortcut::change_whisper_accelerator_setting,
             shortcut::change_ort_accelerator_setting,
             shortcut::change_whisper_gpu_device,
+            shortcut::change_gpu_acceleration_enabled,
             shortcut::get_available_accelerators,
             shortcut::epos_keys::start_epos_keys_recording,
             shortcut::epos_keys::stop_epos_keys_recording,

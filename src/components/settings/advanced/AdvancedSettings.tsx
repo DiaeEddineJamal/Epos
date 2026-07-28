@@ -15,6 +15,7 @@ import { ExperimentalToggle } from "../ExperimentalToggle";
 import { useSettings } from "../../../hooks/useSettings";
 import { KeyboardImplementationSelector } from "../debug/KeyboardImplementationSelector";
 import { AccelerationSelector } from "../AccelerationSelector";
+import { GpuAcceleration } from "../GpuAcceleration";
 import { LazyStreamClose } from "../LazyStreamClose";
 
 export const AdvancedSettings: React.FC = () => {
@@ -24,24 +25,43 @@ export const AdvancedSettings: React.FC = () => {
 
   return (
     <div className="max-w-3xl w-full mx-auto space-y-6">
-      <SettingsGroup title={t("settings.advanced.groups.app")} colorVariant="purple">
+      <SettingsGroup
+        title={t("settings.advanced.groups.app")}
+        colorVariant="purple"
+      >
         <ModelUnloadTimeoutSetting descriptionMode="tooltip" grouped={true} />
         <ExperimentalToggle descriptionMode="tooltip" grouped={true} />
       </SettingsGroup>
 
-      <SettingsGroup title={t("settings.advanced.groups.output")} colorVariant="blue">
+      <SettingsGroup
+        title={t("settings.advanced.groups.performance")}
+        colorVariant="blue"
+      >
+        <GpuAcceleration descriptionMode="tooltip" grouped={true} />
+      </SettingsGroup>
+
+      <SettingsGroup
+        title={t("settings.advanced.groups.output")}
+        colorVariant="blue"
+      >
         <PasteMethodSetting descriptionMode="tooltip" grouped={true} />
         <TypingToolSetting descriptionMode="tooltip" grouped={true} />
         <ClipboardHandlingSetting descriptionMode="tooltip" grouped={true} />
         <AutoSubmit descriptionMode="tooltip" grouped={true} />
       </SettingsGroup>
 
-      <SettingsGroup title={t("settings.advanced.groups.transcription")} colorVariant="green">
+      <SettingsGroup
+        title={t("settings.advanced.groups.transcription")}
+        colorVariant="green"
+      >
         <CustomWords descriptionMode="tooltip" grouped />
         <AppendTrailingSpace descriptionMode="tooltip" grouped={true} />
       </SettingsGroup>
 
-      <SettingsGroup title={t("settings.advanced.groups.history")} colorVariant="tan">
+      <SettingsGroup
+        title={t("settings.advanced.groups.history")}
+        colorVariant="tan"
+      >
         <HistoryLimit descriptionMode="tooltip" grouped={true} />
         <RecordingRetentionPeriodSelector
           descriptionMode="tooltip"
@@ -50,7 +70,10 @@ export const AdvancedSettings: React.FC = () => {
       </SettingsGroup>
 
       {experimentalEnabled && (
-        <SettingsGroup title={t("settings.advanced.groups.experimental")} colorVariant="light-tan">
+        <SettingsGroup
+          title={t("settings.advanced.groups.experimental")}
+          colorVariant="light-tan"
+        >
           <PostProcessingToggle descriptionMode="tooltip" grouped={true} />
           <KeyboardImplementationSelector
             descriptionMode="tooltip"

@@ -1251,6 +1251,17 @@ pub fn change_whisper_gpu_device(app: AppHandle, device: i32) -> Result<(), Stri
     Ok(())
 }
 
+/// Master switch for GPU acceleration across both engines. Unloads the model so
+/// the next transcription rebuilds its session on the new execution provider.
+#[tauri::command]
+#[specta::specta]
+pub fn change_gpu_acceleration_enabled(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let mut s = settings::get_settings(&app);
+    s.gpu_acceleration_enabled = enabled;
+    apply_and_reload_accelerator(&app, s);
+    Ok(())
+}
+
 /// Return which accelerators and GPU devices are available for this build.
 #[tauri::command]
 #[specta::specta]
