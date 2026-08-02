@@ -28,7 +28,9 @@ const createDataField = (focusColumn: number, focusRow: number) =>
       digit,
       distance,
       scale: scale.toFixed(3),
-      delay: `${Math.round(75 + distance * 18 + (index % 5) * 9)}ms`,
+      // Kept in step with the .binary-transition curtain duration in App.css —
+      // the slowest digit must still finish before the curtain lifts.
+      delay: `${Math.round(60 + distance * 14 + (index % 5) * 7)}ms`,
     };
   });
 

@@ -11,8 +11,6 @@ import { PostProcessingToggle } from "../PostProcessingToggle";
 import { AppendTrailingSpace } from "../AppendTrailingSpace";
 import { HistoryLimit } from "../HistoryLimit";
 import { RecordingRetentionPeriodSelector } from "../RecordingRetentionPeriod";
-import { ExperimentalToggle } from "../ExperimentalToggle";
-import { useSettings } from "../../../hooks/useSettings";
 import { KeyboardImplementationSelector } from "../debug/KeyboardImplementationSelector";
 import { AccelerationSelector } from "../AccelerationSelector";
 import { GpuAcceleration } from "../GpuAcceleration";
@@ -20,8 +18,6 @@ import { LazyStreamClose } from "../LazyStreamClose";
 
 export const AdvancedSettings: React.FC = () => {
   const { t } = useTranslation();
-  const { getSetting } = useSettings();
-  const experimentalEnabled = getSetting("experimental_enabled") || false;
 
   return (
     <div className="max-w-3xl w-full mx-auto space-y-6">
@@ -30,7 +26,6 @@ export const AdvancedSettings: React.FC = () => {
         colorVariant="purple"
       >
         <ModelUnloadTimeoutSetting descriptionMode="tooltip" grouped={true} />
-        <ExperimentalToggle descriptionMode="tooltip" grouped={true} />
       </SettingsGroup>
 
       <SettingsGroup
@@ -69,20 +64,21 @@ export const AdvancedSettings: React.FC = () => {
         />
       </SettingsGroup>
 
-      {experimentalEnabled && (
-        <SettingsGroup
-          title={t("settings.advanced.groups.experimental")}
-          colorVariant="light-tan"
-        >
-          <PostProcessingToggle descriptionMode="tooltip" grouped={true} />
-          <KeyboardImplementationSelector
-            descriptionMode="tooltip"
-            grouped={true}
-          />
-          <AccelerationSelector descriptionMode="tooltip" grouped={true} />
-          <LazyStreamClose descriptionMode="tooltip" grouped={true} />
-        </SettingsGroup>
-      )}
+      {/* Previously hidden behind an "experimental" master toggle. That toggle
+          is gone, so these are shown unconditionally — gating them on a setting
+          nothing can turn on would make them unreachable. */}
+      <SettingsGroup
+        title={t("settings.advanced.groups.experimental")}
+        colorVariant="light-tan"
+      >
+        <PostProcessingToggle descriptionMode="tooltip" grouped={true} />
+        <KeyboardImplementationSelector
+          descriptionMode="tooltip"
+          grouped={true}
+        />
+        <AccelerationSelector descriptionMode="tooltip" grouped={true} />
+        <LazyStreamClose descriptionMode="tooltip" grouped={true} />
+      </SettingsGroup>
     </div>
   );
 };

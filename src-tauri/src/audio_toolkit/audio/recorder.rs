@@ -498,9 +498,15 @@ fn run_consumer(
         };
 
         // ---------- spectrum processing ---------------------------------- //
-        if let Some(buckets) = visualizer.feed(&raw) {
-            if let Some(cb) = &level_cb {
-                cb(buckets);
+        // Gated on `recording`: the overlay only ever renders the waveform in
+        // that state, so feeding the FFT and emitting levels while idle (the
+        // 30s lazy-close window, or continuously in always-on-mic mode) would
+        // just burn CPU and spam IPC for no visible effect.
+        if recording {
+            if let Some(buckets) = visualizer.feed(&raw) {
+                if let Some(cb) = &level_cb {
+                    cb(buckets);
+                }
             }
         }
 

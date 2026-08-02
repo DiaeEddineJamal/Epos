@@ -31,8 +31,8 @@ tauri_panel! {
     })
 }
 
-const ACTIVE_OVERLAY_WIDTH: f64 = 196.0;
-const ACTIVE_OVERLAY_HEIGHT: f64 = 34.0;
+const ACTIVE_OVERLAY_WIDTH: f64 = 132.0;
+const ACTIVE_OVERLAY_HEIGHT: f64 = 30.0;
 const IDLE_OVERLAY_WIDTH: f64 = 172.0;
 const IDLE_OVERLAY_HEIGHT: f64 = 58.0;
 static OVERLAY_VISIBILITY_GENERATION: AtomicU64 = AtomicU64::new(0);
