@@ -1,11 +1,11 @@
 {
-  "version": "0.9.0",
-  "notes": "GPU acceleration master switch that actually engages the GPU on Windows, XNNPACK and CoreML execution providers, three compact quantized Whisper models for low-memory machines, lower peak memory when switching models, and a searchable language picker.",
-  "pub_date": "2026-07-28T12:39:34Z",
+  "version": "0.9.1",
+  "notes": "Narrower, shorter recording pill; fixed continuous mic-level FFT/IPC running whenever the mic stream was open (idle-close window, Always-On Microphone) for lower idle CPU/battery use; renamed the Cohere model to Cohere Transcribe; removed the unreachable Experimental settings toggle.",
+  "pub_date": "2026-08-02T20:03:41Z",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.9.0/Epos_0.9.0_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0dOUk5nSGJaaUpKZ2pCNDZjV3BLY2xRMzl2S05IQnlyQ0RMMG1JU3RPNFBrRGtFR1NGVzV2alRWZWkyYXA1RUFwSWU3b0J2WVk4UzhYUnlDSEVNSHdZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1MjQyMzU0CWZpbGU6RXBvc18wLjkuMF94NjQtc2V0dXAuZXhlCmtncjZDRzM0WDZrMlBPMFM3OU8ySHlLdFp1SldRa1lkUWtKL2xhbUI5VmdmU2krZGs1cjdRNEJDZXphTng2czF3NG1pTkVIUGRBZExldmtOTkFWR0F3PT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.9.1/Epos_0.9.1_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0h0cWp3Njc0a29QZitvRENZdVdQUGtva0dOSkJmWk9vUVZXeFdXeTN5V1daUTJjdXhBNkVaYzhxVXd4cUpSY2swVG9hU0VjZWdoWGpRY0tsU0tOT3dvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1NzAwMjc1CWZpbGU6RXBvc18wLjkuMV94NjQtc2V0dXAuZXhlCnNOZEpDTUFPcVZTdXkySUNGa0g3SllHR2NQNWF2U1o0aW0rZ1A3cGdTeXhTTDlNSlhUdjAyRm9SZ3RKS1g4akt0VDZlUHdCamlHNUg3YWlVRVRERENRPT0K"
     }
   }
 }
