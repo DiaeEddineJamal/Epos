@@ -1,11 +1,11 @@
 {
-  "version": "0.9.1",
-  "notes": "Narrower, shorter recording pill; fixed continuous mic-level FFT/IPC running whenever the mic stream was open (idle-close window, Always-On Microphone) for lower idle CPU/battery use; renamed the Cohere model to Cohere Transcribe; removed the unreachable Experimental settings toggle.",
-  "pub_date": "2026-08-02T20:03:41Z",
+  "version": "0.9.2",
+  "notes": "Free, local, GPU-accelerated AI post-processing via a new Ollama provider (download models right in Settings, no API key); fixed the recording pill losing its first letter while transcribing/processing; fixed the idle Flow Bar clipping on multi-monitor setups with mismatched display scaling; added a one-time what's-new briefing after updates.",
+  "pub_date": "2026-08-02T22:01:09Z",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.9.1/Epos_0.9.1_x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0h0cWp3Njc0a29QZitvRENZdVdQUGtva0dOSkJmWk9vUVZXeFdXeTN5V1daUTJjdXhBNkVaYzhxVXd4cUpSY2swVG9hU0VjZWdoWGpRY0tsU0tOT3dvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1NzAwMjc1CWZpbGU6RXBvc18wLjkuMV94NjQtc2V0dXAuZXhlCnNOZEpDTUFPcVZTdXkySUNGa0g3SllHR2NQNWF2U1o0aW0rZ1A3cGdTeXhTTDlNSlhUdjAyRm9SZ3RKS1g4akt0VDZlUHdCamlHNUg3YWlVRVRERENRPT0K"
+      "url": "https://github.com/DiaeEddineJamal/Epos/releases/download/v0.9.2/Epos_0.9.2_x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE04aEtPRUMyY0ZabEt1cm1VUndMdnpkR3JCRTVqSlNUa2JQZ3lsbmpUSVVsL3Q3OVdRUmJoU2hQMHQ5UHRaeCtLd1dGMW9QMWk0SGZvcENCQkF1bEVQekt6dUVHT3c0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1NzA3Njk0CWZpbGU6RXBvc18wLjkuMl94NjQtc2V0dXAuZXhlCmhNc3pYYjRBUUZqejdqMy8xSThjK0FzWVlwUWYxOU1MMmp2ZTllRnZxMnRGNUcxWHpPbS81YkdIUDhSK0xGWVR1ajFWcnFrMUtySVU5TCtWSUp4UERRPT0K"
     }
   }
 }
