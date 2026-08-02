@@ -18,13 +18,17 @@ import { ProviderSelect } from "../PostProcessingSettingsApi/ProviderSelect";
 import { BaseUrlField } from "../PostProcessingSettingsApi/BaseUrlField";
 import { ApiKeyField } from "../PostProcessingSettingsApi/ApiKeyField";
 import { ModelSelect } from "../PostProcessingSettingsApi/ModelSelect";
+import { OllamaModelsPanel } from "../PostProcessingSettingsApi/OllamaModelsPanel";
 import { usePostProcessProviderState } from "../PostProcessingSettingsApi/usePostProcessProviderState";
 import { ShortcutInput } from "../ShortcutInput";
 import { useSettings } from "../../../hooks/useSettings";
 
+const OLLAMA_PROVIDER_ID = "ollama";
+
 const PostProcessingSettingsApiComponent: React.FC = () => {
   const { t } = useTranslation();
   const state = usePostProcessProviderState();
+  const isOllamaProvider = state.selectedProvider?.id === OLLAMA_PROVIDER_ID;
 
   return (
     <>
@@ -50,7 +54,7 @@ const PostProcessingSettingsApiComponent: React.FC = () => {
             {t("settings.postProcessing.api.appleIntelligence.unavailable")}
           </Alert>
         ) : null
-      ) : (
+      ) : isOllamaProvider ? null : (
         <>
           {state.selectedProvider?.id === "custom" && (
             <SettingContainer
@@ -96,7 +100,22 @@ const PostProcessingSettingsApiComponent: React.FC = () => {
         </>
       )}
 
-      {!state.isAppleProvider && (
+      {isOllamaProvider && (
+        <SettingContainer
+          title={t("settings.postProcessing.ollama.title")}
+          description={t("settings.postProcessing.ollama.description")}
+          descriptionMode="tooltip"
+          layout="stacked"
+          grouped={true}
+        >
+          <OllamaModelsPanel
+            selectedModel={state.model}
+            onSelectModel={state.handleModelSelect}
+          />
+        </SettingContainer>
+      )}
+
+      {!state.isAppleProvider && !isOllamaProvider && (
         <SettingContainer
           title={t("settings.postProcessing.api.model.title")}
           description={
@@ -428,7 +447,10 @@ export const PostProcessingSettings: React.FC = () => {
 
   return (
     <div className="max-w-3xl w-full mx-auto space-y-6">
-      <SettingsGroup title={t("settings.postProcessing.hotkey.title")} colorVariant="tan">
+      <SettingsGroup
+        title={t("settings.postProcessing.hotkey.title")}
+        colorVariant="tan"
+      >
         <ShortcutInput
           shortcutId="transcribe_with_post_process"
           descriptionMode="tooltip"
@@ -436,11 +458,17 @@ export const PostProcessingSettings: React.FC = () => {
         />
       </SettingsGroup>
 
-      <SettingsGroup title={t("settings.postProcessing.api.title")} colorVariant="green">
+      <SettingsGroup
+        title={t("settings.postProcessing.api.title")}
+        colorVariant="green"
+      >
         <PostProcessingSettingsApi />
       </SettingsGroup>
 
-      <SettingsGroup title={t("settings.postProcessing.prompts.title")} colorVariant="purple">
+      <SettingsGroup
+        title={t("settings.postProcessing.prompts.title")}
+        colorVariant="purple"
+      >
         <PostProcessingSettingsPrompts />
       </SettingsGroup>
     </div>

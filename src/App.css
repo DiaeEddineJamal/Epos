@@ -1980,3 +1980,139 @@
   color: var(--color-live);
   opacity: 1;
 }
+
+/* ============================================================================
+   "What's new" seal — a one-time MDR file briefing shown after an update.
+   Same institutional grammar as the Command Deck / splash: hairline
+   borders, sharp corners, phosphor accents, tracked monospace uppercase.
+   ============================================================================ */
+.whats-new-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, black, transparent 45%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms var(--ease-lumon);
+}
+
+.whats-new-backdrop.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.whats-new-card {
+  width: min(440px, 100%);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-background);
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-live), transparent 88%),
+    0 24px 48px color-mix(in srgb, black, transparent 72%);
+  transform: translateY(10px) scale(0.98);
+  transition: transform 260ms var(--ease-lumon-out);
+}
+
+.whats-new-backdrop.is-visible .whats-new-card {
+  transform: translateY(0) scale(1);
+}
+
+.whats-new-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.whats-new-seal {
+  flex-shrink: 0;
+  transform: scale(0.42);
+  transform-origin: center;
+  width: 60px;
+  height: 26px;
+  overflow: hidden;
+}
+
+.whats-new-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.whats-new-file {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-live);
+}
+
+.whats-new-title {
+  font-size: 1.05rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.whats-new-version {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text), transparent 52%);
+}
+
+.whats-new-list {
+  list-style: none;
+  margin: 0;
+  padding: 18px 22px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.whats-new-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--color-text), transparent 12%);
+}
+
+/* Square phosphor lamp — matches .command-deck-status .phosphor-lamp rather
+   than a generic round bullet, to stay in the instrument-panel vocabulary. */
+.whats-new-bullet {
+  flex-shrink: 0;
+  margin-top: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 1px;
+  background: var(--color-live);
+  box-shadow: 0 0 6px
+    color-mix(in srgb, var(--color-live-glow), transparent 45%);
+}
+
+.whats-new-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 22px 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whats-new-backdrop,
+  .whats-new-card {
+    transition-duration: 1ms !important;
+  }
+}

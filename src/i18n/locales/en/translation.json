@@ -485,6 +485,38 @@
           "refreshModels": "Refresh models"
         }
       },
+      "ollama": {
+        "title": "Local Models",
+        "description": "Free, private, and GPU-accelerated. Runs entirely on your machine via Ollama — no API key, no data leaves your computer.",
+        "checking": "Checking for Ollama...",
+        "introduction": "Ollama runs small language models locally on your GPU or CPU, completely free and with no API key. Install it once, then download a model below.",
+        "install": "Install Ollama",
+        "installing": "Installing...",
+        "installStep": {
+          "downloading": "Downloading Ollama...",
+          "installing": "Installing...",
+          "waiting_for_server": "Starting Ollama...",
+          "ready": "Ready"
+        },
+        "notRunning": "Ollama is installed but isn't running.",
+        "start": "Start Ollama",
+        "starting": "Starting...",
+        "runningDescription": "Download a model, then select it to use for post-processing.",
+        "refresh": "Refresh",
+        "recommended": "Recommended",
+        "download": "Download",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "use": "Use",
+        "inUse": "In use",
+        "gpuStatus": {
+          "gpu": "GPU",
+          "cpu": "CPU",
+          "partial": "GPU + CPU",
+          "unknown": "Unknown",
+          "not_loaded": "Not loaded yet"
+        }
+      },
       "prompts": {
         "title": "Prompt",
         "selectedPrompt": {
@@ -872,5 +904,9 @@
     "tagline": "Speech, refined.",
     "booting": "Initializing terminal",
     "ready": "Ready"
+  },
+  "whatsNew": {
+    "version": "Version {{version}}",
+    "acknowledge": "Certified"
   }
 }

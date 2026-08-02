@@ -42,6 +42,13 @@ const formatShortcut = (binding: string): string => {
     .join(" + ");
 };
 
+// Status strings ship their own trailing ellipsis ("Transcribing...", and
+// leading in RTL locales), but the capsule already renders three animated
+// dots beside them. Drop the literal dots so the pill isn't paying ~19px of
+// its narrow width to say the same thing twice.
+const stripTrailingEllipsis = (label: string): string =>
+  label.replace(/^[.…]+|[.…]+$/g, "").trim();
+
 // Number of bars drawn on the canvas. The backend sends 16 log-spaced
 // frequency buckets; bars sample them symmetrically so low/mid voice energy
 // sits in the middle and highs feather out to the edges — producing the
@@ -465,20 +472,12 @@ const RecordingOverlay: React.FC = () => {
           {state === "recording" && (
             <canvas ref={canvasRef} className="wave-canvas" aria-hidden />
           )}
-          {state === "transcribing" && (
+          {(state === "transcribing" || state === "processing") && (
             <div className="status-text" role="status" aria-live="polite">
-              {t("overlay.transcribing")}
-              <span className="dots">
-                <span />
-                <span />
-                <span />
+              <span className="status-label">
+                {stripTrailingEllipsis(t(`overlay.${state}`))}
               </span>
-            </div>
-          )}
-          {state === "processing" && (
-            <div className="status-text" role="status" aria-live="polite">
-              {t("overlay.processing")}
-              <span className="dots">
+              <span className="dots" aria-hidden>
                 <span />
                 <span />
                 <span />

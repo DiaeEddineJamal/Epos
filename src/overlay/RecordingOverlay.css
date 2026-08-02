@@ -184,35 +184,56 @@
   display: block;
 }
 
-/* ---------- status text (transcribing / processing) ---------- */
+/* ---------- status text (transcribing / processing) ----------
+   The cancel button only exists while recording, so in these two states the
+   right grid column is dead weight — collapse it and hand the width to the
+   label instead. Without this the centered text overflows a clipped box and
+   loses characters from BOTH ends (the leading "T" of "TRANSCRIBING"). */
+.recording-overlay.state-transcribing .overlay-capsule,
+.recording-overlay.state-processing .overlay-capsule {
+  grid-template-columns: 14px minmax(0, 1fr) 0;
+  gap: 3px;
+}
+
 .status-text {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
   color: var(--ov-text);
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.02em;
   font-family:
     "IBM Plex Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
   white-space: nowrap;
   max-width: 100%;
-  padding-inline: 1px 2px;
-  overflow: visible;
+  min-width: 0;
+  padding-inline: 0 1px;
+  overflow: hidden;
   text-shadow: none;
+}
+
+/* Locales with much longer words than English (Bulgarian, Korean) still can't
+   fit. Ellipsize the tail rather than letting the flex box clip both ends. */
+.status-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dots {
   display: inline-flex;
-  gap: 3px;
-  margin-inline-start: 3px;
+  gap: 2px;
+  margin-inline-start: 2px;
+  flex-shrink: 0;
 }
 
 .dots span {
-  width: 3px;
-  height: 3px;
+  width: 2.5px;
+  height: 2.5px;
   border-radius: 0;
   background: currentColor;
   opacity: 0.35;
@@ -342,9 +363,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
-  padding: 3px 6px;
+  /* "safe" matters: if the card ever exceeds the window (a DPI mismatch on a
+     second monitor shrinks the CSS viewport), plain flex-end overflows
+     UPWARD and silently eats the hint text. safe flex-end falls back to
+     flex-start instead, so the label is the last thing to be lost. */
+  justify-content: safe flex-end;
+  gap: 2px;
+  padding: 1px 5px;
+  min-height: 0;
   opacity: 0;
   pointer-events: none;
   transform: translateY(4px);
@@ -375,12 +401,13 @@
 /* Prompt capsule ("Dictate Ctrl + Win"). */
 .flow-hint {
   min-width: 0;
-  min-height: 22px;
+  min-height: 20px;
   max-width: 100%;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
+  padding: 0 10px;
   border: 1px solid var(--ov-control-border);
   border-radius: 999px;
   background: var(--ov-control-bg);
@@ -417,6 +444,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .flow-mic,
@@ -440,16 +468,42 @@
 }
 
 .flow-mic {
-  width: 42px;
-  height: 26px;
+  width: 40px;
+  height: 24px;
   border-radius: 999px;
 }
 
 .flow-scratchpad {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   opacity: 1;
+}
+
+/* Last-resort degradation. The Rust side re-syncs window size on DPI change,
+   but a monitor swap can leave the webview briefly reporting a shorter
+   viewport; shrink to fit rather than clip the hint off the top. */
+@media (max-height: 52px) {
+  .flow-hint {
+    min-height: 17px;
+    padding: 0 7px;
+  }
+  .flow-hint-text,
+  .flow-attribution {
+    font-size: 10px;
+  }
+  .flow-mic {
+    width: 34px;
+    height: 19px;
+  }
+  .flow-scratchpad {
+    width: 19px;
+    height: 19px;
+  }
+  .flow-idle-expand {
+    gap: 2px;
+    padding: 1px 4px;
+  }
 }
 
 .flow-hint:hover,

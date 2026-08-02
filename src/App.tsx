@@ -16,6 +16,7 @@ import { type SidebarSection, SECTIONS_CONFIG } from "./components/navigation";
 import { CommandDeck } from "./components/TopNav";
 import { Titlebar } from "./components/Titlebar";
 import { SplashScreen } from "./components/SplashScreen";
+import { WhatsNewModal } from "./components/WhatsNewModal";
 import { useSettings } from "./hooks/useSettings";
 import { useSettingsStore } from "./stores/settingsStore";
 import { useThemeStore } from "./stores/themeStore";
@@ -331,6 +332,7 @@ function App() {
     >
       {splash}
       <Titlebar />
+      <WhatsNewModal />
       <Toaster
         theme={resolvedTheme}
         toastOptions={{

@@ -29,6 +29,7 @@ use env_filter::Builder as EnvFilterBuilder;
 use managers::audio::AudioRecordingManager;
 use managers::history::HistoryManager;
 use managers::model::ModelManager;
+use managers::ollama::OllamaManager;
 use managers::transcription::TranscriptionManager;
 #[cfg(unix)]
 use signal_hook::consts::{SIGUSR1, SIGUSR2};
@@ -161,6 +162,9 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     );
     let history_manager =
         Arc::new(HistoryManager::new(app_handle).expect("Failed to initialize history manager"));
+    // No async I/O at construction — just wires up an HTTP client — so this
+    // is cheap enough to build unconditionally rather than lazily.
+    let ollama_manager = Arc::new(OllamaManager::new(app_handle));
 
     // Apply accelerator preferences before any model loads
     managers::transcription::apply_accelerator_settings(app_handle);
@@ -170,6 +174,7 @@ fn initialize_core_logic(app_handle: &AppHandle) {
     app_handle.manage(model_manager.clone());
     app_handle.manage(transcription_manager.clone());
     app_handle.manage(history_manager.clone());
+    app_handle.manage(ollama_manager.clone());
 
     // Note: Shortcuts are NOT initialized here.
     // The frontend is responsible for calling the `initialize_shortcuts` command
@@ -417,6 +422,14 @@ pub fn run(cli_args: CliArgs) {
             commands::models::is_model_loading,
             commands::models::has_any_models_available,
             commands::models::has_any_models_or_downloads,
+            commands::ollama::get_ollama_status,
+            commands::ollama::install_ollama,
+            commands::ollama::start_ollama_server,
+            commands::ollama::get_ollama_recommended_models,
+            commands::ollama::pull_ollama_model,
+            commands::ollama::cancel_ollama_pull,
+            commands::ollama::delete_ollama_model,
+            commands::ollama::get_ollama_gpu_status,
             commands::audio::update_microphone_mode,
             commands::audio::get_microphone_mode,
             commands::audio::get_windows_microphone_permission_status,
@@ -658,6 +671,19 @@ pub fn run(cli_args: CliArgs) {
                 log::info!("Theme changed to: {:?}", theme);
                 // Update tray icon to match new theme, maintaining idle state
                 utils::change_tray_icon(&window.app_handle(), utils::TrayIconState::Idle);
+            }
+            // Dragging the flow bar's monitor to a different display (or the OS
+            // moving it there, e.g. via a display hot-plug) can change the DPI
+            // scale factor without a matching Moved/Resized event arriving first.
+            // The overlay's logical size/position is computed from that scale
+            // (see overlay::calculate_overlay_position), so a stale scale factor
+            // leaves the window smaller than its own CSS layout expects — the
+            // idle Flow Bar's hover card then clips upward past the window edge.
+            // Re-sync geometry for the new monitor whenever this fires.
+            tauri::WindowEvent::ScaleFactorChanged { .. }
+                if window.label() == "recording_overlay" =>
+            {
+                overlay::update_overlay_position(&window.app_handle());
             }
             _ => {}
         })

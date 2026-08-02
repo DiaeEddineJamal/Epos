@@ -657,6 +657,19 @@ fn default_post_process_providers() -> Vec<PostProcessProvider> {
         });
     }
 
+    // Local, free, GPU-accelerated via a locally-installed Ollama instance —
+    // no API key. Epos manages Ollama's model downloads itself (see
+    // managers::ollama); this entry just points the generic OpenAI-compatible
+    // client at its local endpoint like "custom" does.
+    providers.push(PostProcessProvider {
+        id: crate::managers::ollama::OLLAMA_PROVIDER_ID.to_string(),
+        label: "Ollama (Local)".to_string(),
+        base_url: format!("{}/v1", crate::managers::ollama::OLLAMA_BASE_URL),
+        allow_base_url_edit: false,
+        models_endpoint: Some("/models".to_string()),
+        supports_structured_output: false,
+    });
+
     // Custom provider always comes last
     providers.push(PostProcessProvider {
         id: "custom".to_string(),
